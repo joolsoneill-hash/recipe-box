@@ -143,6 +143,11 @@
   .plan-hint{font-size:12px;color:var(--brown);margin:8px 0 0;}
   .gro-total{display:flex;justify-content:space-between;align-items:baseline;font-size:15px;margin:0 0 12px;padding:10px 12px;background:var(--card);border:1px solid var(--line);border-radius:2px;}
   .gro-total span{font-size:12px;color:var(--brown);}
+  .thumb{width:64px;height:64px;border-radius:3px;object-fit:cover;flex-shrink:0;display:block;cursor:pointer;}
+  .thumb-sm{width:36px;height:36px;}
+  .thumb-empty{display:flex;align-items:center;justify-content:center;color:var(--paper);font-weight:700;font-size:22px;opacity:.85;}
+  .thumb-sm.thumb-empty{font-size:15px;}
+  .prev-meal{display:flex;align-items:center;gap:10px;}
   .serv-line{margin-top:7px;font-size:13px;color:var(--brown);display:flex;align-items:center;gap:8px;}
   .stepper{display:inline-flex;align-items:center;border:1px solid var(--line-strong);border-radius:2px;background:var(--paper);}
   .stepper strong{min-width:30px;text-align:center;color:var(--ink);font-size:14px;}
@@ -234,7 +239,7 @@
 <body>
 <div id="app">
   <header class="app-header">
-    <span class="app-version" id="app-version">v4.1</span>
+    <span class="app-version" id="app-version">v4.2</span>
     <button type="button" class="header-btn" id="bug-header-btn">🐞 Report a bug</button>
     <h1>The Recipe Box</h1>
     <p class="tagline">Plan the week. Cook from cards.</p>
@@ -738,6 +743,12 @@ function renderRecipeDetail(id){
 }
 
 /* ---------- MEAL PLAN VIEW ---------- */
+function thumbHtml(r, small){
+  const cls = 'thumb' + (small ? ' thumb-sm' : '');
+  if(r.photo) return `<img class="${cls}" src="${r.photo}" alt="" data-act="open-recipe" data-id="${esc(r.id)}">`;
+  return `<div class="${cls} thumb-empty" style="background:${TAG_COLORS[r.tag]||'var(--brown)'}" data-act="open-recipe" data-id="${esc(r.id)}">${esc((r.title || '?').replace(/[^A-Za-z0-9]/, '').charAt(0).toUpperCase() || '·')}</div>`;
+}
+
 function renderPlan(){
   const plans = Object.values(state.plans).sort((a,b)=>(b.created||0)-(a.created||0));
   const plan = activePlan();
@@ -761,6 +772,7 @@ function renderPlan(){
     items.forEach(r=>{
       html += `
         <div class="plan-item">
+          ${thumbHtml(r)}
           <div class="plan-item-main" data-act="open-recipe" data-id="${esc(r.id)}">
             <div class="plan-item-title">${esc(r.title)}</div>
             <div class="plan-item-meta">${esc(TAG_LABELS[r.tag]||r.tag)} · ${esc(r.time)} min · recipe serves ${esc(r.servings)}</div>
@@ -800,7 +812,7 @@ function renderPlan(){
           </button>`;
       if(open){
         html += `<div class="prev-body">`;
-        if(rs.length) html += rs.map(r=>`<div class="prev-meal" data-act="open-recipe" data-id="${esc(r.id)}">${esc(r.title)}</div>`).join('');
+        if(rs.length) html += rs.map(r=>`<div class="prev-meal" data-act="open-recipe" data-id="${esc(r.id)}">${thumbHtml(r, true)}<span>${esc(r.title)}</span></div>`).join('');
         else html += `<div class="prev-empty">No meals in this plan.</div>`;
         if((p.extras || []).length) html += `<div class="prev-extras">Plus: ${(p.extras || []).map(x=>esc(x.name)).join(', ')}</div>`;
         html += `<div class="prev-actions">
@@ -1158,7 +1170,7 @@ function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '4.1';
+const APP_VERSION = '4.2';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
