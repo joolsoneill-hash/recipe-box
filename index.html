@@ -294,8 +294,11 @@ const IMPORTED_RECIPES = [
 ];
 
 /* ---------- FIREBASE AUTH + STORAGE (shared, Google Sign-In required) ---------- */
-let FIREBASE_CONFIG = null;
-try { FIREBASE_CONFIG = JSON.parse(localStorage.getItem('recipeBoxFirebaseConfig') || 'null'); } catch(e){ FIREBASE_CONFIG = null; }
+// Firebase web config is NOT a secret: it only identifies the project.
+// Access is protected by Google Sign-In + the Realtime Database rules (email whitelist).
+const DEFAULT_FIREBASE_CONFIG = {"apiKey":"AIzaSyAAVlcygCcJXlK0LkfIh3oiEMc6sZhEVFo","authDomain":"recipe-box-oneill.firebaseapp.com","databaseURL":"https://recipe-box-oneill-default-rtdb.firebaseio.com","projectId":"recipe-box-oneill","storageBucket":"recipe-box-oneill.firebasestorage.app","messagingSenderId":"809735084570","appId":"1:809735084570:web:e6fbe32739f5a901014fa3"};
+let FIREBASE_CONFIG = DEFAULT_FIREBASE_CONFIG;
+try { const saved = JSON.parse(localStorage.getItem('recipeBoxFirebaseConfig') || 'null'); if(saved && saved.apiKey && saved.databaseURL) FIREBASE_CONFIG = saved; } catch(e){}
 let DB_URL = FIREBASE_CONFIG?.databaseURL || '';
 let auth = null;
 
