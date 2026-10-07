@@ -161,6 +161,12 @@
 
   .picker-item{padding:12px 10px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px;}
   .picker-item span{flex:1;font-size:14px;line-height:1.35;}
+  .picker-item{justify-content:flex-start;}
+  .picker-item button{margin-left:auto;}
+  .picker-item small{display:block;font-size:11.5px;color:var(--brown);margin-top:2px;}
+  .picker-item .thumb{cursor:default;width:46px;height:46px;}
+  .picker-chips{margin-bottom:6px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;}
+  .picker-chips .chip{flex-shrink:0;}
   .picker-item button{background:var(--herb);color:#fff;border:none;border-radius:2px;padding:7px 12px;font-size:12px;font-weight:600;min-width:74px;}
   .picker-item button.on{background:var(--ink);}
 
@@ -239,7 +245,7 @@
 <body>
 <div id="app">
   <header class="app-header">
-    <span class="app-version" id="app-version">v4.2</span>
+    <span class="app-version" id="app-version">v4.3</span>
     <button type="button" class="header-btn" id="bug-header-btn">🐞 Report a bug</button>
     <h1>The Recipe Box</h1>
     <p class="tagline">Plan the week. Cook from cards.</p>
@@ -479,6 +485,7 @@ async function migrateCategories(){
   const changed = [];
   Object.values(state.recipes).forEach(r=>{
     let dirty = false;
+    if(!CUISINE_KEYS.includes(r.cuisine)){ r.cuisine = guessCuisine(r.title, r.ingredients); dirty = true; }
     (Array.isArray(r.ingredients) ? r.ingredients : []).forEach(i=>{
       if(!CAT_KEYS.includes(i.category)){ i.category = guessCategory(i.name); dirty = true; }
     });
@@ -487,6 +494,47 @@ async function migrateCategories(){
   for(const r of changed) await saveRecipe(r);
 }
 
+
+/* ---------- CUISINES / DISH STYLES (for finding meals in the plan builder) ---------- */
+const CUISINES = [
+  {key:'italian', label:'Italian'}, {key:'mexican', label:'Mexican'}, {key:'asian', label:'Asian'},
+  {key:'indian', label:'Indian'}, {key:'mediterranean', label:'Mediterranean'}, {key:'middle-eastern', label:'Middle Eastern'},
+  {key:'french', label:'French'}, {key:'american', label:'American'},
+  {key:'salad', label:'Salad'}, {key:'soup', label:'Soup & stew'}, {key:'burgers', label:'Burgers & sandwiches'},
+  {key:'other', label:'Other'}
+];
+const CUISINE_KEYS = CUISINES.map(c => c.key);
+const CUISINE_LABEL = Object.fromEntries(CUISINES.map(c => [c.key, c.label]));
+function guessCuisine(title, ingredients){
+  const ti = String(title || '').toLowerCase();
+  const ing = (ingredients || []).map(i => String((i && i.name) || '').toLowerCase()).join(' | ');
+  const titleRules = [
+    ['salad', /salad/], ['soup', /\bsoup|stew|chowder|chili\b|chilli\b/],
+    ['burgers', /burger|sandwich|\bwraps?\b|\bsub\b|toastie|sloppy/],
+    ['mexican', /taco|burrito|quesadilla|enchilada|fajita|nacho|mexican|tostada|guacamole/],
+    ['indian', /curry|masala|tikka|\bdal\b|dhal|paneer|biryani|korma|samosa|indian/],
+    ['asian', /stir.?fry|ramen|noodle|teriyaki|sushi|fried rice|pad thai|thai|katsu|dumpling|miso|asian|korean|japanese|chinese|bibimbap|pho\b/],
+    ['middle-eastern', /hummus|falafel|shawarma|shakshuka|kebab|tabbouleh|middle eastern/],
+    ['french', /french|ratatouille|quiche|crepe|crêpe|gratin|croque|bourguignon/],
+    ['italian', /pasta|orzo|risotto|pizza|lasagn|gnocchi|spaghetti|penne|ravioli|carbonara|bolognese|pesto|italian|bruschetta|parmigiana|frittata|focaccia|fettuccine|linguine/],
+    ['mediterranean', /greek|mediterranean|gyro|souvlaki|couscous/],
+    ['american', /\bbbq\b|barbecue|mac (and|&|n) cheese|pancake|waffle|meatloaf|casserole|american|sliders?/]
+  ];
+  for(const [k, re] of titleRules) if(re.test(ti)) return k;
+  const ingRules = [
+    ['mexican', /tortilla|salsa|chipotle|jalape|black bean|cilantro|tortillas/],
+    ['indian', /garam masala|curry|turmeric|paneer|tikka|cardamom/],
+    ['asian', /soy sauce|sesame oil|miso|bok choy|rice vinegar|hoisin|fish sauce|ginger/],
+    ['middle-eastern', /tahini|za'atar|sumac|hummus|pita/],
+    ['italian', /pasta|orzo|parmesan|mozzarella|ricotta|pesto|spaghetti|basil/],
+    ['mediterranean', /feta|halloumi|kalamata|olives?\b|tzatziki|couscous/]
+  ];
+  for(const [k, re] of ingRules) if(re.test(ing)) return k;
+  return 'other';
+}
+function cuisineOptionsHtml(sel){
+  return CUISINES.map(c => `<option value="${c.key}" ${c.key === sel ? 'selected' : ''}>${esc(c.label)}</option>`).join('');
+}
 
 function normPlan(p){
   const ids = p.recipeIds ? (Array.isArray(p.recipeIds) ? p.recipeIds : Object.values(p.recipeIds)) : [];
@@ -863,14 +911,18 @@ function openMealPicker(){
   const plan = activePlan();
   if(!plan) return;
   const recipes = Object.values(state.recipes).sort((a,b)=>a.title.localeCompare(b.title));
+  const present = CUISINES.filter(c => recipes.some(r => r.cuisine === c.key));
+  let filter = 'all';
   let html = `<div class="sheet-handle"></div><h2>Choose meals for ${esc(planLabel(plan))}</h2>`;
   if(recipes.length === 0){
     html += `<div class="empty-state"><p>Add a recipe first, then come back to build your plan.</p></div>`;
   } else {
-    html += `<div class="field"><input id="picker-search" type="text" placeholder="Search recipes…"></div><div id="picker-list">`;
+    html += `<div class="field" style="margin-bottom:8px;"><input id="picker-search" type="text" placeholder="Search recipes…"></div>
+      <div class="chip-row picker-chips" id="picker-chips"><button type="button" class="chip active" data-pcuisine="all">All</button>${present.map(c=>`<button type="button" class="chip" data-pcuisine="${c.key}">${esc(c.label)}</button>`).join('')}</div>
+      <div id="picker-list">`;
     recipes.forEach(r=>{
       const on = plan.recipeIds.includes(r.id);
-      html += `<div class="picker-item" data-title="${esc(r.title.toLowerCase())}"><span>${esc(r.title)}</span><button type="button" data-picker-id="${esc(r.id)}" class="${on?'on':''}">${on?'Added ✓':'Add'}</button></div>`;
+      html += `<div class="picker-item" data-title="${esc(r.title.toLowerCase())}" data-cuisine="${esc(r.cuisine || 'other')}">${thumbHtml(r, true).replace(/ data-act="open-recipe" data-id="[^"]*"/, '')}<span>${esc(r.title)}<small>${esc(CUISINE_LABEL[r.cuisine] || 'Other')} · ${esc(TAG_LABELS[r.tag]||r.tag)}</small></span><button type="button" data-picker-id="${esc(r.id)}" class="${on?'on':''}">${on?'Added ✓':'Add'}</button></div>`;
     });
     html += `</div>`;
   }
@@ -880,6 +932,14 @@ function openMealPicker(){
   document.getElementById('picker-done').onclick = closeSheet;
   const list = document.getElementById('picker-list');
   if(list){
+    const apply = ()=>{
+      const q = document.getElementById('picker-search').value.trim().toLowerCase();
+      list.querySelectorAll('.picker-item').forEach(row=>{
+        const okQ = !q || row.dataset.title.includes(q);
+        const okC = filter === 'all' || row.dataset.cuisine === filter;
+        row.style.display = (okQ && okC) ? '' : 'none';
+      });
+    };
     list.addEventListener('click', async (e)=>{
       const btn = e.target.closest('[data-picker-id]');
       if(!btn) return;
@@ -891,11 +951,13 @@ function openMealPicker(){
       btn.textContent = on ? 'Added ✓' : 'Add';
       await savePlan(plan);
     });
-    document.getElementById('picker-search').addEventListener('input', (e)=>{
-      const q = e.target.value.trim().toLowerCase();
-      list.querySelectorAll('.picker-item').forEach(row=>{
-        row.style.display = (!q || row.dataset.title.includes(q)) ? '' : 'none';
-      });
+    document.getElementById('picker-search').addEventListener('input', apply);
+    document.getElementById('picker-chips').addEventListener('click', (e)=>{
+      const c = e.target.closest('[data-pcuisine]');
+      if(!c) return;
+      filter = c.dataset.pcuisine;
+      document.querySelectorAll('#picker-chips .chip').forEach(x => x.classList.toggle('active', x === c));
+      apply();
     });
   }
 }
@@ -1170,7 +1232,7 @@ function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '4.2';
+const APP_VERSION = '4.3';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
@@ -1354,12 +1416,13 @@ Rules:
 - For whole or countable ingredients (eggs, garlic cloves, bell peppers, etc.) put the count as qty and leave unit as an empty string, folding the counting word into the ingredient name (e.g. "garlic cloves", "large eggs").
 - If a seasoning or oil (salt, pepper, oil, spices, etc.) only appears inside the instruction steps with per-step amounts, sum all of its occurrences into ONE ingredient entry with the total quantity.
 - For each ingredient set category to exactly one of: produce (fruit and vegetables, fresh herbs), meat (meat, fish, tofu and meat alternatives), dairy (milk, cheese, yoghurt, butter, eggs), bakery (bread, wraps, rolls), pantry (tins, oils, sauces, grains, pasta, flour, sugar, nuts, stock), spices (dried herbs, spices, salt, pepper), frozen, drinks, other.
+- Set cuisine to exactly one of: italian, mexican, asian, indian, mediterranean, middle-eastern, french, american, salad, soup, burgers, other, whichever best describes the dish.
 - Pick exactly one tag from: breakfast, lunch, dinner, snack, dessert, whichever best fits the dish.
 - Estimate total time in minutes and servings if not stated exactly.
 - Write each instruction step as a clear, standalone sentence or two, preserving all temperatures, times and quantities.
 
 Respond with ONLY one JSON object in exactly this shape, with no markdown code fences and no commentary before or after it:
-{"title":"","tag":"","time":0,"servings":0,"ingredients":[{"name":"","qty":"","unit":"","category":""}],"steps":[""]}`;
+{"title":"","tag":"","cuisine":"","time":0,"servings":0,"ingredients":[{"name":"","qty":"","unit":"","category":""}],"steps":[""]}`;
 }
 
 function parseRecipeJson(data){
@@ -1380,6 +1443,7 @@ function normalizeDraft(d){
   return {
     title: (d.title || 'Imported Recipe').toString(),
     tag: allowedTags.includes(d.tag) ? d.tag : 'dinner',
+    cuisine: CUISINE_KEYS.includes(d.cuisine) ? d.cuisine : null,
     time: parseInt(d.time) || 0,
     servings: parseInt(d.servings) || 1,
     ingredients: Array.isArray(d.ingredients) && d.ingredients.length
@@ -1680,6 +1744,10 @@ function openRecipeForm(existingId, draft){
         <div class="field"><label>Servings</label><input id="f-servings" type="number" min="1" value="${esc(r.servings)}"></div>
       </div>
 
+      <div class="field"><label>Cuisine / style</label>
+        <select id="f-cuisine" data-auto="${CUISINE_KEYS.includes(r.cuisine) ? '0' : '1'}">${cuisineOptionsHtml(CUISINE_KEYS.includes(r.cuisine) ? r.cuisine : guessCuisine(r.title, r.ingredients))}</select>
+      </div>
+
       <div class="field">
         <label>Ingredients</label>
         <div id="ing-list">${r.ingredients.map((ing,i)=>ingredientRowHtml(ing,i)).join('')}</div>
@@ -1731,13 +1799,22 @@ function openRecipeForm(existingId, draft){
     if(e.target.dataset.removeIng !== undefined) e.target.closest('.ing-block').remove();
     if(e.target.dataset.removeStep !== undefined) e.target.closest('.step-row').remove();
   });
+  const refreshCuisine = ()=>{
+    const cs = document.getElementById('f-cuisine');
+    if(cs.dataset.auto === '0') return;
+    const names = Array.from(document.querySelectorAll('#ing-list .ing-name')).map(x => ({name: x.value}));
+    cs.value = guessCuisine(document.getElementById('f-title').value, names);
+  };
   form.addEventListener('input', (e)=>{
+    if(e.target.id === 'f-title') refreshCuisine();
     if(!e.target.classList.contains('ing-name')) return;
     const sel = e.target.closest('.ing-block').querySelector('.ing-cat');
     if(sel.dataset.auto !== '0') sel.value = guessCategory(e.target.value);
+    refreshCuisine();
   });
   form.addEventListener('change', (e)=>{
     if(e.target.classList.contains('ing-cat')) e.target.dataset.auto = '0';
+    if(e.target.id === 'f-cuisine') e.target.dataset.auto = '0';
   });
   document.getElementById('cancel-form-btn').onclick = closeSheet;
 
@@ -1757,7 +1834,7 @@ function openRecipeForm(existingId, draft){
     const steps = Array.from(document.querySelectorAll('#step-list textarea')).map(t=>t.value.trim()).filter(s=>s);
 
     const id = existingId || uid();
-    const recipe = {id, title, tag, time: parseInt(time)||0, servings: parseInt(servings)||1, ingredients, steps, photo: currentPhotoData};
+    const recipe = {id, title, tag, cuisine: document.getElementById('f-cuisine').value, time: parseInt(time)||0, servings: parseInt(servings)||1, ingredients, steps, photo: currentPhotoData};
     state.recipes[id] = recipe;
     closeSheet();
     if(!existingId) goTab('box');
