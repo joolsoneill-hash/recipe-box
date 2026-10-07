@@ -284,7 +284,7 @@
 <body>
 <div id="app">
   <header class="app-header">
-    <span class="app-version" id="app-version">v5.3</span>
+    <span class="app-version" id="app-version">v5.4</span>
     <button type="button" class="header-btn" id="bug-header-btn">🐞 Report a bug</button>
     <h1>The Recipe Box</h1>
     <p class="tagline">Plan the week. Cook from cards.</p>
@@ -443,17 +443,22 @@ function guessCategory(rawName){
   return 'other';
 }
 
-async function migrateCategories(){
-  const changed = [];
+// Migrations fix the data in memory straight away (so the screen is right), then save only the small changed
+// fields in the background. They never block start-up and never re-upload photos.
+function migrateCategories(){
+  const writes = [];
   Object.values(state.recipes).forEach(r=>{
+    if(!CUISINE_KEYS.includes(r.cuisine)){
+      r.cuisine = guessCuisine(fullTitle(r), r.ingredients);
+      writes.push(dbSet('recipes/' + r.id + '/cuisine', r.cuisine));
+    }
     let dirty = false;
-    if(!CUISINE_KEYS.includes(r.cuisine)){ r.cuisine = guessCuisine(fullTitle(r), r.ingredients); dirty = true; }
     (Array.isArray(r.ingredients) ? r.ingredients : []).forEach(i=>{
       if(!CAT_KEYS.includes(i.category)){ i.category = guessCategory(i.name); dirty = true; }
     });
-    if(dirty) changed.push(r);
+    if(dirty) writes.push(dbSet('recipes/' + r.id + '/ingredients', r.ingredients));
   });
-  for(const r of changed) await saveRecipe(r);
+  return writes;
 }
 
 
@@ -554,8 +559,8 @@ async function loadState(){
     try { state.recipes = (await dbGet('recipes')) || {}; }
     catch(e){ console.error('load recipes failed', e); state.recipes = {}; }
 
-    await migrateCategories();
-    await migrateSubtitles();
+    // fix data in memory now; save the small changes in the background without holding up start-up
+    Promise.allSettled([...migrateSubtitles(), ...migrateCategories()]).then(r => { const bad = r.filter(x => x.status === 'rejected').length; if(bad) console.error('migration saves failed', bad); });
 
     let plans = {};
     try { plans = (await dbGet('plans')) || {}; } catch(e){ plans = {}; }
@@ -676,13 +681,15 @@ function splitTitle(t){
   return [t, ''];
 }
 function fullTitle(r){ return r.subtitle ? r.title + ' ' + r.subtitle : r.title; }
-async function migrateSubtitles(){
-  for(const r of Object.values(state.recipes)){
-    if(typeof r.subtitle === 'string') continue;
+function migrateSubtitles(){
+  const writes = [];
+  Object.values(state.recipes).forEach(r=>{
+    if(typeof r.subtitle === 'string') return;
     const [main, sub] = splitTitle(r.title);
     r.title = main; r.subtitle = sub;
-    await saveRecipe(r);
-  }
+    writes.push(dbSet('recipes/' + r.id + '/title', main), dbSet('recipes/' + r.id + '/subtitle', sub));
+  });
+  return writes;
 }
 function starSvg(on){
   return `<svg class="star-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.5 5.4 5.9.7-4.4 4 1.2 5.8L12 16.2 6.8 19.1 8 13.3 3.6 9.3l5.9-.7z" fill="${on?'#f2b01e':'none'}" stroke="${on?'#c9830a':'currentColor'}" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
@@ -1314,7 +1321,7 @@ function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '5.3';
+const APP_VERSION = '5.4';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
