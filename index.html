@@ -133,6 +133,26 @@
   .picker-item button{background:var(--herb);color:#fff;border:none;border-radius:2px;padding:7px 12px;font-size:12px;font-weight:600;min-width:74px;}
   .picker-item button.on{background:var(--ink);}
 
+
+  .header-btn{position:absolute;top:14px;right:14px;background:rgba(237,227,208,0.12);color:var(--paper);border:1px solid rgba(237,227,208,0.32);border-radius:14px;padding:5px 11px;font-size:12px;font-weight:600;}
+  .sheet-note{font-size:13px;color:var(--brown);line-height:1.5;margin:0 0 12px;}
+  .sheet-status{font-size:13px;color:var(--brown);min-height:18px;margin:8px 0;line-height:1.4;}
+  .sheet-steps{font-size:13px;color:var(--ink);line-height:1.6;padding-left:20px;margin:0 0 14px;}
+  .thumbs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px;}
+  .thumb{position:relative;width:72px;height:72px;}
+  .thumb img{width:72px;height:72px;object-fit:cover;border-radius:2px;border:1px solid var(--line-strong);display:block;}
+  .thumb span{position:absolute;left:3px;bottom:3px;background:var(--ink);color:var(--paper);font-size:10px;font-weight:700;border-radius:8px;padding:1px 6px;}
+  .thumb button{position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;border:none;background:var(--tomato);color:#fff;font-size:14px;line-height:1;padding:0;}
+  .file-chip{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--card);border:1px solid var(--line-strong);border-radius:2px;padding:9px 11px;font-size:13px;margin-bottom:6px;}
+  .file-chip button{border:none;background:none;color:var(--tomato);font-size:18px;}
+  .bug-item{background:var(--card);border:1px solid var(--line);border-radius:2px;padding:11px 12px;margin-bottom:8px;}
+  .bug-item.done{opacity:0.6;}
+  .bug-text{font-size:14px;line-height:1.45;white-space:pre-wrap;}
+  .bug-meta{font-size:11.5px;color:var(--brown);margin-top:5px;}
+  .bug-actions{display:flex;gap:14px;margin-top:8px;}
+  .bug-actions button{border:none;background:none;color:var(--herb);font-size:12px;font-weight:700;padding:2px 0;}
+  .bug-actions button.del{color:var(--tomato);}
+
   /* Grocery list */
   .grocery-group{margin-bottom:18px;}
   .grocery-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px;}
@@ -163,6 +183,7 @@
 <body>
 <div id="app">
   <header class="app-header">
+    <button type="button" class="header-btn" id="bug-header-btn">🐞 Report a bug</button>
     <h1>The Recipe Box</h1>
     <p class="tagline">Plan the week. Cook from cards.</p>
   </header>
@@ -499,7 +520,8 @@ function renderBox(){
     <div class="chip-row">
       ${tags.map(t=>`<button class="chip ${state.activeFilter===t?'active':''}" data-act="filter" data-id="${esc(t)}">${t==='all'?'All':esc(TAG_LABELS[t]||t)}</button>`).join('')}
     </div>
-    <button class="add-btn" data-act="add-recipe" style="margin-bottom:18px;">+ Add a recipe</button>
+    <button class="add-btn" data-act="add-recipe">+ Add a recipe</button>
+    <button class="add-btn" data-act="import-recipe" style="background:var(--ink);margin-bottom:18px;">✨ Import a recipe: screenshots, PDF or website</button>
   `;
 
   if(filtered.length===0){
@@ -523,6 +545,8 @@ function renderBox(){
   html += `<div style="margin-top:28px;">`;
   if(deferredInstall) html += `<button class="secondary-btn" data-act="install-app">⬇ Install app on this device</button>`;
   html += `
+    <button class="secondary-btn" data-act="report-bug">🐞 Report a bug</button>
+    <button class="secondary-btn" data-act="view-bugs">View reported bugs</button>
     <button class="secondary-btn" data-act="import-data">⇩ Import data</button>
     <button class="secondary-btn" data-act="export-data">⇪ Export all data</button>
     <button class="secondary-btn" data-act="change-db">⚙ Change shared database</button>
@@ -815,6 +839,447 @@ function openExportSheet(){
   });
 }
 
+/* ---------- BUG REPORTS ---------- */
+const APP_VERSION = '2026-10-07';
+
+function describeView(){
+  if(cookIsOpen()) return 'Cooking mode';
+  const v = currentView();
+  if(v.recipeId && state.recipes[v.recipeId]) return 'Recipe: ' + state.recipes[v.recipeId].title;
+  return ({box:'Recipes', plan:'Meal Plan', list:'Grocery List'})[v.tab] || v.tab;
+}
+
+function openBugSheet(){
+  const where = describeView();
+  openSheet(`
+    <div class="sheet-handle"></div>
+    <h2>Report a bug</h2>
+    <p class="sheet-note">Say what went wrong and what you were doing. It's saved to the shared bug list, which only the approved signed-in users can see.</p>
+    <div class="field"><label>What happened?</label><textarea id="bug-text" placeholder="e.g. When I tap Add on a recipe the count doesn't change…" style="min-height:110px;"></textarea></div>
+    <div class="sheet-note">Screen: ${esc(where)}</div>
+    <div id="bug-status" class="sheet-status"></div>
+    <button class="primary-btn" id="bug-send">Save bug report</button>
+    <button class="secondary-btn" id="bug-list-btn">View reported bugs</button>
+    <button class="secondary-btn" id="bug-cancel">Close</button>
+  `);
+  document.getElementById('bug-cancel').onclick = closeSheet;
+  document.getElementById('bug-list-btn').onclick = openBugListSheet;
+  document.getElementById('bug-send').onclick = async ()=>{
+    const textEl = document.getElementById('bug-text');
+    const status = document.getElementById('bug-status');
+    const btn = document.getElementById('bug-send');
+    const text = textEl.value.trim();
+    if(!text){ status.textContent = 'Describe the bug first.'; return; }
+    btn.disabled = true;
+    status.textContent = 'Saving…';
+    const bug = {
+      id: uid(), text, status: 'open', created: Date.now(),
+      reporter: (auth && auth.currentUser && auth.currentUser.email) || 'unknown',
+      screen: where, version: APP_VERSION, device: (navigator.userAgent || '').slice(0, 160)
+    };
+    try {
+      await dbSet('bugs/' + bug.id, bug);
+      textEl.value = '';
+      status.textContent = "Saved. Thanks, it's on the bug list.";
+    } catch(e){
+      console.error('bug save failed', e);
+      status.textContent = "Couldn't save that. Check your connection and try again.";
+    }
+    btn.disabled = false;
+  };
+}
+
+async function openBugListSheet(){
+  openSheet(`<div class="sheet-handle"></div><h2>Reported bugs</h2><div class="loading">Loading…</div>`);
+  let bugs;
+  try { bugs = (await dbGet('bugs')) || {}; }
+  catch(e){
+    document.getElementById('sheet').innerHTML = `<div class="sheet-handle"></div><h2>Reported bugs</h2><p class="sheet-note">Couldn't load the bug list. Check your connection.</p><button class="secondary-btn" id="bl-close">Close</button>`;
+    document.getElementById('bl-close').onclick = closeSheet;
+    return;
+  }
+  paintBugList(bugs);
+}
+
+function bugDate(ts){
+  try { return new Date(ts).toLocaleString('en-AU', {day:'numeric', month:'short', hour:'numeric', minute:'2-digit'}); }
+  catch(e){ return ''; }
+}
+
+function paintBugList(bugs){
+  const list = Object.values(bugs).sort((a,b)=>{
+    if(a.status !== b.status) return a.status === 'open' ? -1 : 1;
+    return (b.created || 0) - (a.created || 0);
+  });
+  const openCount = list.filter(b => b.status === 'open').length;
+  let html = `<div class="sheet-handle"></div><h2>Reported bugs</h2><div id="bl-root">
+    <p class="sheet-note">${openCount} open · ${list.length - openCount} fixed</p>`;
+  if(!list.length) html += `<div class="empty-state"><p>No bugs reported yet.</p></div>`;
+  list.forEach(b=>{
+    html += `
+      <div class="bug-item ${b.status === 'open' ? '' : 'done'}">
+        <div class="bug-text">${esc(b.text)}</div>
+        <div class="bug-meta">${esc(bugDate(b.created))} · ${esc(b.reporter || '')} · ${esc(b.screen || '')}</div>
+        <div class="bug-actions">
+          <button data-bug-toggle="${esc(b.id)}">${b.status === 'open' ? 'Mark fixed' : 'Reopen'}</button>
+          <button data-bug-del="${esc(b.id)}" class="del">Delete</button>
+        </div>
+      </div>`;
+  });
+  html += `
+    <button class="secondary-btn" id="bl-copy">Copy open bugs as text</button>
+    <button class="secondary-btn" id="bl-back">Report another bug</button>
+    <button class="secondary-btn" id="bl-close">Close</button></div>`;
+  document.getElementById('sheet').innerHTML = html;
+
+  const root = document.getElementById('bl-root');
+  root.addEventListener('click', async (e)=>{
+    const tg = e.target.closest('[data-bug-toggle]');
+    const dl = e.target.closest('[data-bug-del]');
+    try {
+      if(tg){
+        const b = bugs[tg.dataset.bugToggle];
+        b.status = b.status === 'open' ? 'done' : 'open';
+        await dbSet('bugs/' + b.id, b);
+        paintBugList(bugs);
+      } else if(dl){
+        if(!confirm('Delete this bug report?')) return;
+        const id = dl.dataset.bugDel;
+        await dbDelete('bugs/' + id);
+        delete bugs[id];
+        paintBugList(bugs);
+      }
+    } catch(err){ console.error('bug update failed', err); }
+  });
+  document.getElementById('bl-close').onclick = closeSheet;
+  document.getElementById('bl-back').onclick = openBugSheet;
+  document.getElementById('bl-copy').onclick = async ()=>{
+    const open = list.filter(b => b.status === 'open');
+    const text = `Recipe Box open bugs (${open.length}), app version ${APP_VERSION}\n\n` +
+      open.map((b,i)=>`${i+1}. ${b.text}\n   [${b.screen || ''}; ${b.reporter || ''}; ${bugDate(b.created)}]`).join('\n\n');
+    const btn = document.getElementById('bl-copy');
+    try { await navigator.clipboard.writeText(text); btn.textContent = 'Copied!'; }
+    catch(e){ btn.textContent = "Couldn't copy"; }
+    setTimeout(()=>{ if(btn.isConnected) btn.textContent = 'Copy open bugs as text'; }, 1500);
+  };
+}
+
+/* ---------- AI RECIPE IMPORT (screenshots, PDF or website) ----------
+   Uses Claude through an Anthropic API key that is stored in the shared database (secrets/anthropicApiKey).
+   The database rules only allow the approved Google accounts to read it, so any approved user can import
+   recipes without ever seeing or pasting the key again. The key is never written into this page's code. */
+const IMPORT_MODEL = 'claude-sonnet-5';
+const IMPORT_KEY_PATH = 'secrets/anthropicApiKey';
+const IMPORT_MAX_IMAGES = 12;
+const IMPORT_MAX_PDF_BYTES = 20 * 1024 * 1024;
+let importKeyCache = null;
+const importState = {mode:'shots', images:[], pdf:null, url:'', busy:false, message:''};
+
+async function getImportKey(force){
+  if(importKeyCache && !force) return importKeyCache;
+  const k = await dbGet(IMPORT_KEY_PATH);
+  importKeyCache = (typeof k === 'string' && k.trim()) ? k.trim() : null;
+  return importKeyCache;
+}
+
+async function callClaude(key, content, opts){
+  opts = opts || {};
+  const body = {model: IMPORT_MODEL, max_tokens: opts.maxTokens || 4096, messages: [{role:'user', content}]};
+  if(opts.tools) body.tools = opts.tools;
+  let res;
+  try {
+    res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify(body)
+    });
+  } catch(e){
+    throw Object.assign(new Error("Couldn't reach Claude. Check your connection and try again."), {status: 0});
+  }
+  let data = null;
+  try { data = await res.json(); } catch(e){}
+  if(!res.ok){
+    const msg = (data && data.error && data.error.message) || ('HTTP ' + res.status);
+    let friendly = msg;
+    if(res.status === 401) friendly = 'The API key was rejected. Check it was copied in full, or replace it in Import settings.';
+    else if(/credit balance/i.test(msg)) friendly = 'The Anthropic API account is out of credit. Add credit at console.anthropic.com under Billing.';
+    else if(res.status === 429) friendly = 'Too many requests right now. Wait a minute and try again.';
+    else if(res.status >= 500) friendly = 'Claude is busy right now. Try again shortly.';
+    throw Object.assign(new Error(friendly), {status: res.status});
+  }
+  return data;
+}
+
+function recipePrompt(sourceText){
+  return `You are extracting ONE recipe from ${sourceText}.
+
+Rules:
+- Combine everything into ONE recipe. If the source contains several recipes, extract only the main one. Ignore adverts, comments, life stories, nutrition tables and navigation text.
+- Convert all weight measurements to grams (g) or kilograms (kg), and all liquid volumes to millilitres (ml) or litres (l). Teaspoon (tsp), tablespoon (tbsp) and cup may stay as they are. Convert temperatures to degrees Celsius.
+- For whole or countable ingredients (eggs, garlic cloves, bell peppers, etc.) put the count as qty and leave unit as an empty string, folding the counting word into the ingredient name (e.g. "garlic cloves", "large eggs").
+- If a seasoning or oil (salt, pepper, oil, spices, etc.) only appears inside the instruction steps with per-step amounts, sum all of its occurrences into ONE ingredient entry with the total quantity.
+- Pick exactly one tag from: breakfast, lunch, dinner, snack, dessert, whichever best fits the dish.
+- Estimate total time in minutes and servings if not stated exactly.
+- Write each instruction step as a clear, standalone sentence or two, preserving all temperatures, times and quantities.
+
+Respond with ONLY one JSON object in exactly this shape, with no markdown code fences and no commentary before or after it:
+{"title":"","tag":"","time":0,"servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""]}`;
+}
+
+function parseRecipeJson(data){
+  const blocks = (data.content || []).filter(b => b.type === 'text');
+  for(let i = blocks.length - 1; i >= 0; i--){
+    const t = blocks[i].text || '';
+    const s = t.indexOf('{'), e = t.lastIndexOf('}');
+    if(s >= 0 && e > s){
+      try { return JSON.parse(t.slice(s, e + 1)); } catch(err){}
+    }
+  }
+  throw Object.assign(new Error("I couldn't find a recipe in that. Try a clearer source, or a different way (screenshots, PDF or website)."), {status: -1});
+}
+
+function normalizeDraft(d){
+  const allowedTags = ['breakfast','lunch','dinner','snack','dessert'];
+  const allowedUnits = ['', 'g', 'kg', 'ml', 'l', 'tsp', 'tbsp', 'cup'];
+  return {
+    title: (d.title || 'Imported Recipe').toString(),
+    tag: allowedTags.includes(d.tag) ? d.tag : 'dinner',
+    time: parseInt(d.time) || 0,
+    servings: parseInt(d.servings) || 1,
+    ingredients: Array.isArray(d.ingredients) && d.ingredients.length
+      ? d.ingredients.map(i => ({
+          name: (i.name || '').toString(),
+          qty: (i.qty !== undefined && i.qty !== null) ? i.qty.toString() : '',
+          unit: allowedUnits.includes((i.unit || '').toString()) ? (i.unit || '').toString() : ''
+        }))
+      : [{name:'', qty:'', unit:''}],
+    steps: Array.isArray(d.steps) && d.steps.length ? d.steps.map(s => s.toString()) : [''],
+    photo: d.photo || null
+  };
+}
+
+function fileToBase64(file){
+  return new Promise((resolve, reject)=>{
+    const r = new FileReader();
+    r.onload = () => resolve(String(r.result).split(',')[1] || '');
+    r.onerror = () => reject(new Error('file read failed'));
+    r.readAsDataURL(file);
+  });
+}
+
+function importSheetIsShowing(){ return !!document.getElementById('imp-root'); }
+
+async function openImportSheet(){
+  importState.busy = false;
+  importState.message = '';
+  importState.images = [];
+  importState.pdf = null;
+  importState.url = '';
+  openSheet(`<div class="sheet-handle"></div><h2>Import a recipe</h2><div class="loading">Checking import settings…</div>`);
+  try {
+    const key = await getImportKey();
+    if(!sheetIsOpen()) return;
+    if(key) paintImportSheet(); else paintKeySetup('new');
+  } catch(e){
+    console.error('import settings load failed', e);
+    if(!sheetIsOpen()) return;
+    document.getElementById('sheet').innerHTML = `<div class="sheet-handle"></div><h2>Import a recipe</h2>
+      <p class="sheet-note">Couldn't read the import settings from the shared database. Check your connection, and that you're signed in with an approved Google account.</p>
+      <button class="secondary-btn" id="imp-err-close">Close</button>`;
+    document.getElementById('imp-err-close').onclick = closeSheet;
+  }
+}
+
+function paintImportSheet(){
+  const st = importState;
+  const modes = [['shots','Screenshots'], ['pdf','PDF'], ['web','Website']];
+  let body = '';
+  if(st.mode === 'shots'){
+    body = `
+      <p class="sheet-note">Add every screenshot for <strong>one</strong> recipe, with the top of the recipe first. You can add more in several goes.</p>
+      <div class="field"><input type="file" id="imp-files" accept="image/*" multiple ${st.busy ? 'disabled' : ''}></div>
+      <div class="thumbs">${st.images.map((img,i)=>`
+        <div class="thumb"><img src="${img.url}" alt="Screenshot ${i+1}"><span>${i+1}</span>${st.busy ? '' : `<button type="button" data-imp-rm="${i}" aria-label="Remove screenshot ${i+1}">×</button>`}</div>`).join('')}</div>`;
+  } else if(st.mode === 'pdf'){
+    body = `
+      <p class="sheet-note">Choose a PDF of the recipe (up to 20 MB).</p>
+      <div class="field"><input type="file" id="imp-pdf" accept="application/pdf,.pdf" ${st.busy ? 'disabled' : ''}></div>
+      ${st.pdf ? `<div class="file-chip">📄 ${esc(st.pdf.name)} · ${(st.pdf.size/1024/1024).toFixed(1)} MB <button type="button" data-imp-rm-pdf="1" aria-label="Remove PDF">×</button></div>` : ''}`;
+  } else {
+    body = `
+      <p class="sheet-note">Paste the link to a recipe page. Claude reads the page for you. If a site blocks it, use screenshots or save the page as a PDF instead.</p>
+      <div class="field"><input type="url" id="imp-url" placeholder="https://…" value="${esc(st.url)}" inputmode="url" autocapitalize="off" ${st.busy ? 'disabled' : ''}></div>`;
+  }
+  const ready = !st.busy && ((st.mode === 'shots' && st.images.length) || (st.mode === 'pdf' && st.pdf) || (st.mode === 'web' && st.url.trim()));
+  document.getElementById('sheet').innerHTML = `
+    <div class="sheet-handle"></div>
+    <h2>Import a recipe</h2>
+    <div id="imp-root">
+      <div class="chip-row">${modes.map(([m,l])=>`<button type="button" class="chip ${st.mode===m?'active':''}" data-imp-mode="${m}" ${st.busy?'disabled':''}>${l}</button>`).join('')}</div>
+      ${body}
+      <div class="sheet-status" id="imp-status">${esc(st.message)}</div>
+      <button class="primary-btn" id="imp-run" ${ready ? '' : 'disabled'}>${st.busy ? 'Reading the recipe…' : 'Read recipe'}</button>
+      <button class="secondary-btn" id="imp-settings" ${st.busy ? 'disabled' : ''}>Import settings</button>
+      <button class="secondary-btn" id="imp-cancel">Cancel</button>
+    </div>`;
+
+  const root = document.getElementById('imp-root');
+  root.addEventListener('click', (e)=>{
+    const modeBtn = e.target.closest('[data-imp-mode]');
+    const rm = e.target.closest('[data-imp-rm]');
+    const rmPdf = e.target.closest('[data-imp-rm-pdf]');
+    if(modeBtn){ st.mode = modeBtn.dataset.impMode; st.message = ''; paintImportSheet(); }
+    else if(rm){ st.images.splice(parseInt(rm.dataset.impRm), 1); st.message = ''; paintImportSheet(); }
+    else if(rmPdf){ st.pdf = null; st.message = ''; paintImportSheet(); }
+  });
+  document.getElementById('imp-cancel').onclick = closeSheet;
+  document.getElementById('imp-settings').onclick = ()=>paintKeySetup('manage');
+  document.getElementById('imp-run').onclick = runImport;
+
+  const files = document.getElementById('imp-files');
+  if(files) files.addEventListener('change', async ()=>{
+    const picked = Array.from(files.files || []);
+    if(!picked.length) return;
+    st.message = 'Preparing screenshots…';
+    document.getElementById('imp-status').textContent = st.message;
+    for(const f of picked){
+      if(st.images.length >= IMPORT_MAX_IMAGES){ st.message = `That's the maximum of ${IMPORT_MAX_IMAGES} screenshots.`; break; }
+      try {
+        const url = await resizeImage(f, 1600, 0.85);
+        st.images.push({url, b64: url.split(',')[1]});
+        st.message = '';
+      } catch(err){ st.message = "One of those files couldn't be read as an image."; }
+    }
+    if(importSheetIsShowing()) paintImportSheet();
+  });
+  const pdf = document.getElementById('imp-pdf');
+  if(pdf) pdf.addEventListener('change', async ()=>{
+    const f = pdf.files && pdf.files[0];
+    if(!f) return;
+    if(f.size > IMPORT_MAX_PDF_BYTES){ st.message = 'That PDF is over 20 MB. Try screenshots instead.'; st.pdf = null; paintImportSheet(); return; }
+    try { st.pdf = {name: f.name, size: f.size, b64: await fileToBase64(f)}; st.message = ''; }
+    catch(err){ st.pdf = null; st.message = "Couldn't read that PDF."; }
+    if(importSheetIsShowing()) paintImportSheet();
+  });
+  const url = document.getElementById('imp-url');
+  if(url) url.addEventListener('input', ()=>{
+    st.url = url.value;
+    document.getElementById('imp-run').disabled = !st.url.trim();
+  });
+}
+
+async function runImport(){
+  const st = importState;
+  let content, tools;
+  if(st.mode === 'shots'){
+    if(!st.images.length) return;
+    content = st.images.map(img => ({type:'image', source:{type:'base64', media_type:'image/jpeg', data: img.b64}}));
+    content.push({type:'text', text: recipePrompt('the screenshots provided. The images are in reading order and may show different parts of the SAME single recipe (a cover photo, the ingredients list, the step-by-step instructions)')});
+  } else if(st.mode === 'pdf'){
+    if(!st.pdf) return;
+    content = [
+      {type:'document', source:{type:'base64', media_type:'application/pdf', data: st.pdf.b64}},
+      {type:'text', text: recipePrompt('the attached PDF')}
+    ];
+  } else {
+    let u;
+    try { u = new URL(st.url.trim()); if(!/^https?:$/.test(u.protocol)) throw new Error('bad'); }
+    catch(e){ st.message = "That doesn't look like a web link. It should start with https://"; paintImportSheet(); return; }
+    content = `Fetch this web page and extract the recipe from it: ${u.href}\n\n` + recipePrompt('that web page');
+    tools = [{type:'web_fetch_20260318', name:'web_fetch', max_uses:2, max_content_tokens:60000}];
+  }
+
+  st.busy = true;
+  st.message = 'Reading the recipe. This usually takes 15 to 40 seconds.';
+  paintImportSheet();
+  try {
+    const key = await getImportKey();
+    if(!key) throw Object.assign(new Error('No API key is saved yet. Add one in Import settings.'), {status: 401});
+    const data = await callClaude(key, content, {tools, maxTokens: 4096});
+    const draft = normalizeDraft(parseRecipeJson(data));
+    st.busy = false;
+    st.message = '';
+    if(!importSheetIsShowing()) return; // the sheet was closed while we waited
+    closeSheet();
+    openRecipeForm(null, draft);
+  } catch(err){
+    console.error('recipe import failed', err && err.message);
+    st.busy = false;
+    st.message = (err && err.message) || "That didn't work. Try again.";
+    if(importSheetIsShowing()) paintImportSheet();
+  }
+}
+
+function paintKeySetup(mode){
+  const hasKey = !!importKeyCache;
+  const manage = (mode === 'manage' && hasKey);
+  const masked = hasKey ? '…' + importKeyCache.slice(-4) : '';
+  document.getElementById('sheet').innerHTML = `
+    <div class="sheet-handle"></div>
+    <h2>${manage ? 'Import settings' : 'Set up recipe import'}</h2>
+    <div id="key-root">
+    ${manage ? `
+      <p class="sheet-note">An API key is saved in your private recipe database (ends <strong>${esc(masked)}</strong>). Any approved signed-in user can import recipes with it.</p>
+      <div class="sheet-status" id="key-status"></div>
+      <button class="primary-btn" id="key-back">Back to import</button>
+      <button class="secondary-btn" id="key-replace">Replace key</button>
+      <button class="danger-btn" id="key-remove">Remove key</button>
+    ` : `
+      <p class="sheet-note">Importing uses Claude to read screenshots, PDFs and web pages. It needs an Anthropic API key. Add it once here and it's saved in your private recipe database, so everyone approved can import without pasting it again.</p>
+      <ol class="sheet-steps">
+        <li>Go to <strong>console.anthropic.com</strong> and sign in.</li>
+        <li>Under <strong>Billing</strong>, add a few dollars of credit, and set a low monthly spend limit.</li>
+        <li>Under <strong>API keys</strong>, create a key and copy it (it starts with <em>sk-ant-</em>).</li>
+        <li>Paste it below. Don't send it to anyone, or paste it into a chat.</li>
+      </ol>
+      <div class="field"><label>Anthropic API key</label><input id="key-input" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="sk-ant-…"></div>
+      <div class="sheet-status" id="key-status"></div>
+      <button class="primary-btn" id="key-save">Save and test key</button>
+      <button class="secondary-btn" id="key-cancel">${hasKey ? 'Back' : 'Cancel'}</button>
+    `}
+    </div>`;
+
+  const status = document.getElementById('key-status');
+  const on = (id, fn) => { const el = document.getElementById(id); if(el) el.onclick = fn; };
+  on('key-back', paintImportSheet);
+  on('key-replace', ()=>paintKeySetup('new'));
+  on('key-cancel', ()=>{ if(hasKey) paintImportSheet(); else closeSheet(); });
+  on('key-remove', async ()=>{
+    if(!confirm('Remove the saved API key? Nobody will be able to import recipes until a new key is added.')) return;
+    try {
+      await dbDelete(IMPORT_KEY_PATH);
+      importKeyCache = null;
+      paintKeySetup('new');
+    } catch(e){ status.textContent = "Couldn't remove the key. Try again."; }
+  });
+  on('key-save', async ()=>{
+    const input = document.getElementById('key-input');
+    const key = input.value.trim();
+    if(!key){ status.textContent = 'Paste your API key first.'; return; }
+    if(!key.startsWith('sk-ant-')){ status.textContent = 'That does not look like an Anthropic key. It should start with sk-ant-'; return; }
+    const btn = document.getElementById('key-save');
+    btn.disabled = true;
+    status.textContent = 'Testing the key…';
+    try {
+      await callClaude(key, 'Reply with the single word OK.', {maxTokens: 8});
+      status.textContent = 'Key works. Saving…';
+      await dbSet(IMPORT_KEY_PATH, key);
+      importKeyCache = key;
+      importState.message = '';
+      if(sheetIsOpen()) paintImportSheet();
+    } catch(err){
+      console.error('key save failed', err && err.message);
+      status.textContent = (err && err.status === 401) ? "That key was rejected. Check that it was copied in full." : ((err && err.message) || "Couldn't save the key.");
+      btn.disabled = false;
+    }
+  });
+}
+
 /* ---------- SHEET (modal) ---------- */
 function sheetIsOpen(){ return !document.getElementById('sheet-overlay').classList.contains('hidden'); }
 function openSheet(html){
@@ -961,6 +1426,9 @@ mainEl.addEventListener('click', async (e)=>{
   switch(act){
     case 'filter': state.activeFilter = id; render(); break;
     case 'add-recipe': openRecipeForm(null); break;
+    case 'import-recipe': openImportSheet(); break;
+    case 'report-bug': openBugSheet(); break;
+    case 'view-bugs': openBugListSheet(); break;
     case 'import-data': openImportDataSheet(); break;
     case 'export-data': openExportSheet(); break;
     case 'change-db':
@@ -1049,6 +1517,8 @@ mainEl.addEventListener('input', (e)=>{
 document.querySelectorAll('.tab').forEach(btn=>{
   btn.addEventListener('click', ()=>{ if(state.loaded) goTab(btn.dataset.tab); });
 });
+
+document.getElementById('bug-header-btn').addEventListener('click', ()=>{ if(state.loaded) openBugSheet(); });
 
 document.getElementById('sheet-overlay').addEventListener('click', (e)=>{
   if(e.target.id === 'sheet-overlay') closeSheet();
