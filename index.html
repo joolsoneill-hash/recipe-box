@@ -193,6 +193,7 @@
   .extra-row input,.extra-row select{padding:9px 10px;font-size:14px;border:1px solid var(--line-strong);border-radius:2px;background:var(--paper);color:var(--ink);min-width:0;}
   .extra-row input:first-child{flex:2;} .extra-row input:last-child{flex:1;}
   .extra-row select{flex:1;}
+  .grocery-item.extra .gi-name,.grocery-item.extra .gi-qty{font-style:italic;}
   .gi-del{border:none;background:none;color:var(--tomato);font-size:20px;line-height:1;padding:0 2px;flex-shrink:0;}
   .loading{text-align:center;padding:40px;color:var(--brown);font-size:13px;}
 
@@ -219,7 +220,7 @@
 <body>
 <div id="app">
   <header class="app-header">
-    <span class="app-version" id="app-version">v3.6</span>
+    <span class="app-version" id="app-version">v3.7</span>
     <button type="button" class="header-btn" id="bug-header-btn">🐞 Report a bug</button>
     <h1>The Recipe Box</h1>
     <p class="tagline">Plan the week. Cook from cards.</p>
@@ -979,7 +980,7 @@ function renderGrocery(){
         <input id="extra-qty" placeholder="Qty" aria-label="Quantity">
       </div>
       <div class="extra-row">
-        <select id="extra-cat" data-auto="1" aria-label="Category">${catOptionsHtml('other')}</select>
+        <select id="extra-cat" aria-label="Category"><option value="auto" selected>Category: automatic</option>${catOptionsHtml('')}</select>
         <button type="submit" class="small-btn">Add</button>
       </div>
     </form>`;
@@ -1000,7 +1001,7 @@ function renderGrocery(){
     list.forEach(it=>{
       const checked = !!state.checks[it.key];
       html += `
-        <label class="grocery-item ${checked?'checked':''}">
+        <label class="grocery-item ${checked?'checked':''} ${it.extra?'extra':''}">
           <input type="checkbox" data-check-key="${esc(it.key)}" ${checked?'checked':''}>
           <span class="gi-name">${esc(it.name)}${it.note ? `<span class="gi-note">${esc(it.note)}</span>` : ''}</span>
           <span class="gi-qty">${esc(it.qtyText)}</span>
@@ -1110,7 +1111,7 @@ function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '3.6';
+const APP_VERSION = '3.7';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
@@ -1833,8 +1834,6 @@ mainEl.addEventListener('change', async (e)=>{
     render();
     await saveChecks();
     if(t.checked && groceryAllChecked()) openAllDoneSheet();
-  } else if(t.id === 'extra-cat'){
-    t.dataset.auto = '0';
   }
 });
 
@@ -1844,7 +1843,8 @@ mainEl.addEventListener('submit', async (e)=>{
   const plan = activePlan();
   const name = document.getElementById('extra-name').value.trim();
   if(!plan || !name) return;
-  const cat = document.getElementById('extra-cat').value;
+  let cat = document.getElementById('extra-cat').value;
+  if(!CAT_KEYS.includes(cat)) cat = guessCategory(name);
   plan.extras = (plan.extras || []).concat([{id: uid(), name, qty: document.getElementById('extra-qty').value.trim(), category: cat}]);
   render();
   const nm = document.getElementById('extra-name'); if(nm) nm.focus();
@@ -1852,11 +1852,6 @@ mainEl.addEventListener('submit', async (e)=>{
 });
 
 mainEl.addEventListener('input', (e)=>{
-  if(e.target.id === 'extra-name'){
-    const sel = document.getElementById('extra-cat');
-    if(sel && sel.dataset.auto !== '0') sel.value = guessCategory(e.target.value);
-    return;
-  }
   if(e.target.id === 'search-input'){
     const pos = e.target.selectionStart;
     state.searchTerm = e.target.value;
