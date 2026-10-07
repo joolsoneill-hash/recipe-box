@@ -263,11 +263,11 @@
   .plan-item{position:relative;align-items:stretch;padding:12px 12px 12px 12px;min-height:128px;}
   .plan-item .thumb{width:104px;height:104px;align-self:flex-start;}
   .plan-item .thumb-empty{font-size:44px;}
-  .plan-item .fav-btn{position:absolute;top:6px;left:6px;z-index:3;width:32px;height:32px;box-shadow:0 1px 4px rgba(0,0,0,.3);}
+  .plan-item .fav-btn{position:absolute;top:6px;right:6px;z-index:3;width:32px;height:32px;box-shadow:0 1px 4px rgba(0,0,0,.3);}
   .plan-item .fav-btn{color:var(--brown);}
   .plan-item .fav-btn.on{color:#d99a1e;}
   .plan-item .fav-btn .star-svg{width:21px;height:21px;}
-  .plan-item .plan-rm{position:absolute;top:6px;right:6px;}
+  .plan-item .plan-rm{position:absolute;top:46px;right:8px;font-size:12px;}
   .plan-item .done-col{position:absolute;right:10px;bottom:8px;padding:4px;}
   .plan-item .plan-item-main{padding-right:40px;min-width:0;}
   .plan-item.editing .plan-item-main{padding-right:56px;}
@@ -328,6 +328,7 @@
   .store-seg{display:flex;gap:0;margin:0 0 12px;border:1.5px solid var(--herb);border-radius:8px;overflow:hidden;}
   .store-seg button{flex:1;padding:11px 8px;font:inherit;font-weight:700;font-size:15px;background:var(--card);color:var(--herb);border:none;cursor:pointer;}
   .store-seg button.on{background:var(--herb);color:#fff;}
+  .store-tag.aldi{background:var(--herb);color:#fff;border-color:var(--herb);}
   .store-tag{font:inherit;font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:10px;border:1px solid var(--line-strong);background:transparent;color:var(--brown);margin-left:6px;white-space:nowrap;}
   .gi-name{min-width:0}
   .np-sec{border-top:1px solid var(--line-strong);padding:12px 0 4px;margin-top:10px;}
@@ -360,7 +361,7 @@
 <body>
 <div id="app">
   <header class="app-header">
-    <span class="app-version" id="app-version">v6.2</span>
+    <span class="app-version" id="app-version">v6.4</span>
     <button type="button" class="header-btn" id="bug-header-btn">🐞 Bug or idea</button>
     <div class="brand"><svg viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#2B2620"/><g transform="translate(256 262) scale(.9) translate(-256 -256)"> <!-- steam --> <g fill="none" stroke="#EDE3D0" stroke-width="12" stroke-linecap="round" opacity=".85"> <path d="M196 132c-18-22 18-34 0-58"/> <path d="M256 120c-18-22 18-34 0-58"/> <path d="M316 132c-18-22 18-34 0-58"/> </g> <!-- bowl back rim --> <ellipse cx="256" cy="232" rx="168" ry="44" fill="#FAF6EC"/> <!-- noodle pile --> <g fill="none" stroke="#E9B949" stroke-width="22" stroke-linecap="round"> <path d="M118 226c26-62 54 44 82-12s54 44 82-12 54 44 82-12" /> <path d="M132 206c24-58 50 38 78-8s50 40 78-8 48 36 74-6"/> <path d="M150 188c22-40 44 26 70-4s44 28 70-4 40 24 58 0"/> </g> <g fill="none" stroke="#C8962A" stroke-width="5" stroke-linecap="round" opacity=".55"> <path d="M132 214c26-56 52 40 80-8s52 42 80-8 52 38 80-8"/> </g> <!-- sauce and basil --> <ellipse cx="256" cy="188" rx="62" ry="26" fill="#B94A2F"/> <ellipse cx="238" cy="182" rx="22" ry="8" fill="#D8674A" opacity=".75"/> <path d="M286 170c30-26 62-14 66 6-30 22-58 16-66-6z" fill="#4D7A5A"/> <path d="M292 174c20-8 38-8 54 2" stroke="#2F5A3C" stroke-width="4" fill="none" stroke-linecap="round"/> <!-- bowl body --> <path d="M88 236c0 100 70 170 168 170s168-70 168-170c-40 28-100 42-168 42S128 264 88 236z" fill="#FAF6EC"/> <path d="M88 236c40 28 100 42 168 42s128-14 168-42" fill="none" stroke="#B94A2F" stroke-width="16" stroke-linecap="round"/> <path d="M120 318c34 54 82 76 136 76" fill="none" stroke="#D9CDB4" stroke-width="10" stroke-linecap="round" opacity=".8"/> <!-- bowl foot --> <rect x="196" y="402" width="120" height="22" rx="11" fill="#FAF6EC"/> <!-- eyes and smile for cartoon feel --> <circle cx="214" cy="330" r="11" fill="#2B2620"/> <circle cx="298" cy="330" r="11" fill="#2B2620"/> <circle cx="218" cy="326" r="3.5" fill="#fff"/> <circle cx="302" cy="326" r="3.5" fill="#fff"/> <path d="M232 352c14 16 34 16 48 0" fill="none" stroke="#2B2620" stroke-width="8" stroke-linecap="round"/> <circle cx="190" cy="350" r="12" fill="#D8674A" opacity=".45"/> <circle cx="322" cy="350" r="12" fill="#D8674A" opacity=".45"/> <!-- chopsticks --> <g stroke-linecap="round"> <line x1="366" y1="96" x2="296" y2="206" stroke="#C98A4A" stroke-width="10"/> <line x1="392" y1="112" x2="316" y2="214" stroke="#8A4A2F" stroke-width="10"/> </g> </g></svg><h1>The Recipe Box</h1></div>
     <p class="tagline">Plan the week. Cook from cards.</p>
@@ -731,9 +732,9 @@ async function loadPhotos(){
   const byId = Object.fromEntries(cached.map(c => [c.id, c]));
   const need = [];
   Object.values(state.recipes).forEach(r=>{
-    if(r.photo || !r.photoRev) return;
+    if(r.photo) return;
     const c = byId[r.id];
-    if(c && c.rev === r.photoRev) r.photo = c.data; else need.push(r);
+    if(r.photoRev && c && c.rev === r.photoRev) r.photo = c.data; else need.push(r);
   });
   if(cached.length) renderSoon();
   let idx = 0;
@@ -742,14 +743,17 @@ async function loadPhotos(){
       const r = need[idx++];
       try {
         const d = await dbGet('photos/' + r.id);
-        if(typeof d === 'string' && d){ r.photo = d; PhotoCache.put(r.id, r.photoRev, d); renderSoon(); }
+        if(typeof d === 'string' && d){
+          if(!r.photoRev){ r.photoRev = Date.now(); dbSet('recipes/' + r.id + '/photoRev', r.photoRev).catch(()=>{}); }   // repair: remember that this recipe has a stored photo
+          r.photo = d; PhotoCache.put(r.id, r.photoRev, d); renderSoon();
+        }
       } catch(e){ console.error('photo load failed', r.id, e); }
     }
   };
   await Promise.all([worker(), worker(), worker(), worker()]);
   // one-off: move photos that are still stored inside the recipe into their own place
   for(const r of Object.values(state.recipes)){
-    if(r.photo && !r.photoRev){ try { await ensurePhotoStored(r); await dbDelete('recipes/' + r.id + '/photo'); } catch(e){ console.error('photo move failed', r.id, e); } }
+    if(r.photo && !r.photoRev){ try { await ensurePhotoStored(r); await dbSet('recipes/' + r.id + '/photoRev', r.photoRev); await dbDelete('recipes/' + r.id + '/photo'); } catch(e){ console.error('photo move failed', r.id, e); } }
   }
 }
 function setRecipePhoto(r, data){ r.photo = data || null; r.photoRev = null; r._photoDirty = true; }
@@ -1492,14 +1496,17 @@ function renderGrocery(){
     html += `<div class="empty-state"><h3>Your list is empty</h3><p>Add your own items above, or choose some meals in "Meal Plan".</p></div>`;
     return html;
   }
-  const storeOf = it => (state.storePrefs && state.storePrefs[it.key] === 'aldi') ? 'aldi' : 'coles';
+  const actualStore = it => (state.storePrefs && state.storePrefs[it.key] === 'aldi') ? 'aldi' : 'coles';
+  state.storeHold = state.storeHold || {};
+  const storeOf = it => state.storeHold[it.key] || actualStore(it);   // an item that was just moved stays put for a moment
   const cnt = {coles: items.filter(it => storeOf(it)==='coles').length, aldi: items.filter(it => storeOf(it)==='aldi').length};
-  if(!state.storeView) state.storeView = 'coles';
-  html += `<div class="store-seg" role="tablist"><button type="button" class="${state.storeView==='coles'?'on':''}" data-act="store-view" data-id="coles">Coles (${cnt.coles})</button><button type="button" class="${state.storeView==='aldi'?'on':''}" data-act="store-view" data-id="aldi">Aldi (${cnt.aldi})</button></div>`;
-  items = items.filter(it => storeOf(it) === state.storeView);
-  if(!items.length){ html += `<div class="empty-state"><p>Nothing to buy at ${state.storeView==='aldi'?'Aldi':'Coles'}. Tap the small shop tag on an item to move it between shops.</p></div>`; return html; }
+  if(!state.storeView) state.storeView = 'all';
+  html += `<div class="store-seg" role="tablist"><button type="button" class="${state.storeView==='all'?'on':''}" data-act="store-view" data-id="all">All (${items.length})</button><button type="button" class="${state.storeView==='coles'?'on':''}" data-act="store-view" data-id="coles">Coles (${cnt.coles})</button><button type="button" class="${state.storeView==='aldi'?'on':''}" data-act="store-view" data-id="aldi">Aldi (${cnt.aldi})</button></div>`;
+  const storeName = state.storeView==='aldi' ? 'Aldi' : (state.storeView==='coles' ? 'Coles' : '');
+  if(state.storeView !== 'all') items = items.filter(it => storeOf(it) === state.storeView);
+  if(!items.length){ html += `<div class="empty-state"><p>Nothing to buy at ${storeName}. Tap the small shop tag on an item to move it between shops.</p></div>`; return html; }
   const ticked = items.filter(it => state.checks[it.key]).length;
-  html += `<div class="gro-total"><div><strong>${items.length}</strong> item${items.length===1?'':'s'} at ${state.storeView==='aldi'?'Aldi':'Coles'}</div><span>${ticked} of ${items.length} ticked</span></div>`;
+  html += `<div class="gro-total"><div><strong>${items.length}</strong> item${items.length===1?'':'s'}${storeName ? ' at ' + storeName : ' in total'}</div><span>${ticked} of ${items.length} ticked</span></div>`;
   html += `<div class="check-actions"><button class="secondary-btn" data-act="check-all">Check all</button><button class="secondary-btn" data-act="clear-checks">Uncheck all</button></div>`;
   CATEGORIES.forEach(c=>{
     const list = items.filter(it => it.cat === c.key).sort((a,b)=>a.name.localeCompare(b.name));
@@ -1512,7 +1519,7 @@ function renderGrocery(){
           <input type="checkbox" data-check-key="${esc(it.key)}" ${checked?'checked':''}>
           <span class="gi-name"><span class="gi-link" data-act="where-used" data-id="${esc(it.key)}">${esc(it.name)}</span>${it.note ? `<span class="gi-note">${esc(it.note)}</span>` : ''}${it.uses && it.uses.length ? `<span class="gi-where" data-act="where-used" data-id="${esc(it.key)}">where used (${it.uses.length}) ›</span>` : ''}</span>
           <span class="gi-qty">${esc(it.qtyText)}</span>
-          <button type="button" class="store-tag ${state.storeView}" data-act="store-swap" data-id="${esc(it.key)}" aria-label="Move to ${state.storeView==='aldi'?'Coles':'Aldi'}">${state.storeView==='aldi'?'Aldi':'Coles'} ⇄</button>
+          <button type="button" class="store-tag ${actualStore(it)}" data-act="store-swap" data-id="${esc(it.key)}" aria-label="Move to ${actualStore(it)==='aldi'?'Coles':'Aldi'}">${actualStore(it)==='aldi'?'Aldi':'Coles'} ⇄</button>
           ${it.extra ? `<button type="button" class="gi-del" data-act="extra-del" data-id="${esc(it.id)}" aria-label="Remove item">×</button>` : ''}
         </label>`;
     });
@@ -1665,7 +1672,7 @@ async function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '6.2';
+const APP_VERSION = '6.4';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
@@ -2427,7 +2434,11 @@ mainEl.addEventListener('click', async (e)=>{
       e.preventDefault();
       state.storePrefs = state.storePrefs || {};
       const nowAldi = state.storePrefs[id] === 'aldi';
+      state.storeHold = state.storeHold || {}; state.storeHoldTimers = state.storeHoldTimers || {};
+      if(!state.storeHold[id]) state.storeHold[id] = nowAldi ? 'aldi' : 'coles';
       if(nowAldi) delete state.storePrefs[id]; else state.storePrefs[id] = 'aldi';
+      clearTimeout(state.storeHoldTimers[id]);
+      state.storeHoldTimers[id] = setTimeout(()=>{ delete state.storeHold[id]; render(); }, 2000);   // pause so the change is seen before the item moves
       render();
       try{ if(Object.keys(state.storePrefs).length) await dbSet('storePrefs', state.storePrefs); else await dbDelete('storePrefs'); }catch(err){ console.error(err); }
       break;
