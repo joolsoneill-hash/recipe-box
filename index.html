@@ -184,7 +184,7 @@
 <body>
 <div id="app">
   <header class="app-header">
-    <span class="app-version" id="app-version">v3.1</span>
+    <span class="app-version" id="app-version">v3.2</span>
     <button type="button" class="header-btn" id="bug-header-btn">🐞 Report a bug</button>
     <h1>The Recipe Box</h1>
     <p class="tagline">Plan the week. Cook from cards.</p>
@@ -732,25 +732,117 @@ function openMealPicker(){
   }
 }
 
-/* ---------- GROCERY LIST ---------- */
+/* ---------- GROCERY LIST ----------
+   One line per ingredient. Matching ignores plurals and descriptions ("extra virgin olive oil" and
+   "olive oil" are the same item), and quantities are added up across the whole plan, converting
+   between compatible units (kg/g, l/ml, and tsp/tbsp/cup into ml). */
+const VOL_ML = {ml:1, l:1000, tsp:5, tbsp:15, cup:250};
+const MASS_G = {g:1, kg:1000};
+const NAME_DROP = new Set(['extra','virgin','large','medium','small','fresh','ripe','raw','plain','unsalted','salted',
+  'softened','cubed','chopped','diced','minced','sliced','grated','coarsely','finely','pkg','package','clove','cloves',
+  'boiling','warm','hot','cold','iced']);
+// grams per millilitre, used only to merge a weight and a volume of the same ingredient
+const DENSITY = {water: 1, butter: 0.95};
+const LIQUID_RE = /\b(oil|vinegar|broth|stock|water|milk|juice|sauce|syrup|wine|cream|extract|molasse|honey|coffee|espresso)/;
+
+function topName(raw){
+  // text before the first comma, ignoring commas inside brackets: "seeds (pepita, sunflower), toasted" -> "seeds (pepita, sunflower)"
+  const masked = String(raw || '').replace(/\([^)]*\)/g, m => m.replace(/,/g, '\u0001'));
+  return masked.split(',')[0].replace(/\u0001/g, ',').trim();
+}
+function singularWord(w){
+  if(w.length > 3 && w.endsWith('ies')) return w.slice(0, -3) + 'y';
+  if(w.length > 4 && (/(ch|sh|x|z)es$/.test(w) || /oes$/.test(w))) return w.slice(0, -2);
+  if(w.length > 3 && w.endsWith('s') && !/(ss|us|is)$/.test(w)) return w.slice(0, -1);
+  return w;
+}
+function normIngName(raw){
+  const base = String(raw || '').toLowerCase().replace(/\([^)]*\)/g, ' ').split(',')[0].replace(/[^a-z\s-]/g, ' ');
+  const words = base.split(/\s+/).filter(Boolean).filter(w => !NAME_DROP.has(w)).map(singularWord);
+  return words.join(' ') || String(raw || '').trim().toLowerCase();
+}
+
+function parseQty(q){
+  if(q === null || q === undefined) return NaN;
+  let s = String(q).trim().toLowerCase();
+  if(!s) return NaN;
+  const uni = {'½':'1/2', '¼':'1/4', '¾':'3/4', '⅓':'1/3', '⅔':'2/3', '⅛':'1/8'};
+  s = s.replace(/[½¼¾⅓⅔⅛]/g, m => ' ' + uni[m] + ' ').replace(/\s+/g, ' ').trim();
+  const range = s.match(/^(.+?)\s*(?:-|–|to)\s*(.+)$/);
+  if(range){
+    const a = parseQty(range[1]), b = parseQty(range[2]);
+    if(!isNaN(a) && !isNaN(b)) return Math.max(a, b);
+  }
+  let m = s.match(/^(\d+)\s+(\d+)\/(\d+)$/);
+  if(m) return +m[1] + (+m[2]) / (+m[3]);
+  m = s.match(/^(\d+)\/(\d+)$/);
+  if(m) return (+m[1]) / (+m[2]);
+  if(/^\d*\.?\d+$/.test(s)) return parseFloat(s);
+  return NaN;
+}
+
+function fmtNum(n){ return String(Math.round(n * 100) / 100); }
+function fmtFrac(n){
+  const whole = Math.floor(n + 1e-9), f = n - whole;
+  if(f < 0.03) return String(whole);
+  if(f > 0.97) return String(whole + 1);
+  const fr = [[0.25,'¼'], [0.5,'½'], [0.75,'¾'], [1/3,'⅓'], [2/3,'⅔']];
+  for(const [v, c] of fr){ if(Math.abs(f - v) < 0.03) return (whole || '') + c; }
+  return fmtNum(n);
+}
+
+function formatVolume(ml, metric){
+  if(metric){
+    if(ml >= 1000) return fmtNum(ml / 1000) + ' l';
+    return (Math.round(ml * 10) / 10) + ' ml';
+  }
+  if(ml >= 62.4) return fmtFrac(ml / 250) + ' cup';
+  const tsp = ml / 5;
+  if(tsp < 6) return fmtFrac(tsp) + ' tsp';
+  const tbsp = Math.floor(tsp / 3 + 1e-9);
+  const rem = tsp - tbsp * 3;
+  return tbsp + ' tbsp' + (rem > 0.03 ? ' + ' + fmtFrac(rem) + ' tsp' : '');
+}
+
 function buildGroceryList(){
-  const map = {};
+  const groups = {};
   planRecipes(activePlan()).forEach(recipe=>{
-    recipe.ingredients.forEach(ing=>{
-      const rawKey = (ing.name.trim().toLowerCase())+'|'+(ing.unit||'').trim().toLowerCase();
-      const key = rawKey.replace(/[.$#\[\]\/]/g, '_'); // Firebase keys cannot contain these
-      if(!map[key]) map[key] = {name:ing.name.trim(), unit:(ing.unit||'').trim(), qty:0, qtyIsNumeric:true, parts:[]};
-      const n = parseFloat(ing.qty);
-      if(!isNaN(n) && map[key].qtyIsNumeric){ map[key].qty += n; }
-      else { map[key].qtyIsNumeric = false; map[key].parts.push(ing.qty); }
+    (recipe.ingredients || []).forEach(ing=>{
+      const raw = (ing.name || '').trim();
+      if(!raw) return;
+      const norm = normIngName(raw);
+      const g = groups[norm] || (groups[norm] = {norm, names:{}, g:0, hasG:false, ml:0, hasMl:false, metricVol:false, count:0, hasCount:false, others:{}, notes:[]});
+      const shown = topName(raw);
+      g.names[shown] = (g.names[shown] || 0) + 1;
+      const unit = (ing.unit || '').trim().toLowerCase();
+      const rawQ = String(ing.qty === undefined || ing.qty === null ? '' : ing.qty).trim();
+      const qty = parseQty(rawQ);
+      if(isNaN(qty)){ if(rawQ && !g.notes.includes(rawQ)) g.notes.push(rawQ); return; }
+      if(MASS_G[unit]){ g.g += qty * MASS_G[unit]; g.hasG = true; }
+      else if(VOL_ML[unit]){
+        g.ml += qty * VOL_ML[unit]; g.hasMl = true;
+        if(unit === 'ml' || unit === 'l') g.metricVol = true;
+      }
+      else if(unit === ''){ g.count += qty; g.hasCount = true; }
+      else { g.others[unit] = (g.others[unit] || 0) + qty; }
     });
   });
-  return Object.entries(map).map(([key, v])=>{
-    let qtyDisplay;
-    if(v.qtyIsNumeric && v.qty>0) qtyDisplay = (v.qty % 1 === 0 ? v.qty : v.qty.toFixed(2).replace(/0+$/,'').replace(/\.$/,''));
-    else if(v.parts.length) qtyDisplay = v.parts.join(' + ');
-    else qtyDisplay = '';
-    return {key, name:v.name, unit:v.unit, qtyDisplay};
+
+  return Object.values(groups).map(g=>{
+    // merge a weight and a volume of the same thing where the conversion is well known
+    if(g.hasG && g.hasMl && DENSITY[g.norm]){
+      if(g.norm === 'water'){ g.ml += g.g / DENSITY.water; g.g = 0; g.hasG = false; g.metricVol = true; }
+      else { g.g += g.ml * DENSITY[g.norm]; g.ml = 0; g.hasMl = false; }
+    }
+    const parts = [];
+    if(g.hasG) parts.push(g.g >= 1000 ? fmtNum(g.g / 1000) + ' kg' : Math.round(g.g) + ' g');
+    if(g.hasMl) parts.push(formatVolume(g.ml, g.metricVol || LIQUID_RE.test(g.norm)));
+    if(g.hasCount) parts.push(fmtFrac(g.count));
+    Object.keys(g.others).forEach(u => parts.push(fmtNum(g.others[u]) + ' ' + u));
+    // display name: the most common wording; on a tie use the plural form for counts above one
+    const plural = g.hasCount && g.count > 1;
+    const name = Object.keys(g.names).sort((a,b)=> g.names[b] - g.names[a] || (plural ? b.length - a.length : a.length - b.length))[0];
+    return {key: g.norm.replace(/[.$#\[\]\/]/g, '_'), name, qtyText: parts.join(' + '), note: g.notes.join(', ')};
   }).sort((a,b)=>a.name.localeCompare(b.name));
 }
 
@@ -767,7 +859,7 @@ function renderGrocery(){
       html += `
         <label class="grocery-item ${checked?'checked':''}">
           <input type="checkbox" data-check-key="${esc(it.key)}" ${checked?'checked':''}>
-          <span>${[esc(it.qtyDisplay), esc(it.unit), esc(it.name)].filter(Boolean).join(' ')}</span>
+          <span>${[esc(it.qtyText), esc(it.name), it.note ? '(' + esc(it.note) + ')' : ''].filter(Boolean).join(' ')}</span>
         </label>`;
     });
     html += `</div><button class="secondary-btn" data-act="clear-checks">Uncheck all</button>`;
@@ -842,7 +934,7 @@ function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '3.1';
+const APP_VERSION = '3.2';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
