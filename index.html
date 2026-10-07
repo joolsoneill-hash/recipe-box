@@ -245,7 +245,7 @@
 <body>
 <div id="app">
   <header class="app-header">
-    <span class="app-version" id="app-version">v4.5</span>
+    <span class="app-version" id="app-version">v4.6</span>
     <button type="button" class="header-btn" id="bug-header-btn">🐞 Report a bug</button>
     <h1>The Recipe Box</h1>
     <p class="tagline">Plan the week. Cook from cards.</p>
@@ -1117,9 +1117,14 @@ function openImportDataSheet(){
     let importSummary = '';
     try {
       if(parsed.recipes){
-        let added = 0, skipped = 0;
+        let added = 0, skipped = 0, photosAdded = 0;
         for(const id in parsed.recipes){
-          if(state.recipes[id]){ skipped++; continue; }   // never overwrite a recipe that is already here
+          if(state.recipes[id]){
+            // never overwrite a recipe that is already here; only fill in a missing photo
+            const inc = parsed.recipes[id];
+            if(!state.recipes[id].photo && inc && inc.photo){ state.recipes[id].photo = inc.photo; await saveRecipe(state.recipes[id]); photosAdded++; }
+            skipped++; continue;
+          }
           const r = parsed.recipes[id];
           if(!CUISINE_KEYS.includes(r.cuisine)) r.cuisine = guessCuisine(r.title, r.ingredients);
           (r.ingredients || []).forEach(i => { if(!CAT_KEYS.includes(i.category)) i.category = guessCategory(i.name); });
@@ -1127,7 +1132,7 @@ function openImportDataSheet(){
           await saveRecipe(r);
           added++;
         }
-        importSummary = `Added ${added} recipe${added===1?'':'s'}` + (skipped ? `, skipped ${skipped} already here` : '');
+        importSummary = `Added ${added} recipe${added===1?'':'s'}` + (skipped ? `, skipped ${skipped} already here` : '') + (photosAdded ? `, added ${photosAdded} missing photo${photosAdded===1?'':'s'}` : '');
       }
       if(parsed.plans){
         for(const id in parsed.plans){
@@ -1171,7 +1176,7 @@ function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '4.5';
+const APP_VERSION = '4.6';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
