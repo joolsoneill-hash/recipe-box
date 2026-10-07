@@ -351,12 +351,16 @@
   .cook-edit-link{margin-top:10px;background:none;border:none;color:rgba(237,227,208,.7);font:inherit;font-size:14px;text-decoration:underline;padding:4px 0;}
   .cook-step-edit{width:100%;min-height:140px;font:inherit;font-size:18px;line-height:1.5;padding:10px;border-radius:4px;border:1px solid rgba(237,227,208,.5);background:rgba(0,0,0,.25);color:var(--paper);box-sizing:border-box;}
   .cook-edit-actions{display:flex;gap:8px;margin-top:8px;}
+  .idea-btns{display:flex;gap:8px;margin:10px 0 0;}
+  .idea-btns .secondary-btn{margin:0;flex:1;padding:10px 6px;font-size:13px;}
+  .idea-row .small-btn{flex-shrink:0;margin-left:8px;}
+  .idea-row .small-btn.on{background:var(--herb);color:#fff;}
 </style>
 </head>
 <body>
 <div id="app">
   <header class="app-header">
-    <span class="app-version" id="app-version">v6.0</span>
+    <span class="app-version" id="app-version">v6.2</span>
     <button type="button" class="header-btn" id="bug-header-btn">🐞 Bug or idea</button>
     <div class="brand"><svg viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#2B2620"/><g transform="translate(256 262) scale(.9) translate(-256 -256)"> <!-- steam --> <g fill="none" stroke="#EDE3D0" stroke-width="12" stroke-linecap="round" opacity=".85"> <path d="M196 132c-18-22 18-34 0-58"/> <path d="M256 120c-18-22 18-34 0-58"/> <path d="M316 132c-18-22 18-34 0-58"/> </g> <!-- bowl back rim --> <ellipse cx="256" cy="232" rx="168" ry="44" fill="#FAF6EC"/> <!-- noodle pile --> <g fill="none" stroke="#E9B949" stroke-width="22" stroke-linecap="round"> <path d="M118 226c26-62 54 44 82-12s54 44 82-12 54 44 82-12" /> <path d="M132 206c24-58 50 38 78-8s50 40 78-8 48 36 74-6"/> <path d="M150 188c22-40 44 26 70-4s44 28 70-4 40 24 58 0"/> </g> <g fill="none" stroke="#C8962A" stroke-width="5" stroke-linecap="round" opacity=".55"> <path d="M132 214c26-56 52 40 80-8s52 42 80-8 52 38 80-8"/> </g> <!-- sauce and basil --> <ellipse cx="256" cy="188" rx="62" ry="26" fill="#B94A2F"/> <ellipse cx="238" cy="182" rx="22" ry="8" fill="#D8674A" opacity=".75"/> <path d="M286 170c30-26 62-14 66 6-30 22-58 16-66-6z" fill="#4D7A5A"/> <path d="M292 174c20-8 38-8 54 2" stroke="#2F5A3C" stroke-width="4" fill="none" stroke-linecap="round"/> <!-- bowl body --> <path d="M88 236c0 100 70 170 168 170s168-70 168-170c-40 28-100 42-168 42S128 264 88 236z" fill="#FAF6EC"/> <path d="M88 236c40 28 100 42 168 42s128-14 168-42" fill="none" stroke="#B94A2F" stroke-width="16" stroke-linecap="round"/> <path d="M120 318c34 54 82 76 136 76" fill="none" stroke="#D9CDB4" stroke-width="10" stroke-linecap="round" opacity=".8"/> <!-- bowl foot --> <rect x="196" y="402" width="120" height="22" rx="11" fill="#FAF6EC"/> <!-- eyes and smile for cartoon feel --> <circle cx="214" cy="330" r="11" fill="#2B2620"/> <circle cx="298" cy="330" r="11" fill="#2B2620"/> <circle cx="218" cy="326" r="3.5" fill="#fff"/> <circle cx="302" cy="326" r="3.5" fill="#fff"/> <path d="M232 352c14 16 34 16 48 0" fill="none" stroke="#2B2620" stroke-width="8" stroke-linecap="round"/> <circle cx="190" cy="350" r="12" fill="#D8674A" opacity=".45"/> <circle cx="322" cy="350" r="12" fill="#D8674A" opacity=".45"/> <!-- chopsticks --> <g stroke-linecap="round"> <line x1="366" y1="96" x2="296" y2="206" stroke="#C98A4A" stroke-width="10"/> <line x1="392" y1="112" x2="316" y2="214" stroke="#8A4A2F" stroke-width="10"/> </g> </g></svg><h1>The Recipe Box</h1></div>
     <p class="tagline">Plan the week. Cook from cards.</p>
@@ -1015,6 +1019,7 @@ function renderPlan(){
       </div>
       <button type="button" class="plan-plus" data-act="new-plan" aria-label="Start a new meal plan">+</button>
     </div>
+    <div class="idea-btns"><button type="button" class="secondary-btn" data-act="ideas" data-id="fridge">🥬 What's in my fridge?</button><button type="button" class="secondary-btn" data-act="ideas" data-id="again">↻ Cook again</button></div>
     ${draftIds().length ? `<div class="draft-banner">📝 ${draftIds().length} meal${draftIds().length===1?'':'s'} waiting for your next plan. Tap + to start it.</div>` : ''}
     <div class="plan-count" style="margin-top:6px;">${items.length} meal${items.length===1?'':'s'} chosen${plan.locked ? '' : ` · <span class="plan-add-link" data-act="add-meals">+ add</span>`}</div>
   `;
@@ -1108,7 +1113,8 @@ function openNewPlanSheet(){
   const drafts = draftIds();
   const uncooked = old ? old.recipeIds.filter(id => state.recipes[id] && !(old.done && old.done[id])) : [];
   const recipes = Object.values(state.recipes);
-  const tags = Object.keys(TAG_LABELS).filter(t => recipes.some(r => r.tag === t));
+  const tags = CUISINES.map(c=>c.key).filter(t => recipes.some(r => recipeCuisines(r).includes(t)));
+  const cuiLabel = t => (CUISINES.find(c=>c.key===t)||{label:t}).label;
   const want = {};
   let carryOn = false, carryMode = 'none';
   const skip = new Set();
@@ -1134,10 +1140,10 @@ function openNewPlanSheet(){
       h += `</div>`;
     }
     if(tags.length){
-      h += `<div class="np-sec"><h3>Suggest meals for me</h3><div style="font-size:12px;color:var(--brown);margin-bottom:4px;">Pick how many from each category. They are chosen at random, and you can swap any afterwards.</div>`;
+      h += `<div class="np-sec"><h3>Suggest meals for me</h3><div style="font-size:12px;color:var(--brown);margin-bottom:4px;">Pick how many from each cuisine. They are chosen at random, and you can swap any afterwards.</div>`;
       tags.forEach(t=>{
-        const avail = recipes.filter(r => r.tag === t).length;
-        h += `<div class="np-row"><span>${esc(TAG_LABELS[t])} <small style="color:var(--brown)">(${avail} recipe${avail===1?'':'s'})</small></span><span class="stepper"><button type="button" data-np-dec="${t}" aria-label="Fewer">−</button><strong>${want[t]||0}</strong><button type="button" data-np-inc="${t}" aria-label="More">+</button></span></div>`;
+        const avail = recipes.filter(r => recipeCuisines(r).includes(t)).length;
+        h += `<div class="np-row"><span>${esc(cuiLabel(t))} <small style="color:var(--brown)">(${avail} recipe${avail===1?'':'s'})</small></span><span class="stepper"><button type="button" data-np-dec="${t}" aria-label="Fewer">−</button><strong>${want[t]||0}</strong><button type="button" data-np-inc="${t}" aria-label="More">+</button></span></div>`;
       });
       h += `</div>`;
     }
@@ -1151,7 +1157,7 @@ function openNewPlanSheet(){
     if(c) c.onchange = ()=>{ carryOn = c.checked; draw(); };
     document.querySelectorAll('input[name=np-cm]').forEach(r => r.onchange = ()=>{ carryMode = r.value; draw(); });
     document.querySelectorAll('[data-np-ing]').forEach(x => x.onchange = ()=>{ if(x.checked) skip.delete(x.dataset.npIng); else skip.add(x.dataset.npIng); });
-    document.querySelectorAll('[data-np-inc]').forEach(b => b.onclick = ()=>{ const t=b.dataset.npInc; const avail = recipes.filter(r=>r.tag===t).length; want[t] = Math.min(avail, (want[t]||0)+1); draw(); });
+    document.querySelectorAll('[data-np-inc]').forEach(b => b.onclick = ()=>{ const t=b.dataset.npInc; const avail = recipes.filter(r=>recipeCuisines(r).includes(t)).length; want[t] = Math.min(avail, (want[t]||0)+1); draw(); });
     document.querySelectorAll('[data-np-dec]').forEach(b => b.onclick = ()=>{ const t=b.dataset.npDec; want[t] = Math.max(0, (want[t]||0)-1); draw(); });
     document.getElementById('np-create').onclick = create;
   }
@@ -1170,7 +1176,7 @@ function openNewPlanSheet(){
     drafts.forEach(id => { if(!plan.recipeIds.includes(id)) plan.recipeIds.push(id); });
     tags.forEach(t=>{
       const n = want[t] || 0; if(!n) return;
-      const pool = recipes.filter(r => r.tag === t && !plan.recipeIds.includes(r.id)).map(r=>r.id);
+      const pool = recipes.filter(r => recipeCuisines(r).includes(t) && !plan.recipeIds.includes(r.id)).map(r=>r.id);
       for(let i = pool.length - 1; i > 0; i--){ const j = Math.floor(Math.random()*(i+1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
       plan.recipeIds.push(...pool.slice(0, n));
     });
@@ -1190,6 +1196,78 @@ function openNewPlanSheet(){
     if(hadDraft) await saveDraft();
   }
   draw();
+}
+
+
+/* ---------- MEAL IDEAS: from the fridge / cook again ---------- */
+let ideasState = {tab:'fridge', terms:[]};
+try{ ideasState.terms = JSON.parse(localStorage.getItem('rb_fridge')||'[]'); }catch(e){}
+function fridgeTokens(txt){ return normIngName(txt).split(/\s+/).filter(Boolean).map(w=>singularWord(w)); }
+function fridgeMatches(){
+  const terms = ideasState.terms.map(t=>({t, tok: fridgeTokens(t)})).filter(x=>x.tok.length);
+  if(!terms.length) return [];
+  const out = [];
+  Object.values(state.recipes).forEach(r=>{
+    const ingToks = (r.ingredients||[]).map(i=>({name:i.name, tok: fridgeTokens(i.name||'')}));
+    const hit = [];
+    terms.forEach(x=>{
+      if(ingToks.some(it => x.tok.every(w => it.tok.includes(w)))) hit.push(x.t);
+    });
+    if(hit.length) out.push({r, hit, total: (r.ingredients||[]).length});
+  });
+  return out.sort((a,b)=> b.hit.length - a.hit.length || (a.total - b.total) || a.r.title.localeCompare(b.r.title)).slice(0, 10);
+}
+function ideaTarget(){ const p = activePlan(); return (p && !p.locked) ? 'plan' : 'draft'; }
+function ideaAdded(id){ return ideaTarget()==='plan' ? activePlan().recipeIds.includes(id) : draftIds().includes(id); }
+function ideaRow(r, sub){
+  const on = ideaAdded(r.id);
+  return `<div class="where-row idea-row" data-idea-open="${esc(r.id)}">${thumbHtml(r, true).replace(/ data-act="open-recipe" data-id="[^"]*"/, '')}<span><strong>${esc(r.title)}</strong><small>${sub}</small></span><button type="button" class="small-btn ${on?'on':''}" data-idea-add="${esc(r.id)}">${on?'Added ✓':(ideaTarget()==='plan'?'+ Plan':'+ Next plan')}</button></div>`;
+}
+function ideasBody(){
+  let h = '';
+  if(ideasState.tab === 'fridge'){
+    h += `<form id="fr-form" class="extra-row" autocomplete="off"><input id="fr-input" placeholder="e.g. red cabbage" aria-label="Ingredient you have"><button type="submit" class="small-btn">Add</button></form>`;
+    h += `<div style="margin:8px 0;">${ideasState.terms.map((t,i)=>`<span class="np-chip">${esc(t)}<button type="button" data-fr-rm="${i}" aria-label="Remove">×</button></span>`).join('')}</div>`;
+    const m = fridgeMatches();
+    if(!ideasState.terms.length) h += `<p style="font-size:13px;color:var(--brown)">Type what is in your fridge or pantry, one thing at a time, and I will find recipes that use it.</p>`;
+    else if(!m.length) h += `<p style="font-size:13px;color:var(--brown)">No recipes use that yet.</p>`;
+    else h += m.map(x=>ideaRow(x.r, `Uses ${x.hit.map(esc).join(', ')} · ${esc(x.r.time)} min`)).join('');
+  } else {
+    const prev = Object.values(state.plans).filter(p=>p.id!==state.activePlanId).sort((a,b)=>(b.created||0)-(a.created||0)).slice(0,3);
+    if(!prev.length) h += `<p style="font-size:13px;color:var(--brown)">No previous plans yet.</p>`;
+    prev.forEach((p,i)=>{
+      const rs = planRecipes(p);
+      if(!rs.length) return;
+      h += `<div class="np-sec"><h3>${i===0?'Last plan: ':''}${esc(planLabel(p))}</h3>${rs.map(r=>ideaRow(r, (p.done&&p.done[r.id]?'Cooked':'Not cooked')+' · '+esc(r.time)+' min')).join('')}<button type="button" class="secondary-btn" data-idea-all="${esc(p.id)}">Add all ${rs.length} meals</button></div>`;
+    });
+  }
+  return h;
+}
+function openIdeasSheet(tab){
+  ideasState.tab = tab || ideasState.tab;
+  const tgt = ideaTarget();
+  openSheet(`<div class="sheet-handle"></div><h2>Meal ideas</h2>
+    <div class="store-seg"><button type="button" class="${ideasState.tab==='fridge'?'on':''}" data-idea-tab="fridge">From my fridge</button><button type="button" class="${ideasState.tab==='again'?'on':''}" data-idea-tab="again">Cook again</button></div>
+    <p style="font-size:12px;color:var(--brown);margin:0 0 8px;">${tgt==='plan'?'Meals you add go into the current plan.':'The current plan is locked, so meals you add go into your next plan.'} Tap a meal to see the recipe.</p>
+    <div id="ideas-body">${ideasBody()}</div><button class="secondary-btn" id="ideas-close">Close</button>`);
+  const sh = document.querySelector('.sheet');
+  document.getElementById('ideas-close').onclick = closeSheet;
+  const redraw = ()=>{ const keep = (document.getElementById('fr-input')||{}).value; document.getElementById('ideas-body').innerHTML = ideasBody(); const i = document.getElementById('fr-input'); if(i){ i.value = keep||''; } bindIdeas(); };
+  const save = ()=>{ try{ localStorage.setItem('rb_fridge', JSON.stringify(ideasState.terms)); }catch(e){} };
+  function bindIdeas(){
+    const f = document.getElementById('fr-form');
+    if(f) f.onsubmit = ev=>{ ev.preventDefault(); const i = document.getElementById('fr-input'); i.value.split(',').map(x=>x.trim()).filter(Boolean).forEach(t=>{ if(!ideasState.terms.some(y=>y.toLowerCase()===t.toLowerCase())) ideasState.terms.push(t); }); i.value=''; save(); redraw(); document.getElementById('fr-input').focus(); };
+    document.querySelectorAll('[data-fr-rm]').forEach(b=>b.onclick=()=>{ ideasState.terms.splice(+b.dataset.frRm,1); save(); redraw(); });
+    document.querySelectorAll('[data-idea-add]').forEach(b=>b.onclick=async ev=>{ ev.stopPropagation(); const id=b.dataset.ideaAdd; if(ideaTarget()==='plan'){ await togglePlanRecipe(id); } else { await toggleDraft(id); } redraw(); });
+    document.querySelectorAll('[data-idea-all]').forEach(b=>b.onclick=async()=>{
+      const p = state.plans[b.dataset.ideaAll]; if(!p) return;
+      for(const id of p.recipeIds){ if(!state.recipes[id] || ideaAdded(id)) continue; if(ideaTarget()==='plan'){ await togglePlanRecipe(id); } else { await toggleDraft(id); } }
+      redraw();
+    });
+    document.querySelectorAll('[data-idea-open]').forEach(r=>r.onclick=()=>{ const id=r.dataset.ideaOpen; closeSheet(); goTo({tab: currentView().tab, recipeId: id}); });
+  }
+  document.querySelectorAll('[data-idea-tab]').forEach(b=>b.onclick=()=>{ ideasState.tab=b.dataset.ideaTab; openIdeasSheet(); });
+  bindIdeas();
 }
 
 function openMealPicker(){
@@ -1587,7 +1665,7 @@ async function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '6.0';
+const APP_VERSION = '6.2';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
@@ -2342,6 +2420,7 @@ mainEl.addEventListener('click', async (e)=>{
       break;
     }
     case 'noop': break;
+    case 'ideas': openIdeasSheet(id); break;
     case 'draft-toggle': e.stopPropagation(); await toggleDraft(id); break;
     case 'store-view': state.storeView = id; render(); break;
     case 'store-swap': {
