@@ -200,6 +200,34 @@
   .grocery-item input[type=checkbox]{margin-top:1px;}
   .gi-name{flex:1;min-width:0;line-height:1.35;}
   .gi-name::first-letter{text-transform:uppercase;}
+  .fav-btn{background:rgba(255,255,255,.92);border:1px solid var(--line-strong);color:var(--brown);border-radius:50%;width:34px;height:34px;font-size:18px;line-height:1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0;flex-shrink:0;}
+  .fav-btn.on{color:#d99a1e;border-color:#d99a1e;}
+  .recipe-card .fav-btn{position:absolute;top:6px;right:8px;z-index:2;}
+  .filter-label{font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--brown);margin:10px 0 2px;font-weight:600;}
+  .fav-line{display:flex;align-items:center;gap:10px;margin:2px 0 6px;}
+  .fav-line .fav-btn{width:auto;border-radius:18px;padding:0 12px;height:34px;font-size:13px;gap:6px;}
+  .done-col{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;color:var(--brown);flex-shrink:0;cursor:pointer;}
+  .done-col input{width:22px;height:22px;accent-color:var(--herb);margin:0;}
+  .plan-item.done{opacity:.5;}
+  .plan-item.done .plan-item-title{text-decoration:line-through;}
+  .plan-item.done .plan-item-meta,.plan-item.done .serv-line{text-decoration:line-through;}
+  .plan-side{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;}
+  .plan-item-main{min-width:0;}
+  .plan-fav{background:none;border:none;font-size:20px;color:var(--brown);cursor:pointer;padding:4px;}
+  .plan-fav.on{color:#d99a1e;}
+  .picker-item .fav-btn{width:30px;height:30px;font-size:16px;}
+  .cook-finish{text-align:center;padding:20px 10px;}
+  .cook-finish h2{font-size:28px;margin:0 0 6px;}
+  .cook-finish p{color:var(--brown);margin:0 0 20px;}
+  .cook-finish .fav-btn{width:auto;border-radius:24px;padding:0 20px;height:46px;font-size:16px;gap:8px;margin:0 auto;}
+  .gi-link{border-bottom:1px dotted var(--brown);cursor:pointer;}
+  .gi-where{display:block;font-size:12px;color:var(--herb);margin-top:2px;cursor:pointer;}
+  .where-list{margin:0 0 14px;}
+  .where-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);cursor:pointer;}
+  .where-row span{flex:1;min-width:0;}
+  .where-row strong{display:block;font-size:14px;color:var(--ink);}
+  .where-row small{display:block;font-size:12px;color:var(--brown);margin-top:1px;}
+  .where-row em{font-style:normal;color:var(--herb);font-size:18px;}
   .gi-note{display:block;font-size:12px;color:var(--brown);margin-top:1px;}
   .gi-qty{flex:0 0 auto;max-width:42%;text-align:right;font-weight:600;color:var(--brown);line-height:1.35;padding-left:8px;}
   .gcat-head{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--herb);margin:18px 0 2px;padding-bottom:4px;border-bottom:2px solid var(--line-strong);}
@@ -245,7 +273,7 @@
 <body>
 <div id="app">
   <header class="app-header">
-    <span class="app-version" id="app-version">v4.6</span>
+    <span class="app-version" id="app-version">v4.8</span>
     <button type="button" class="header-btn" id="bug-header-btn">🐞 Report a bug</button>
     <h1>The Recipe Box</h1>
     <p class="tagline">Plan the week. Cook from cards.</p>
@@ -320,6 +348,7 @@ let state = {
   searchTerm: '',
   openPlans: {},
   activeFilter: 'all',
+  activeCuisine: 'all',
   loaded: false
 };
 let loadingState = false;
@@ -472,6 +501,7 @@ function normPlan(p){
   const locked = p.locked === undefined ? built : !!p.locked;
   return {id: p.id, name: p.name || 'Meal plan', created: p.created || 0, recipeIds: ids.filter(Boolean), built, locked,
           servings: Object.fromEntries(Object.entries(p.servings || {}).map(([k,v]) => [k, Math.min(99, Math.max(1, parseInt(v) || 1))])),
+          done: Object.fromEntries(Object.entries(p.done || {}).filter(([k,v]) => v).map(([k]) => [k, true])),
           extras: ex.filter(x => x && x.name).map(x => ({id: String(x.id || uid()), name: String(x.name), qty: String(x.qty || ''), category: CAT_KEYS.includes(x.category) ? x.category : guessCategory(x.name)}))};
 }
 function planLabel(p){
@@ -618,13 +648,26 @@ function goTab(tab){
   window.scrollTo(0, 0);
 }
 
+/* ---------- FAVOURITES ---------- */
+async function setFavourite(id){
+  const r = state.recipes[id];
+  if(!r) return false;
+  r.fav = !r.fav;
+  await saveRecipe(r);
+  return !!r.fav;
+}
+function favBtnHtml(r, withText){
+  return `<button type="button" class="fav-btn ${r.fav?'on':''}" data-act="fav" data-id="${esc(r.id)}" aria-label="${r.fav?'Remove from favourites':'Add to favourites'}">${r.fav?'★':'☆'}${withText ? `<span>${r.fav?'Favourite':'Add to favourites'}</span>` : ''}</button>`;
+}
+
 /* ---------- RECIPE BOX ---------- */
 function renderBox(){
   const recipes = Object.values(state.recipes);
   const filtered = recipes.filter(r=>{
-    const matchesTag = state.activeFilter==='all' || r.tag===state.activeFilter;
+    const matchesTag = state.activeFilter==='all' || (state.activeFilter==='fav' ? !!r.fav : r.tag===state.activeFilter);
+    const matchesCuisine = state.activeCuisine==='all' || (r.cuisine || 'other')===state.activeCuisine;
     const matchesSearch = !state.searchTerm || r.title.toLowerCase().includes(state.searchTerm.toLowerCase());
-    return matchesTag && matchesSearch;
+    return matchesTag && matchesCuisine && matchesSearch;
   });
   const tags = ['all', ...new Set(recipes.map(r=>r.tag))];
 
@@ -632,21 +675,30 @@ function renderBox(){
     <div class="search-row">
       <input type="text" id="search-input" placeholder="Search recipes…" value="${esc(state.searchTerm)}">
     </div>
+    <div class="filter-label">Show</div>
     <div class="chip-row">
-      ${tags.map(t=>`<button class="chip ${state.activeFilter===t?'active':''}" data-act="filter" data-id="${esc(t)}">${t==='all'?'All':esc(TAG_LABELS[t]||t)}</button>`).join('')}
+      <button class="chip ${state.activeFilter==='all'?'active':''}" data-act="filter" data-id="all">All (${recipes.length})</button>
+      <button class="chip ${state.activeFilter==='fav'?'active':''}" data-act="filter" data-id="fav">★ Favourites (${recipes.filter(r=>r.fav).length})</button>
+      ${tags.filter(t=>t!=='all').map(t=>`<button class="chip ${state.activeFilter===t?'active':''}" data-act="filter" data-id="${esc(t)}">${esc(TAG_LABELS[t]||t)} (${recipes.filter(r=>r.tag===t).length})</button>`).join('')}
+    </div>
+    <div class="filter-label">Cuisine</div>
+    <div class="chip-row">
+      <button class="chip ${state.activeCuisine==='all'?'active':''}" data-act="cfilter" data-id="all">Any</button>
+      ${CUISINES.filter(c=>recipes.some(r=>(r.cuisine||'other')===c.key)).map(c=>`<button class="chip ${state.activeCuisine===c.key?'active':''}" data-act="cfilter" data-id="${c.key}">${esc(c.label)} (${recipes.filter(r=>(r.cuisine||'other')===c.key).length})</button>`).join('')}
     </div>
     <button class="add-btn" data-act="add-recipe">+ Add a recipe</button>
     <button class="add-btn" data-act="import-recipe" style="background:var(--ink);margin-bottom:18px;">✨ Import a recipe: screenshots, PDF or website</button>
   `;
 
   if(filtered.length===0){
-    html += `<div class="empty-state"><h3>No recipes here yet</h3><p>${recipes.length===0 ? 'Add your first recipe to start building your box.' : 'Nothing matches that search or filter.'}</p></div>`;
+    html += `<div class="empty-state"><h3>No recipes here yet</h3><p>${recipes.length===0 ? 'Add your first recipe to start building your box.' : 'Nothing matches that search or filter.' + (state.activeFilter==='fav' ? ' Tap the ☆ on a recipe to make it a favourite.' : '')}</p></div>`;
   } else {
     html += `<div class="recipe-grid">`;
     filtered.forEach(r=>{
       const ingPreview = r.ingredients.slice(0,3).map(i=>i.name).join(', ') + (r.ingredients.length>3?'…':'');
       html += `
         <div class="recipe-card" data-act="open-recipe" data-id="${esc(r.id)}">
+          ${favBtnHtml(r)}
           ${r.photo ? `<img src="${r.photo}" alt="" style="width:100%;height:140px;object-fit:cover;display:block;border-radius:2px 2px 0 0;margin:-16px -14px 12px;width:calc(100% + 28px);max-width:none;">` : placeholderHtml(r, 90, '2px 2px 0 0', 'margin:-16px -14px 12px;width:calc(100% + 28px);')}
           <span class="card-tag" style="background:${TAG_COLORS[r.tag]||'var(--brown)'};top:8px;">${esc(TAG_LABELS[r.tag]||r.tag)}</span>
           <h3>${esc(r.title)}</h3>
@@ -682,6 +734,7 @@ function renderRecipeDetail(id){
     ${r.photo ? `<img src="${r.photo}" alt="" style="width:100%;height:200px;object-fit:cover;border-radius:4px;margin-bottom:12px;display:block;">` : placeholderHtml(r, 120, '4px', 'margin-bottom:12px;')}
     <span class="card-tag" style="position:static;display:inline-block;background:${TAG_COLORS[r.tag]||'var(--brown)'}">${esc(TAG_LABELS[r.tag]||r.tag)}</span>
     <h2 class="detail-title" style="margin-top:8px;">${esc(r.title)}</h2>
+    <div class="fav-line">${favBtnHtml(r, true)}</div>
     <div class="recipe-meta">${esc(r.time)} min · serves ${esc(r.servings)}${Math.abs(sf - 1) > 1e-9 ? ` · <strong>scaled for ${planServings(plan, r)}</strong>` : ''}</div>
 
     <button class="primary-btn" data-act="cook" data-id="${esc(r.id)}" style="background:var(--tomato);margin:14px 0 4px;">▶ Start cooking</button>
@@ -741,8 +794,10 @@ function renderPlan(){
     html += `<div class="empty-state"><h3>No meals chosen yet</h3><p>Tap "Add meals from your recipes" to build this plan. Your grocery list is built from the current plan.</p></div>`;
   } else {
     items.forEach(r=>{
+      const isDone = !!(plan.done && plan.done[r.id]);
       html += `
-        <div class="plan-item">
+        <div class="plan-item ${isDone?'done':''}">
+          <label class="done-col"><input type="checkbox" data-act="plan-done" data-id="${esc(r.id)}" ${isDone?'checked':''} aria-label="Mark as cooked">Cooked</label>
           ${thumbHtml(r)}
           <div class="plan-item-main" data-act="open-recipe" data-id="${esc(r.id)}">
             <div class="plan-item-title">${esc(r.title)}</div>
@@ -752,7 +807,8 @@ function renderPlan(){
               : `<div class="serv-line">Cooking for
                   <span class="stepper"><button data-act="serv-dec" data-id="${esc(r.id)}" aria-label="Fewer servings">−</button><strong>${planServings(plan, r)}</strong><button data-act="serv-inc" data-id="${esc(r.id)}" aria-label="More servings">+</button></span></div>`}
           </div>
-          ${plan.locked ? '' : `<button data-act="plan-remove" data-id="${esc(r.id)}">Remove</button>`}
+          <div class="plan-side"><button type="button" class="plan-fav ${r.fav?'on':''}" data-act="fav" data-id="${esc(r.id)}" aria-label="Favourite">${r.fav?'★':'☆'}</button>
+          ${plan.locked ? '' : `<button data-act="plan-remove" data-id="${esc(r.id)}">Remove</button>`}</div>
         </div>`;
     });
   }
@@ -841,11 +897,11 @@ function openMealPicker(){
     html += `<div class="empty-state"><p>Add a recipe first, then come back to build your plan.</p></div>`;
   } else {
     html += `<div class="field" style="margin-bottom:8px;"><input id="picker-search" type="text" placeholder="Search recipes…"></div>
-      <div class="chip-row picker-chips" id="picker-chips"><button type="button" class="chip active" data-pcuisine="all">All</button>${present.map(c=>`<button type="button" class="chip" data-pcuisine="${c.key}">${esc(c.label)}</button>`).join('')}</div>
+      <div class="chip-row picker-chips" id="picker-chips"><button type="button" class="chip active" data-pcuisine="all">All</button><button type="button" class="chip" data-pcuisine="fav">★ Favourites</button>${present.map(c=>`<button type="button" class="chip" data-pcuisine="${c.key}">${esc(c.label)}</button>`).join('')}</div>
       <div id="picker-list">`;
     recipes.forEach(r=>{
       const on = plan.recipeIds.includes(r.id);
-      html += `<div class="picker-item" data-title="${esc(r.title.toLowerCase())}" data-cuisine="${esc(r.cuisine || 'other')}">${thumbHtml(r, true).replace(/ data-act="open-recipe" data-id="[^"]*"/, '')}<span>${esc(r.title)}<small>${esc(CUISINE_LABEL[r.cuisine] || 'Other')} · ${esc(TAG_LABELS[r.tag]||r.tag)}</small></span><button type="button" data-picker-id="${esc(r.id)}" class="${on?'on':''}">${on?'Added ✓':'Add'}</button></div>`;
+      html += `<div class="picker-item" data-title="${esc(r.title.toLowerCase())}" data-cuisine="${esc(r.cuisine || 'other')}" data-fav="${r.fav?'1':'0'}" data-rid="${esc(r.id)}">${thumbHtml(r, true).replace(/ data-act="open-recipe" data-id="[^"]*"/, '')}<span>${esc(r.title)}<small>${esc(CUISINE_LABEL[r.cuisine] || 'Other')} · ${esc(TAG_LABELS[r.tag]||r.tag)}</small></span><button type="button" class="fav-btn ${r.fav?'on':''}" data-fav-id="${esc(r.id)}" aria-label="Favourite">${r.fav?'★':'☆'}</button><button type="button" data-picker-id="${esc(r.id)}" class="${on?'on':''}">${on?'Added ✓':'Add'}</button></div>`;
     });
     html += `</div>`;
   }
@@ -859,11 +915,19 @@ function openMealPicker(){
       const q = document.getElementById('picker-search').value.trim().toLowerCase();
       list.querySelectorAll('.picker-item').forEach(row=>{
         const okQ = !q || row.dataset.title.includes(q);
-        const okC = filter === 'all' || row.dataset.cuisine === filter;
+        const okC = filter === 'all' || (filter === 'fav' ? row.dataset.fav === '1' : row.dataset.cuisine === filter);
         row.style.display = (okQ && okC) ? '' : 'none';
       });
     };
     list.addEventListener('click', async (e)=>{
+      const fb = e.target.closest('[data-fav-id]');
+      if(fb){
+        const on = await setFavourite(fb.dataset.favId);
+        fb.classList.toggle('on', on); fb.textContent = on ? '★' : '☆';
+        fb.closest('.picker-item').dataset.fav = on ? '1' : '0';
+        apply();
+        return;
+      }
       const btn = e.target.closest('[data-picker-id]');
       if(!btn) return;
       const rid = btn.dataset.pickerId;
@@ -965,7 +1029,7 @@ function buildGroceryList(){
       const raw = (ing.name || '').trim();
       if(!raw) return;
       const norm = normIngName(raw);
-      const g = groups[norm] || (groups[norm] = {norm, names:{}, g:0, hasG:false, ml:0, hasMl:false, metricVol:false, count:0, hasCount:false, others:{}, notes:[], cats:{}});
+      const g = groups[norm] || (groups[norm] = {norm, names:{}, g:0, hasG:false, ml:0, hasMl:false, metricVol:false, count:0, hasCount:false, others:{}, notes:[], cats:{}, uses:[]});
       const shown = topName(raw);
       g.names[shown] = (g.names[shown] || 0) + 1;
       const ck = CAT_KEYS.includes(ing.category) ? ing.category : guessCategory(raw);
@@ -973,6 +1037,7 @@ function buildGroceryList(){
       const unit = (ing.unit || '').trim().toLowerCase();
       const rawQ = String(ing.qty === undefined || ing.qty === null ? '' : ing.qty).trim();
       const qty = parseQty(rawQ) * factor;
+      if(!g.uses.some(u => u.id === recipe.id)) g.uses.push({id: recipe.id, title: recipe.title, text: [rawQ ? scaleQty(rawQ, unit, factor) : '', unit, raw].filter(Boolean).join(' ')});
       if(isNaN(qty)){ if(rawQ && !g.notes.includes(rawQ)) g.notes.push(rawQ); return; }
       if(MASS_G[unit]){ g.g += qty * MASS_G[unit]; g.hasG = true; }
       else if(VOL_ML[unit]){
@@ -999,7 +1064,7 @@ function buildGroceryList(){
     const plural = g.hasCount && g.count > 1;
     const name = Object.keys(g.names).sort((a,b)=> g.names[b] - g.names[a] || (plural ? b.length - a.length : a.length - b.length))[0];
     const cat = CAT_KEYS.slice().sort((a,b)=> (g.cats[b]||0) - (g.cats[a]||0))[0];
-    return {key: g.norm.replace(/[.$#\[\]\/]/g, '_'), name, qtyText: parts.join(' + '), note: g.notes.join(', '), cat, extra: false};
+    return {key: g.norm.replace(/[.$#\[\]\/]/g, '_'), name, qtyText: parts.join(' + '), note: g.notes.join(', '), cat, extra: false, uses: g.uses};
   }).sort((a,b)=>a.name.localeCompare(b.name));
 }
 
@@ -1046,7 +1111,7 @@ function renderGrocery(){
       html += `
         <label class="grocery-item ${checked?'checked':''} ${it.extra?'extra':''}">
           <input type="checkbox" data-check-key="${esc(it.key)}" ${checked?'checked':''}>
-          <span class="gi-name">${esc(it.name)}${it.note ? `<span class="gi-note">${esc(it.note)}</span>` : ''}</span>
+          <span class="gi-name"><span class="gi-link" data-act="where-used" data-id="${esc(it.key)}">${esc(it.name)}</span>${it.note ? `<span class="gi-note">${esc(it.note)}</span>` : ''}${it.uses && it.uses.length ? `<span class="gi-where" data-act="where-used" data-id="${esc(it.key)}">where used (${it.uses.length}) ›</span>` : ''}</span>
           <span class="gi-qty">${esc(it.qtyText)}</span>
           ${it.extra ? `<button type="button" class="gi-del" data-act="extra-del" data-id="${esc(it.id)}" aria-label="Remove item">×</button>` : ''}
         </label>`;
@@ -1054,6 +1119,28 @@ function renderGrocery(){
     html += `</div>`;
   });
   return html;
+}
+
+function openWhereUsedSheet(key){
+  const it = allGroceryItems().find(x => x.key === key);
+  if(!it) return;
+  const uses = it.uses || [];
+  openSheet(`
+    <div class="sheet-handle"></div>
+    <h2>${esc(it.name)}</h2>
+    <p style="font-size:13px;color:var(--brown);line-height:1.5;margin:0 0 10px;">${uses.length ? `Used in ${uses.length} meal${uses.length===1?'':'s'} in this plan. Tap one to open the recipe.` : 'This is an item you added yourself, so it isn’t part of any recipe.'}</p>
+    <div class="where-list">${uses.map(u => {
+      const r = state.recipes[u.id];
+      return `<div class="where-row" data-where-id="${esc(u.id)}">${r ? thumbHtml(r, true).replace(/ data-act="open-recipe" data-id="[^"]*"/, '') : ''}<span><strong>${esc(u.title)}</strong><small>${esc(u.text)}</small></span><em>›</em></div>`;
+    }).join('')}</div>
+    <button class="secondary-btn" id="wu-close">Close</button>
+  `);
+  document.getElementById('wu-close').onclick = closeSheet;
+  document.querySelectorAll('.where-row').forEach(row => row.onclick = ()=>{
+    const rid = row.dataset.whereId;
+    closeSheet();
+    goTo({tab: currentView().tab, recipeId: rid});
+  });
 }
 
 function groceryAllChecked(){
@@ -1176,7 +1263,7 @@ function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '4.6';
+const APP_VERSION = '4.8';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
@@ -1778,7 +1865,7 @@ function openRecipeForm(existingId, draft){
     const steps = Array.from(document.querySelectorAll('#step-list textarea')).map(t=>t.value.trim()).filter(s=>s);
 
     const id = existingId || uid();
-    const recipe = {id, title, tag, cuisine: document.getElementById('f-cuisine').value, time: parseInt(time)||0, servings: parseInt(servings)||1, ingredients, steps, photo: currentPhotoData};
+    const recipe = {id, title, tag, cuisine: document.getElementById('f-cuisine').value, time: parseInt(time)||0, servings: parseInt(servings)||1, ingredients, steps, photo: currentPhotoData, fav: !!(existingId && state.recipes[existingId] && state.recipes[existingId].fav)};
     state.recipes[id] = recipe;
     closeSheet();
     if(!existingId) goTab('box');
@@ -1795,6 +1882,14 @@ mainEl.addEventListener('click', async (e)=>{
   const act = el.dataset.act, id = el.dataset.id;
   switch(act){
     case 'filter': state.activeFilter = id; render(); break;
+    case 'cfilter': state.activeCuisine = id; render(); break;
+    case 'fav': await setFavourite(id); render(); break;
+    case 'plan-done': {
+      const pl = activePlan(); if(!pl) break;
+      pl.done = pl.done || {};
+      if(pl.done[id]) delete pl.done[id]; else pl.done[id] = true;
+      render(); await savePlan(pl); break;
+    }
     case 'add-recipe': openRecipeForm(null); break;
     case 'import-recipe': openImportSheet(); break;
     case 'report-bug': openBugSheet(); break;
@@ -1809,6 +1904,7 @@ mainEl.addEventListener('click', async (e)=>{
     case 'install-app':
       if(deferredInstall){ deferredInstall.prompt(); try { await deferredInstall.userChoice; } catch(err){} deferredInstall = null; render(); }
       break;
+    case 'where-used': e.preventDefault(); openWhereUsedSheet(id); break;
     case 'open-recipe': goTo({tab: currentView().tab, recipeId: id}); break;
     case 'back': goBack(); break;
     case 'cook': openCookMode(id); break;
@@ -1992,6 +2088,12 @@ function openCookMode(recipeId){
   if(!r || !r.steps.length) return;
   cookState.recipeId = recipeId;
   cookState.stepIndex = 0;
+  cookState.finished = false;
+  const ap = activePlan();
+  if(ap && ap.recipeIds.includes(recipeId) && !(ap.done && ap.done[recipeId])){
+    ap.done = ap.done || {}; ap.done[recipeId] = true;   // starting to cook marks the meal as cooked
+    savePlan(ap);
+  }
   document.getElementById('cook-overlay').classList.remove('hidden');
   renderCookStep();
   requestWakeLock();
@@ -2039,6 +2141,19 @@ function renderCookStep(){
   if(!r) return closeCookMode();
   const total = r.steps.length;
   const i = cookState.stepIndex;
+  if(cookState.finished){
+    document.getElementById('cook-progress').textContent = 'Finished';
+    document.getElementById('cook-step-area').innerHTML = `<div class="cook-finish"><h2>Enjoy your meal! 🎉</h2><p>${esc(r.title)}</p>
+      <button type="button" class="fav-btn ${r.fav?'on':''}" id="cook-fav-btn">${r.fav?'★ In your favourites':'☆ Add to favourites'}</button></div>`;
+    document.getElementById('cook-fav-btn').onclick = async ()=>{
+      const on = await setFavourite(r.id);
+      const b = document.getElementById('cook-fav-btn'); b.classList.toggle('on', on); b.textContent = on ? '★ In your favourites' : '☆ Add to favourites';
+    };
+    document.getElementById('cook-dots').innerHTML = '';
+    document.getElementById('cook-prev-btn').disabled = false;
+    document.getElementById('cook-next-btn').textContent = 'Close';
+    return;
+  }
   document.getElementById('cook-progress').textContent = `Step ${i+1} of ${total}`;
   const stepIngredients = getStepIngredients(r, i);
   const ingredientsHtml = !stepIngredients.length ? '' : `<div class="cook-ings-panel">
@@ -2080,12 +2195,14 @@ document.addEventListener('visibilitychange', ()=>{
 
 document.getElementById('cook-exit-btn').addEventListener('click', closeCookMode);
 document.getElementById('cook-prev-btn').addEventListener('click', ()=>{
+  if(cookState.finished){ cookState.finished = false; renderCookStep(); return; }
   if(cookState.stepIndex > 0){ cookState.stepIndex--; renderCookStep(); }
 });
 document.getElementById('cook-next-btn').addEventListener('click', ()=>{
   const r = state.recipes[cookState.recipeId];
   if(!r) return closeCookMode();
   if(cookState.stepIndex < r.steps.length - 1){ cookState.stepIndex++; renderCookStep(); }
+  else if(!cookState.finished){ cookState.finished = true; renderCookStep(); }
   else { closeCookMode(); }
 });
 
