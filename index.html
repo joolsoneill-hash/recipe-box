@@ -215,7 +215,7 @@
   .cook-ings-panel{margin:0 18px 10px;padding:12px 14px;background:rgba(237,227,208,0.1);border:1px solid rgba(237,227,208,0.28);border-radius:2px;text-align:left;max-height:34%;overflow-y:auto;flex-shrink:0;}
   .cook-ings-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
   .cook-ing-row{display:flex;justify-content:space-between;gap:12px;padding:5px 0;font-size:15px;border-top:1px solid rgba(237,227,208,0.14);}
-  .cook-ing-row:first-of-type{border-top:none;}
+  .cook-ing-row:first-child{border-top:none;}
   .cook-ing-qty{font-weight:600;white-space:nowrap;}
   .cook-ing-none{font-size:13px;color:rgba(237,227,208,0.6);}
   .cook-step-title{font-weight:600;font-size:13px;color:var(--gold);margin-bottom:16px;letter-spacing:0.3px;}
@@ -234,7 +234,7 @@
 <body>
 <div id="app">
   <header class="app-header">
-    <span class="app-version" id="app-version">v4.0</span>
+    <span class="app-version" id="app-version">v4.1</span>
     <button type="button" class="header-btn" id="bug-header-btn">🐞 Report a bug</button>
     <h1>The Recipe Box</h1>
     <p class="tagline">Plan the week. Cook from cards.</p>
@@ -1158,7 +1158,7 @@ function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '4.0';
+const APP_VERSION = '4.1';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
@@ -1970,27 +1970,35 @@ function closeCookMode(){
   cookState.recipeId = null;
 }
 
-function ingredientMatchesStep(ingName, stepText){
+// Where in the step text an ingredient is first mentioned (-1 if it isn't).
+function ingredientStepPos(ingName, stepText){
   const primary = (ingName || '').split(',')[0].trim().toLowerCase();
-  if(!primary) return false;
+  if(!primary) return -1;
   const stepLower = stepText.toLowerCase();
-  if(stepLower.includes(primary)) return true;
-  if(primary.endsWith('s') && stepLower.includes(primary.slice(0, -1))) return true;
+  const found = [];
+  const add = p => { if(p >= 0) found.push(p); };
+  add(stepLower.indexOf(primary));
+  if(primary.endsWith('s')) add(stepLower.indexOf(primary.slice(0, -1)));
   const words = primary.split(' ').filter(w => w.length > 2);
-  if(words.length > 1 && words.every(w => stepLower.includes(w))) return true;
+  if(words.length > 1 && words.every(w => stepLower.includes(w))) add(Math.min(...words.map(w => stepLower.indexOf(w))));
   // main word of the ingredient ("olive oil" -> "oil", "garlic cloves" -> "garlic")
   const GENERIC = ['slice','piece','chunk','bunch','small','pkg','package','can','tin','jar','head','leaf','sprig','stalk','stick','strip','wedge','half','whole','mix','mixture','blend','crown','bulb'];
   const head = normIngName(ingName).split(' ').filter(w => !GENERIC.includes(w)).pop();
   if(head && head.length >= 3){
-    const stepWords = new Set(stepLower.replace(/[^a-z\s-]/g, ' ').split(/\s+/).filter(Boolean).map(singularWord));
-    if(stepWords.has(head)) return true;
+    const re = /[a-z-]+/g; let m;
+    while((m = re.exec(stepLower))){ if(singularWord(m[0]) === head){ add(m.index); break; } }
   }
-  return false;
+  return found.length ? Math.min(...found) : -1;
 }
+function ingredientMatchesStep(ingName, stepText){ return ingredientStepPos(ingName, stepText) >= 0; }
 
 function getStepIngredients(recipe, stepIndex){
   const stepText = recipe.steps[stepIndex] || '';
-  return (recipe.ingredients || []).filter(ing => ing.name && ingredientMatchesStep(ing.name, stepText));
+  return (recipe.ingredients || [])
+    .map(ing => ({ing, pos: ing.name ? ingredientStepPos(ing.name, stepText) : -1}))
+    .filter(x => x.pos >= 0)
+    .sort((a, b) => a.pos - b.pos)
+    .map(x => x.ing);
 }
 
 function renderCookStep(){
@@ -2000,11 +2008,10 @@ function renderCookStep(){
   const i = cookState.stepIndex;
   document.getElementById('cook-progress').textContent = `Step ${i+1} of ${total}`;
   const stepIngredients = getStepIngredients(r, i);
-  const ingredientsHtml = `<div class="cook-ings-panel">
-      <div class="cook-ings-title">Ingredients for this step</div>
+  const ingredientsHtml = !stepIngredients.length ? '' : `<div class="cook-ings-panel">
       ${stepIngredients.length
         ? stepIngredients.map(ing => `<div class="cook-ing-row"><span>${esc(ing.name)}</span><span class="cook-ing-qty">${esc([scaleQty(ing.qty, (ing.unit||'').toLowerCase(), scaleFactorFor(r)), ing.unit].filter(Boolean).join(' '))}</span></div>`).join('')
-        : `<div class="cook-ing-none">None listed for this step</div>`}
+        : ''}
     </div>`;
   document.getElementById('cook-step-area').innerHTML = `
     <div class="cook-step-main">
