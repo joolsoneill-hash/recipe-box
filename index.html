@@ -134,6 +134,7 @@
   .picker-item button.on{background:var(--ink);}
 
 
+  .app-version{position:absolute;top:9px;left:20px;font-size:11px;font-weight:600;letter-spacing:0.4px;color:rgba(237,227,208,0.6);}
   .header-btn{position:absolute;top:14px;right:14px;background:rgba(237,227,208,0.12);color:var(--paper);border:1px solid rgba(237,227,208,0.32);border-radius:14px;padding:5px 11px;font-size:12px;font-weight:600;}
   .sheet-note{font-size:13px;color:var(--brown);line-height:1.5;margin:0 0 12px;}
   .sheet-status{font-size:13px;color:var(--brown);min-height:18px;margin:8px 0;line-height:1.4;}
@@ -183,6 +184,7 @@
 <body>
 <div id="app">
   <header class="app-header">
+    <span class="app-version" id="app-version">v3.1</span>
     <button type="button" class="header-btn" id="bug-header-btn">🐞 Report a bug</button>
     <h1>The Recipe Box</h1>
     <p class="tagline">Plan the week. Cook from cards.</p>
@@ -840,7 +842,7 @@ function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '2026-10-07';
+const APP_VERSION = '3.1';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
