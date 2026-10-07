@@ -363,12 +363,14 @@
   .np-recipe:first-child{border-top:none}
   .np-recipe.on{background:rgba(76,107,79,.14);}
   .np-recipe b{color:var(--herb);font-size:16px;flex-shrink:0;}
+  .extra-seg{margin:0;flex:1;}
+  .extra-seg button{padding:9px 10px;font-size:14px;}
 </style>
 </head>
 <body>
 <div id="app">
   <header class="app-header">
-    <span class="app-version" id="app-version">v6.8</span>
+    <span class="app-version" id="app-version">v6.9</span>
     <button type="button" class="header-btn" id="bug-header-btn">🐞 Bug or idea</button>
     <div class="brand"><svg viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#2B2620"/><g transform="translate(256 262) scale(.9) translate(-256 -256)"> <!-- steam --> <g fill="none" stroke="#EDE3D0" stroke-width="12" stroke-linecap="round" opacity=".85"> <path d="M196 132c-18-22 18-34 0-58"/> <path d="M256 120c-18-22 18-34 0-58"/> <path d="M316 132c-18-22 18-34 0-58"/> </g> <!-- bowl back rim --> <ellipse cx="256" cy="232" rx="168" ry="44" fill="#FAF6EC"/> <!-- noodle pile --> <g fill="none" stroke="#E9B949" stroke-width="22" stroke-linecap="round"> <path d="M118 226c26-62 54 44 82-12s54 44 82-12 54 44 82-12" /> <path d="M132 206c24-58 50 38 78-8s50 40 78-8 48 36 74-6"/> <path d="M150 188c22-40 44 26 70-4s44 28 70-4 40 24 58 0"/> </g> <g fill="none" stroke="#C8962A" stroke-width="5" stroke-linecap="round" opacity=".55"> <path d="M132 214c26-56 52 40 80-8s52 42 80-8 52 38 80-8"/> </g> <!-- sauce and basil --> <ellipse cx="256" cy="188" rx="62" ry="26" fill="#B94A2F"/> <ellipse cx="238" cy="182" rx="22" ry="8" fill="#D8674A" opacity=".75"/> <path d="M286 170c30-26 62-14 66 6-30 22-58 16-66-6z" fill="#4D7A5A"/> <path d="M292 174c20-8 38-8 54 2" stroke="#2F5A3C" stroke-width="4" fill="none" stroke-linecap="round"/> <!-- bowl body --> <path d="M88 236c0 100 70 170 168 170s168-70 168-170c-40 28-100 42-168 42S128 264 88 236z" fill="#FAF6EC"/> <path d="M88 236c40 28 100 42 168 42s128-14 168-42" fill="none" stroke="#B94A2F" stroke-width="16" stroke-linecap="round"/> <path d="M120 318c34 54 82 76 136 76" fill="none" stroke="#D9CDB4" stroke-width="10" stroke-linecap="round" opacity=".8"/> <!-- bowl foot --> <rect x="196" y="402" width="120" height="22" rx="11" fill="#FAF6EC"/> <!-- eyes and smile for cartoon feel --> <circle cx="214" cy="330" r="11" fill="#2B2620"/> <circle cx="298" cy="330" r="11" fill="#2B2620"/> <circle cx="218" cy="326" r="3.5" fill="#fff"/> <circle cx="302" cy="326" r="3.5" fill="#fff"/> <path d="M232 352c14 16 34 16 48 0" fill="none" stroke="#2B2620" stroke-width="8" stroke-linecap="round"/> <circle cx="190" cy="350" r="12" fill="#D8674A" opacity=".45"/> <circle cx="322" cy="350" r="12" fill="#D8674A" opacity=".45"/> <!-- chopsticks --> <g stroke-linecap="round"> <line x1="366" y1="96" x2="296" y2="206" stroke="#C98A4A" stroke-width="10"/> <line x1="392" y1="112" x2="316" y2="214" stroke="#8A4A2F" stroke-width="10"/> </g> </g></svg><h1>The Recipe Box</h1></div>
     <p class="tagline">Plan the week. Cook from cards.</p>
@@ -836,6 +838,12 @@ function render(){
   else if(v.tab === 'plan') main.innerHTML = renderPlan();
   else main.innerHTML = renderGrocery();
   setActiveTabButton(v.tab);
+  updateGroceryBadge();
+}
+function updateGroceryBadge(){
+  const b = document.querySelector('.tab[data-tab=list]'); if(!b) return;
+  let n = 0; try{ n = allGroceryItems().filter(it => !state.checks[it.key]).length; }catch(e){}
+  b.textContent = 'Grocery List' + (n ? ' (' + n + ')' : '');
 }
 
 function goTo(view){ viewStack.push(view); render(); window.scrollTo(0, 0); }
@@ -1506,6 +1514,9 @@ function renderGrocery(){
         <input id="extra-qty" placeholder="Qty" aria-label="Quantity">
       </div>
       <div class="extra-row">
+        <div class="store-seg extra-seg" id="extra-store"><button type="button" class="on" data-act="extra-store" data-id="coles">Coles</button><button type="button" data-act="extra-store" data-id="aldi">Aldi</button></div>
+      </div>
+      <div class="extra-row">
         <select id="extra-cat" aria-label="Category"><option value="auto" selected>Category: automatic</option>${catOptionsHtml('')}</select>
         <button type="submit" class="small-btn">Add</button>
       </div>
@@ -1697,7 +1708,7 @@ async function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '6.8';
+const APP_VERSION = '6.9';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
@@ -2452,6 +2463,7 @@ mainEl.addEventListener('click', async (e)=>{
       break;
     }
     case 'noop': break;
+    case 'extra-store': document.querySelectorAll('#extra-store button').forEach(b=>b.classList.toggle('on', b.dataset.id===id)); break;
     case 'ideas': openIdeasSheet(id); break;
     case 'draft-toggle': e.stopPropagation(); await toggleDraft(id); break;
     case 'store-view': state.storeView = id; render(); break;
@@ -2582,7 +2594,11 @@ mainEl.addEventListener('submit', async (e)=>{
   if(!plan || !name) return;
   let cat = document.getElementById('extra-cat').value;
   if(!CAT_KEYS.includes(cat)) cat = guessCategory(name);
-  plan.extras = (plan.extras || []).concat([{id: uid(), name, qty: document.getElementById('extra-qty').value.trim(), category: cat}]);
+  const newId = uid();
+  const onBtn = document.querySelector('#extra-store button.on');
+  const shop = onBtn ? onBtn.dataset.id : 'coles';
+  plan.extras = (plan.extras || []).concat([{id: newId, name, qty: document.getElementById('extra-qty').value.trim(), category: cat}]);
+  if(shop === 'aldi'){ state.storePrefs = state.storePrefs || {}; state.storePrefs['extra-' + newId] = 'aldi'; try{ await dbSet('storePrefs', state.storePrefs); }catch(err){ console.error(err); } }
   render();
   const nm = document.getElementById('extra-name'); if(nm) nm.focus();
   await savePlan(plan);
