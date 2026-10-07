@@ -220,7 +220,7 @@
 <body>
 <div id="app">
   <header class="app-header">
-    <span class="app-version" id="app-version">v3.7</span>
+    <span class="app-version" id="app-version">v3.8</span>
     <button type="button" class="header-btn" id="bug-header-btn">🐞 Report a bug</button>
     <h1>The Recipe Box</h1>
     <p class="tagline">Plan the week. Cook from cards.</p>
@@ -1023,7 +1023,7 @@ function openAllDoneSheet(){
   openSheet(`
     <div class="sheet-handle"></div>
     <h2>All done shopping?</h2>
-    <p style="font-size:13px;color:var(--brown);line-height:1.5;margin:0 0 14px;">Everything on your list is ticked. Would you like to wipe the grocery list and start again? This takes the meals out of ${esc(plan ? planLabel(plan) : 'your plan')} and removes the items you added yourself. Your recipes are not touched.</p>
+    <p style="font-size:13px;color:var(--brown);line-height:1.5;margin:0 0 14px;">Everything on your list is ticked. Would you like to wipe the grocery list and start again? This clears the groceries and the items you added yourself. Your meal plan stays exactly as it is, so you can still cook from it.</p>
     <button class="primary-btn" id="ad-wipe">Wipe list and start again</button>
     <button class="secondary-btn" id="ad-uncheck">Just untick everything</button>
     <button class="secondary-btn" id="ad-no">Not yet</button>
@@ -1036,7 +1036,8 @@ function openAllDoneSheet(){
   };
   document.getElementById('ad-wipe').onclick = async ()=>{
     const p = activePlan();
-    if(p){ p.recipeIds = []; p.extras = []; p.built = false; p.locked = false; }
+    // only the grocery list is wiped: the meals stay in the plan so you can still cook from it
+    if(p){ p.extras = []; p.built = false; p.locked = false; }
     state.checks = {};
     closeSheet();
     if(p) await savePlan(p);
@@ -1111,7 +1112,7 @@ function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '3.7';
+const APP_VERSION = '3.8';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
@@ -1877,6 +1878,19 @@ window.addEventListener('beforeinstallprompt', (e)=>{
   if(state.loaded) render();
 });
 window.addEventListener('appinstalled', ()=>{ deferredInstall = null; if(state.loaded) render(); });
+
+/* ---------- KEEP THE SCREEN AWAKE WHILE THE APP IS OPEN ---------- */
+let appWakeLock = null;
+async function keepScreenAwake(){
+  try {
+    if(!('wakeLock' in navigator) || appWakeLock || document.visibilityState !== 'visible') return;
+    appWakeLock = await navigator.wakeLock.request('screen');
+    appWakeLock.addEventListener('release', ()=>{ appWakeLock = null; });
+  } catch(e){ appWakeLock = null; }
+}
+document.addEventListener('visibilitychange', keepScreenAwake);
+document.addEventListener('pointerdown', keepScreenAwake, {passive:true});
+keepScreenAwake();
 
 /* ---------- COOKING MODE ---------- */
 const cookState = { recipeId: null, stepIndex: 0, wakeLock: null };
