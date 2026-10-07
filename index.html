@@ -268,7 +268,7 @@
   .plan-item .fav-btn.on{color:#d99a1e;}
   .plan-item .fav-btn .star-svg{width:21px;height:21px;}
   .plan-item .plan-rm{position:absolute;top:46px;right:8px;font-size:12px;}
-  .plan-item .done-col{position:absolute;right:10px;bottom:8px;padding:4px;}
+  .plan-item .done-col{position:absolute;right:6px;bottom:8px;padding:4px;}
   .plan-item .plan-item-main{padding-right:40px;min-width:0;}
   .plan-item.editing .plan-item-main{padding-right:56px;}
   .cu-chip{cursor:pointer;user-select:none;}
@@ -356,12 +356,19 @@
   .idea-btns .secondary-btn{margin:0;flex:1;padding:10px 6px;font-size:13px;}
   .idea-row .small-btn{flex-shrink:0;margin-left:8px;}
   .idea-row .small-btn.on{background:var(--herb);color:#fff;}
+  .np-cu{border-top:1px solid var(--line);}
+  .np-cu-head{flex:1;cursor:pointer;padding:6px 0;font-weight:600;}
+  .np-list{margin:0 0 8px;border:1px solid var(--line-strong);border-radius:4px;background:var(--card);}
+  .np-recipe{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 10px;font-size:14px;border-top:1px solid var(--line);cursor:pointer;}
+  .np-recipe:first-child{border-top:none}
+  .np-recipe.on{background:rgba(76,107,79,.14);}
+  .np-recipe b{color:var(--herb);font-size:16px;flex-shrink:0;}
 </style>
 </head>
 <body>
 <div id="app">
   <header class="app-header">
-    <span class="app-version" id="app-version">v6.4</span>
+    <span class="app-version" id="app-version">v6.8</span>
     <button type="button" class="header-btn" id="bug-header-btn">🐞 Bug or idea</button>
     <div class="brand"><svg viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#2B2620"/><g transform="translate(256 262) scale(.9) translate(-256 -256)"> <!-- steam --> <g fill="none" stroke="#EDE3D0" stroke-width="12" stroke-linecap="round" opacity=".85"> <path d="M196 132c-18-22 18-34 0-58"/> <path d="M256 120c-18-22 18-34 0-58"/> <path d="M316 132c-18-22 18-34 0-58"/> </g> <!-- bowl back rim --> <ellipse cx="256" cy="232" rx="168" ry="44" fill="#FAF6EC"/> <!-- noodle pile --> <g fill="none" stroke="#E9B949" stroke-width="22" stroke-linecap="round"> <path d="M118 226c26-62 54 44 82-12s54 44 82-12 54 44 82-12" /> <path d="M132 206c24-58 50 38 78-8s50 40 78-8 48 36 74-6"/> <path d="M150 188c22-40 44 26 70-4s44 28 70-4 40 24 58 0"/> </g> <g fill="none" stroke="#C8962A" stroke-width="5" stroke-linecap="round" opacity=".55"> <path d="M132 214c26-56 52 40 80-8s52 42 80-8 52 38 80-8"/> </g> <!-- sauce and basil --> <ellipse cx="256" cy="188" rx="62" ry="26" fill="#B94A2F"/> <ellipse cx="238" cy="182" rx="22" ry="8" fill="#D8674A" opacity=".75"/> <path d="M286 170c30-26 62-14 66 6-30 22-58 16-66-6z" fill="#4D7A5A"/> <path d="M292 174c20-8 38-8 54 2" stroke="#2F5A3C" stroke-width="4" fill="none" stroke-linecap="round"/> <!-- bowl body --> <path d="M88 236c0 100 70 170 168 170s168-70 168-170c-40 28-100 42-168 42S128 264 88 236z" fill="#FAF6EC"/> <path d="M88 236c40 28 100 42 168 42s128-14 168-42" fill="none" stroke="#B94A2F" stroke-width="16" stroke-linecap="round"/> <path d="M120 318c34 54 82 76 136 76" fill="none" stroke="#D9CDB4" stroke-width="10" stroke-linecap="round" opacity=".8"/> <!-- bowl foot --> <rect x="196" y="402" width="120" height="22" rx="11" fill="#FAF6EC"/> <!-- eyes and smile for cartoon feel --> <circle cx="214" cy="330" r="11" fill="#2B2620"/> <circle cx="298" cy="330" r="11" fill="#2B2620"/> <circle cx="218" cy="326" r="3.5" fill="#fff"/> <circle cx="302" cy="326" r="3.5" fill="#fff"/> <path d="M232 352c14 16 34 16 48 0" fill="none" stroke="#2B2620" stroke-width="8" stroke-linecap="round"/> <circle cx="190" cy="350" r="12" fill="#D8674A" opacity=".45"/> <circle cx="322" cy="350" r="12" fill="#D8674A" opacity=".45"/> <!-- chopsticks --> <g stroke-linecap="round"> <line x1="366" y1="96" x2="296" y2="206" stroke="#C98A4A" stroke-width="10"/> <line x1="392" y1="112" x2="316" y2="214" stroke="#8A4A2F" stroke-width="10"/> </g> </g></svg><h1>The Recipe Box</h1></div>
     <p class="tagline">Plan the week. Cook from cards.</p>
@@ -1023,7 +1030,6 @@ function renderPlan(){
       </div>
       <button type="button" class="plan-plus" data-act="new-plan" aria-label="Start a new meal plan">+</button>
     </div>
-    <div class="idea-btns"><button type="button" class="secondary-btn" data-act="ideas" data-id="fridge">🥬 What's in my fridge?</button><button type="button" class="secondary-btn" data-act="ideas" data-id="again">↻ Cook again</button></div>
     ${draftIds().length ? `<div class="draft-banner">📝 ${draftIds().length} meal${draftIds().length===1?'':'s'} waiting for your next plan. Tap + to start it.</div>` : ''}
     <div class="plan-count" style="margin-top:6px;">${items.length} meal${items.length===1?'':'s'} chosen${plan.locked ? '' : ` · <span class="plan-add-link" data-act="add-meals">+ add</span>`}</div>
   `;
@@ -1119,18 +1125,22 @@ function openNewPlanSheet(){
   const recipes = Object.values(state.recipes);
   const tags = CUISINES.map(c=>c.key).filter(t => recipes.some(r => recipeCuisines(r).includes(t)));
   const cuiLabel = t => (CUISINES.find(c=>c.key===t)||{label:t}).label;
-  const want = {};
+  const sel = new Set(drafts);          // meals chosen for the new plan (starts with the "add to next plan" ones)
+  const sugg = {};                      // cuisine -> recipe ids picked by the random suggester
+  const openCu = new Set();
   let carryOn = false, carryMode = 'none';
   const skip = new Set();
   let carriedItems = [];
   if(uncooked.length){
     carriedItems = buildGroceryList({recipeIds: uncooked, servings: old.servings || {}, carried: [], built: true});
+    carriedItems.forEach(it => skip.add(it.key));   // every grocery starts unticked; tick the ones you need
   }
   function body(){
     let h = `<div class="sheet-handle"></div><h2>Start a new meal plan</h2>
       <p style="font-size:13px;color:var(--brown);line-height:1.5;margin:0 0 6px;">The current plan moves down into "Previous plans". The grocery list follows the new plan.</p>`;
-    if(drafts.length){
-      h += `<div class="np-sec"><h3>From "add to next plan" (${drafts.length})</h3>${drafts.map(id=>`<span class="np-chip">${esc(fullTitle(state.recipes[id]))}</span>`).join('')}<div style="font-size:12px;color:var(--brown)">These will be added automatically.</div></div>`;
+    h += `<div class="idea-btns"><button type="button" class="secondary-btn" id="np-fridge">🥬 What's in my fridge?</button><button type="button" class="secondary-btn" id="np-again">↻ Cook again</button></div>`;
+    if(sel.size){
+      h += `<div class="np-sec"><h3>Chosen for the new plan (${sel.size})</h3>${Array.from(sel).filter(id=>state.recipes[id]).map(id=>`<span class="np-chip">${esc(state.recipes[id].title)}<button type="button" data-np-pick="${esc(id)}" aria-label="Remove">×</button></span>`).join('')}${drafts.length?`<div style="font-size:12px;color:var(--brown)">Meals you marked "add to next plan" are already here.</div>`:''}</div>`;
     }
     if(uncooked.length){
       h += `<div class="np-sec"><label class="np-opt"><input type="checkbox" id="np-carry" ${carryOn?'checked':''}><span>Include the ${uncooked.length} meal${uncooked.length===1?'':'s'} not cooked yet from the current plan<br><small style="color:var(--brown)">${uncooked.map(id=>esc(state.recipes[id].title)).join(', ')}</small></span></label>`;
@@ -1144,10 +1154,18 @@ function openNewPlanSheet(){
       h += `</div>`;
     }
     if(tags.length){
-      h += `<div class="np-sec"><h3>Suggest meals for me</h3><div style="font-size:12px;color:var(--brown);margin-bottom:4px;">Pick how many from each cuisine. They are chosen at random, and you can swap any afterwards.</div>`;
+      h += `<div class="np-sec"><h3>Choose meals by cuisine</h3><div style="font-size:12px;color:var(--brown);margin-bottom:4px;">Tap a cuisine to open it and pick meals, or use + to have a random one suggested. Suggestions appear at the top of the list.</div>`;
       tags.forEach(t=>{
-        const avail = recipes.filter(r => recipeCuisines(r).includes(t)).length;
-        h += `<div class="np-row"><span>${esc(cuiLabel(t))} <small style="color:var(--brown)">(${avail} recipe${avail===1?'':'s'})</small></span><span class="stepper"><button type="button" data-np-dec="${t}" aria-label="Fewer">−</button><strong>${want[t]||0}</strong><button type="button" data-np-inc="${t}" aria-label="More">+</button></span></div>`;
+        const list = recipes.filter(r => recipeCuisines(r).includes(t));
+        const nSel = list.filter(r => sel.has(r.id)).length;
+        const isOpen = openCu.has(t);
+        h += `<div class="np-cu"><div class="np-row"><span class="np-cu-head" data-np-tog="${t}">${isOpen?'▾':'▸'} ${esc(cuiLabel(t))} <small style="color:var(--brown)">(${list.length})${nSel?` · <strong>${nSel} chosen</strong>`:''}</small></span><span class="stepper"><button type="button" data-np-dec="${t}" aria-label="Remove a suggestion">−</button><strong>${(sugg[t]||[]).length}</strong><button type="button" data-np-inc="${t}" aria-label="Suggest one more">+</button></span></div>`;
+        if(isOpen){
+          const rank = r => (sugg[t]||[]).includes(r.id) ? 0 : (sel.has(r.id) ? 1 : 2);
+          const sorted = list.slice().sort((a,b)=> rank(a)-rank(b) || a.title.localeCompare(b.title));
+          h += `<div class="np-list">${sorted.map(r=>`<div class="np-recipe ${sel.has(r.id)?'on':''}" data-np-pick="${esc(r.id)}"><span>${(sugg[t]||[]).includes(r.id)?'🎲 ':''}${esc(r.title)}${r.subtitle?`<em class="pick-sub">${esc(r.subtitle)}</em>`:''}</span><b>${sel.has(r.id)?'✓':'+'}</b></div>`).join('')}</div>`;
+        }
+        h += `</div>`;
       });
       h += `</div>`;
     }
@@ -1155,14 +1173,26 @@ function openNewPlanSheet(){
     return h;
   }
   function draw(){
+    const sc = document.querySelector('.sheet'); const top = sc ? sc.scrollTop : 0;
     openSheet(body());
+    const sc2 = document.querySelector('.sheet'); if(sc2) sc2.scrollTop = top;
     document.getElementById('np-cancel').onclick = closeSheet;
+    document.getElementById('np-fridge').onclick = ()=>openIdeasSheet('fridge', true);
+    document.getElementById('np-again').onclick = ()=>openIdeasSheet('again', true);
     const c = document.getElementById('np-carry');
     if(c) c.onchange = ()=>{ carryOn = c.checked; draw(); };
     document.querySelectorAll('input[name=np-cm]').forEach(r => r.onchange = ()=>{ carryMode = r.value; draw(); });
     document.querySelectorAll('[data-np-ing]').forEach(x => x.onchange = ()=>{ if(x.checked) skip.delete(x.dataset.npIng); else skip.add(x.dataset.npIng); });
-    document.querySelectorAll('[data-np-inc]').forEach(b => b.onclick = ()=>{ const t=b.dataset.npInc; const avail = recipes.filter(r=>recipeCuisines(r).includes(t)).length; want[t] = Math.min(avail, (want[t]||0)+1); draw(); });
-    document.querySelectorAll('[data-np-dec]').forEach(b => b.onclick = ()=>{ const t=b.dataset.npDec; want[t] = Math.max(0, (want[t]||0)-1); draw(); });
+    document.querySelectorAll('[data-np-tog]').forEach(b => b.onclick = ()=>{ const t=b.dataset.npTog; if(openCu.has(t)) openCu.delete(t); else openCu.add(t); draw(); });
+    document.querySelectorAll('[data-np-pick]').forEach(b => b.onclick = ()=>{ const id=b.dataset.npPick; if(sel.has(id)){ sel.delete(id); Object.keys(sugg).forEach(k=>{ sugg[k] = sugg[k].filter(x=>x!==id); }); } else sel.add(id); draw(); });
+    document.querySelectorAll('[data-np-inc]').forEach(b => b.onclick = ()=>{
+      const t=b.dataset.npInc;
+      const pool = recipes.filter(r => recipeCuisines(r).includes(t) && !sel.has(r.id));
+      if(!pool.length){ showToast('No more ' + cuiLabel(t) + ' recipes to suggest'); return; }
+      const pick = pool[Math.floor(Math.random()*pool.length)];
+      sel.add(pick.id); (sugg[t] = sugg[t] || []).unshift(pick.id); openCu.add(t); draw();
+    });
+    document.querySelectorAll('[data-np-dec]').forEach(b => b.onclick = ()=>{ const t=b.dataset.npDec; const l = sugg[t]||[]; if(!l.length) return; const id = l.shift(); sel.delete(id); draw(); });
     document.getElementById('np-create').onclick = create;
   }
   async function create(){
@@ -1177,13 +1207,7 @@ function openNewPlanSheet(){
       uncooked.forEach(id => { if(old.servings && old.servings[id]) plan.servings[id] = old.servings[id]; });
       if(!Object.keys(plan.servings).length) delete plan.servings;
     }
-    drafts.forEach(id => { if(!plan.recipeIds.includes(id)) plan.recipeIds.push(id); });
-    tags.forEach(t=>{
-      const n = want[t] || 0; if(!n) return;
-      const pool = recipes.filter(r => recipeCuisines(r).includes(t) && !plan.recipeIds.includes(r.id)).map(r=>r.id);
-      for(let i = pool.length - 1; i > 0; i--){ const j = Math.floor(Math.random()*(i+1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
-      plan.recipeIds.push(...pool.slice(0, n));
-    });
+    sel.forEach(id => { if(state.recipes[id] && !plan.recipeIds.includes(id)) plan.recipeIds.push(id); });
     state.plans[plan.id] = plan;
     state.activePlanId = plan.id;
     state.checks = {};
@@ -1221,7 +1245,7 @@ function fridgeMatches(){
   });
   return out.sort((a,b)=> b.hit.length - a.hit.length || (a.total - b.total) || a.r.title.localeCompare(b.r.title)).slice(0, 10);
 }
-function ideaTarget(){ const p = activePlan(); return (p && !p.locked) ? 'plan' : 'draft'; }
+function ideaTarget(){ if(ideasState.forNew) return 'draft'; const p = activePlan(); return (p && !p.locked) ? 'plan' : 'draft'; }
 function ideaAdded(id){ return ideaTarget()==='plan' ? activePlan().recipeIds.includes(id) : draftIds().includes(id); }
 function ideaRow(r, sub){
   const on = ideaAdded(r.id);
@@ -1237,7 +1261,7 @@ function ideasBody(){
     else if(!m.length) h += `<p style="font-size:13px;color:var(--brown)">No recipes use that yet.</p>`;
     else h += m.map(x=>ideaRow(x.r, `Uses ${x.hit.map(esc).join(', ')} · ${esc(x.r.time)} min`)).join('');
   } else {
-    const prev = Object.values(state.plans).filter(p=>p.id!==state.activePlanId).sort((a,b)=>(b.created||0)-(a.created||0)).slice(0,3);
+    const prev = Object.values(state.plans).filter(p=>ideasState.forNew || p.id!==state.activePlanId).sort((a,b)=>(b.created||0)-(a.created||0)).slice(0,3);
     if(!prev.length) h += `<p style="font-size:13px;color:var(--brown)">No previous plans yet.</p>`;
     prev.forEach((p,i)=>{
       const rs = planRecipes(p);
@@ -1247,15 +1271,16 @@ function ideasBody(){
   }
   return h;
 }
-function openIdeasSheet(tab){
+function openIdeasSheet(tab, forNew){
   ideasState.tab = tab || ideasState.tab;
+  if(forNew !== undefined) ideasState.forNew = !!forNew;
   const tgt = ideaTarget();
   openSheet(`<div class="sheet-handle"></div><h2>Meal ideas</h2>
     <div class="store-seg"><button type="button" class="${ideasState.tab==='fridge'?'on':''}" data-idea-tab="fridge">From my fridge</button><button type="button" class="${ideasState.tab==='again'?'on':''}" data-idea-tab="again">Cook again</button></div>
-    <p style="font-size:12px;color:var(--brown);margin:0 0 8px;">${tgt==='plan'?'Meals you add go into the current plan.':'The current plan is locked, so meals you add go into your next plan.'} Tap a meal to see the recipe.</p>
+    <p style="font-size:12px;color:var(--brown);margin:0 0 8px;">${ideasState.forNew ? 'Meals you add go into the new plan you are starting.' : (tgt==='plan'?'Meals you add go into the current plan.':'The current plan is locked, so meals you add go into your next plan.')} Tap a meal to see the recipe.</p>
     <div id="ideas-body">${ideasBody()}</div><button class="secondary-btn" id="ideas-close">Close</button>`);
   const sh = document.querySelector('.sheet');
-  document.getElementById('ideas-close').onclick = closeSheet;
+  document.getElementById('ideas-close').onclick = ()=>{ if(ideasState.forNew){ ideasState.forNew = false; openNewPlanSheet(); } else closeSheet(); };
   const redraw = ()=>{ const keep = (document.getElementById('fr-input')||{}).value; document.getElementById('ideas-body').innerHTML = ideasBody(); const i = document.getElementById('fr-input'); if(i){ i.value = keep||''; } bindIdeas(); };
   const save = ()=>{ try{ localStorage.setItem('rb_fridge', JSON.stringify(ideasState.terms)); }catch(e){} };
   function bindIdeas(){
@@ -1672,7 +1697,7 @@ async function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '6.4';
+const APP_VERSION = '6.8';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
