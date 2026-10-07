@@ -124,6 +124,18 @@
   .plan-select-wrap{margin-bottom:12px;}
   .plan-select-wrap label{display:block;font-size:12px;font-weight:600;color:var(--brown);margin-bottom:5px;}
   .plan-select-wrap select{width:100%;padding:11px;border:1px solid var(--line-strong);border-radius:2px;background:var(--card);font-size:15px;font-weight:600;color:var(--ink);}
+  .plan-current-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--herb);margin:0 0 4px;}
+  .plan-date{font-size:22px;font-weight:700;margin:0 0 14px;}
+  .prev-plan{background:var(--card);border:1px solid var(--line);border-radius:2px;margin-bottom:8px;}
+  .prev-head{display:flex;align-items:center;gap:10px;width:100%;background:none;border:none;padding:13px 12px;text-align:left;color:var(--ink);font-size:14.5px;}
+  .prev-arrow{color:var(--brown);width:12px;}
+  .prev-title{flex:1;font-weight:600;}
+  .prev-count{font-size:12px;color:var(--brown);}
+  .prev-body{padding:0 12px 12px 34px;}
+  .prev-meal{padding:8px 0;border-top:1px solid var(--line);font-size:14px;cursor:pointer;}
+  .prev-empty,.prev-extras{font-size:13px;color:var(--brown);padding:6px 0;}
+  .prev-actions{display:flex;gap:8px;margin-top:8px;}
+  .prev-del{color:var(--tomato);}
   .plan-count{font-size:12.5px;color:var(--brown);margin:18px 0 8px;font-weight:600;}
   .plan-item{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:2px;padding:12px;margin-bottom:8px;}
   .plan-item-main{flex:1;cursor:pointer;}
@@ -203,15 +215,15 @@
 <body>
 <div id="app">
   <header class="app-header">
-    <span class="app-version" id="app-version">v3.4</span>
+    <span class="app-version" id="app-version">v3.5</span>
     <button type="button" class="header-btn" id="bug-header-btn">🐞 Report a bug</button>
     <h1>The Recipe Box</h1>
     <p class="tagline">Plan the week. Cook from cards.</p>
   </header>
   <main id="main"><div class="loading">Opening the recipe box…</div></main>
   <nav class="tabbar">
-    <button data-tab="box" class="tab active">Recipes</button>
-    <button data-tab="plan" class="tab">Meal Plan</button>
+    <button data-tab="plan" class="tab active">Meal Plan</button>
+    <button data-tab="box" class="tab">Recipes</button>
     <button data-tab="list" class="tab">Grocery List</button>
   </nav>
 </div>
@@ -266,7 +278,7 @@ const LEGACY_DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 const LEGACY_MEALS = ['breakfast','lunch','dinner'];
 
 /* ---------- STATE + NAVIGATION STACK ---------- */
-const HOME_VIEW = {tab:'box', recipeId:null};
+const HOME_VIEW = {tab:'plan', recipeId:null};
 let viewStack = [HOME_VIEW];
 const currentView = () => viewStack[viewStack.length - 1];
 
@@ -276,6 +288,7 @@ let state = {
   activePlanId: null,
   checks: {},
   searchTerm: '',
+  openPlans: {},
   activeFilter: 'all',
   loaded: false
 };
@@ -457,6 +470,16 @@ function normPlan(p){
   return {id: p.id, name: p.name || 'Meal plan', created: p.created || 0, recipeIds: ids.filter(Boolean),
           extras: ex.filter(x => x && x.name).map(x => ({id: String(x.id || uid()), name: String(x.name), qty: String(x.qty || ''), category: CAT_KEYS.includes(x.category) ? x.category : guessCategory(x.name)}))};
 }
+function planLabel(p){
+  if(!p) return '';
+  if(!p.created) return p.name || 'Meal plan';
+  const d = new Date(p.created);
+  let label = d.toLocaleDateString('en-AU', {weekday:'short', day:'numeric', month:'short', year:'numeric'});
+  // two plans on the same day: number them in the order they were made
+  const same = Object.values(state.plans).filter(q => q.created && new Date(q.created).toDateString() === d.toDateString()).sort((a,b)=>a.created-b.created);
+  if(same.length > 1) label += ' (' + (same.findIndex(q => q.id === p.id) + 1) + ')';
+  return label;
+}
 function activePlan(){ return state.plans[state.activePlanId] || null; }
 function planRecipes(plan){ return plan ? plan.recipeIds.map(id => state.recipes[id]).filter(Boolean) : []; }
 
@@ -573,7 +596,7 @@ function goBack(){
   return false;
 }
 function goTab(tab){
-  viewStack = (tab === 'box') ? [HOME_VIEW] : [HOME_VIEW, {tab, recipeId:null}];
+  viewStack = (tab === HOME_VIEW.tab) ? [HOME_VIEW] : [HOME_VIEW, {tab, recipeId:null}];
   render();
   window.scrollTo(0, 0);
 }
@@ -658,7 +681,7 @@ function renderRecipeDetail(id){
 
     <div class="detail-section">
       <button class="primary-btn" data-act="cook" data-id="${esc(r.id)}" style="background:var(--tomato);">▶ Start cooking</button>
-      <button class="secondary-btn" data-act="plan-toggle" data-id="${esc(r.id)}">${inPlan ? '✓ In meal plan — tap to remove' : '+ Add to meal plan'}${plan ? ` (${esc(plan.name)})` : ''}</button>
+      <button class="secondary-btn" data-act="plan-toggle" data-id="${esc(r.id)}">${inPlan ? '✓ In meal plan — tap to remove' : '+ Add to meal plan'}${plan ? ` (${esc(planLabel(plan))})` : ''}</button>
       <button class="secondary-btn" data-act="edit-recipe" data-id="${esc(r.id)}">Edit recipe</button>
       <button class="danger-btn" data-act="delete-recipe" data-id="${esc(r.id)}">Delete recipe</button>
     </div>
@@ -667,25 +690,21 @@ function renderRecipeDetail(id){
 
 /* ---------- MEAL PLAN VIEW ---------- */
 function renderPlan(){
-  const plans = Object.values(state.plans).sort((a,b)=>(a.created||0)-(b.created||0));
+  const plans = Object.values(state.plans).sort((a,b)=>(b.created||0)-(a.created||0));
   const plan = activePlan();
   if(!plan) return `<div class="loading">No meal plan yet.</div>`;
   const items = planRecipes(plan);
 
   let html = `
-    <div class="plan-select-wrap">
-      <label for="plan-select">Meal plan</label>
-      <select id="plan-select">
-        ${plans.map(p=>`<option value="${esc(p.id)}" ${p.id===plan.id?'selected':''}>${esc(p.name)}</option>`).join('')}
-      </select>
-    </div>
+    <div class="plan-current-label">Current plan</div>
+    <h2 class="plan-date">${esc(planLabel(plan))}</h2>
     <button class="add-btn" data-act="add-meals">+ Add meals from your recipes</button>
-    <button class="secondary-btn" data-act="new-plan" style="margin-top:0;">Create new meal plan</button>
+    <button class="secondary-btn" data-act="new-plan" style="margin-top:0;">Start a new meal plan</button>
     <div class="plan-count">${items.length} meal${items.length===1?'':'s'} chosen</div>
   `;
 
   if(items.length === 0){
-    html += `<div class="empty-state"><h3>No meals chosen yet</h3><p>Tap "Add meals from your recipes" to build this plan. Your grocery list is built from the plan you have selected.</p></div>`;
+    html += `<div class="empty-state"><h3>No meals chosen yet</h3><p>Tap "Add meals from your recipes" to build this plan. Your grocery list is built from the current plan.</p></div>`;
   } else {
     items.forEach(r=>{
       html += `
@@ -699,11 +718,37 @@ function renderPlan(){
     });
   }
 
-  html += `<div style="margin-top:24px;">
-    <button class="secondary-btn" data-act="plan-rename">Rename this plan</button>
-    ${items.length ? `<button class="secondary-btn" data-act="plan-clear">Clear all meals from this plan</button>` : ''}
-    ${plans.length > 1 ? `<button class="danger-btn" data-act="plan-delete">Delete this plan</button>` : ''}
-  </div>`;
+  if(items.length){
+    html += `<button class="secondary-btn" data-act="plan-clear" style="margin-top:12px;">Clear all meals from this plan</button>`;
+  }
+
+  const previous = plans.filter(p => p.id !== plan.id);
+  if(previous.length){
+    html += `<div class="plan-current-label" style="margin-top:30px;">Previous plans</div>`;
+    previous.forEach(p=>{
+      const open = !!state.openPlans[p.id];
+      const rs = planRecipes(p);
+      const n = (p.recipeIds || []).length;
+      html += `
+        <div class="prev-plan">
+          <button class="prev-head" data-act="plan-expand" data-id="${esc(p.id)}" aria-expanded="${open}">
+            <span class="prev-arrow">${open ? '▾' : '▸'}</span>
+            <span class="prev-title">${esc(planLabel(p))}</span>
+            <span class="prev-count">${n} meal${n===1?'':'s'}</span>
+          </button>`;
+      if(open){
+        html += `<div class="prev-body">`;
+        if(rs.length) html += rs.map(r=>`<div class="prev-meal" data-act="open-recipe" data-id="${esc(r.id)}">${esc(r.title)}</div>`).join('');
+        else html += `<div class="prev-empty">No meals in this plan.</div>`;
+        if((p.extras || []).length) html += `<div class="prev-extras">Plus: ${(p.extras || []).map(x=>esc(x.name)).join(', ')}</div>`;
+        html += `<div class="prev-actions">
+            <button class="small-btn" data-act="plan-activate" data-id="${esc(p.id)}">Make this the current plan</button>
+            <button class="small-btn prev-del" data-act="plan-delete-id" data-id="${esc(p.id)}">Delete</button>
+          </div></div>`;
+      }
+      html += `</div>`;
+    });
+  }
   return html;
 }
 
@@ -717,21 +762,17 @@ async function togglePlanRecipe(rid){
 }
 
 function openNewPlanSheet(){
-  const n = Object.keys(state.plans).length + 1;
   openSheet(`
     <div class="sheet-handle"></div>
-    <h2>Create new meal plan</h2>
-    <p style="font-size:13px;color:var(--brown);line-height:1.5;margin:0 0 14px;">This starts a fresh list of meals. Your other plans are kept and you can switch between them. The grocery list follows the plan you have selected, and its ticks start fresh.</p>
-    <div class="field"><label>Plan name</label><input id="np-name" value="Meal plan ${n}"></div>
-    <button class="primary-btn" id="np-create">Create plan and choose meals</button>
+    <h2>Start a new meal plan</h2>
+    <p style="font-size:13px;color:var(--brown);line-height:1.5;margin:0 0 14px;">This starts a fresh plan dated today. The current plan moves down into "Previous plans", where you can look back at it. The grocery list follows the current plan, and its ticks start fresh.</p>
+    <button class="primary-btn" id="np-create">Start plan and choose meals</button>
     <button class="secondary-btn" id="np-cancel">Cancel</button>
   `);
-  const input = document.getElementById('np-name');
-  input.focus(); input.select();
   document.getElementById('np-cancel').onclick = closeSheet;
   document.getElementById('np-create').onclick = async ()=>{
-    const name = input.value.trim() || `Meal plan ${n}`;
-    const plan = {id: uid(), name, created: Date.now(), recipeIds: [], extras: []};
+    const plan = {id: uid(), name: '', created: Date.now(), recipeIds: [], extras: []};
+    plan.name = planLabel({...plan});
     state.plans[plan.id] = plan;
     state.activePlanId = plan.id;
     state.checks = {};
@@ -744,31 +785,11 @@ function openNewPlanSheet(){
   };
 }
 
-function openRenamePlanSheet(){
-  const plan = activePlan();
-  if(!plan) return;
-  openSheet(`
-    <div class="sheet-handle"></div>
-    <h2>Rename meal plan</h2>
-    <div class="field"><label>Plan name</label><input id="rn-name" value="${esc(plan.name)}"></div>
-    <button class="primary-btn" id="rn-save">Save</button>
-    <button class="secondary-btn" id="rn-cancel">Cancel</button>
-  `);
-  document.getElementById('rn-cancel').onclick = closeSheet;
-  document.getElementById('rn-save').onclick = async ()=>{
-    const name = document.getElementById('rn-name').value.trim();
-    if(!name) return;
-    plan.name = name;
-    closeSheet();
-    await savePlan(plan);
-  };
-}
-
 function openMealPicker(){
   const plan = activePlan();
   if(!plan) return;
   const recipes = Object.values(state.recipes).sort((a,b)=>a.title.localeCompare(b.title));
-  let html = `<div class="sheet-handle"></div><h2>Choose meals for "${esc(plan.name)}"</h2>`;
+  let html = `<div class="sheet-handle"></div><h2>Choose meals for ${esc(planLabel(plan))}</h2>`;
   if(recipes.length === 0){
     html += `<div class="empty-state"><p>Add a recipe first, then come back to build your plan.</p></div>`;
   } else {
@@ -934,7 +955,7 @@ function allGroceryItems(){
 function renderGrocery(){
   const plan = activePlan();
   const items = allGroceryItems();
-  let html = `<h3 style="font-size:14px;color:var(--brown);margin:0 0 14px;">Built from: ${plan ? esc(plan.name) : 'your meal plan'}</h3>`;
+  let html = `<h3 style="font-size:14px;color:var(--brown);margin:0 0 14px;">Built from: ${plan ? esc(planLabel(plan)) : 'your meal plan'}</h3>`;
   html += `
     <form id="extra-form" class="extra-form" autocomplete="off">
       <div class="extra-row">
@@ -980,7 +1001,7 @@ function openAllDoneSheet(){
   openSheet(`
     <div class="sheet-handle"></div>
     <h2>All done shopping?</h2>
-    <p style="font-size:13px;color:var(--brown);line-height:1.5;margin:0 0 14px;">Everything on your list is ticked. Would you like to wipe the grocery list and start again? This takes the meals out of "${esc(plan ? plan.name : 'your plan')}" and removes the items you added yourself. Your recipes are not touched.</p>
+    <p style="font-size:13px;color:var(--brown);line-height:1.5;margin:0 0 14px;">Everything on your list is ticked. Would you like to wipe the grocery list and start again? This takes the meals out of ${esc(plan ? planLabel(plan) : 'your plan')} and removes the items you added yourself. Your recipes are not touched.</p>
     <button class="primary-btn" id="ad-wipe">Wipe list and start again</button>
     <button class="secondary-btn" id="ad-uncheck">Just untick everything</button>
     <button class="secondary-btn" id="ad-no">Not yet</button>
@@ -1068,7 +1089,7 @@ function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '3.4';
+const APP_VERSION = '3.5';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
@@ -1709,23 +1730,30 @@ mainEl.addEventListener('click', async (e)=>{
     case 'new-plan': openNewPlanSheet(); break;
     case 'add-meals': openMealPicker(); break;
     case 'plan-remove': togglePlanRecipe(id); break;
-    case 'plan-rename': openRenamePlanSheet(); break;
+    case 'plan-expand': state.openPlans[id] = !state.openPlans[id]; render(); break;
+    case 'plan-activate':
+      if(!state.plans[id]) break;
+      state.activePlanId = id;
+      state.checks = {};
+      render();
+      window.scrollTo(0, 0);
+      await saveActivePlanId();
+      await saveChecks();
+      break;
+    case 'plan-delete-id': {
+      const p = state.plans[id];
+      if(!p || id === state.activePlanId || !confirm(`Delete the plan for ${planLabel(p)}?`)) break;
+      delete state.plans[id];
+      render();
+      await deletePlanStorage(id);
+      break;
+    }
     case 'plan-clear': {
       const plan = activePlan();
-      if(!plan || !confirm(`Remove all meals from "${plan.name}"?`)) break;
+      if(!plan || !confirm(`Remove all meals from the plan for ${planLabel(plan)}?`)) break;
       plan.recipeIds = [];
       render();
       await savePlan(plan);
-      break;
-    }
-    case 'plan-delete': {
-      const plan = activePlan();
-      if(!plan || Object.keys(state.plans).length < 2 || !confirm(`Delete the plan "${plan.name}"?`)) break;
-      delete state.plans[plan.id];
-      state.activePlanId = Object.values(state.plans).sort((a,b)=>(a.created||0)-(b.created||0))[0].id;
-      render();
-      await deletePlanStorage(plan.id);
-      await saveActivePlanId();
       break;
     }
     case 'check-all':
