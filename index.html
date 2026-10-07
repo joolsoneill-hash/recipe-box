@@ -40,8 +40,8 @@
   button{font-family:'Work Sans',sans-serif;cursor:pointer;}
   input,textarea,select{font-family:'Work Sans',sans-serif;}
 
-  .app-header{background:var(--ink);color:var(--paper);padding:22px 20px 22px;position:relative;margin-bottom:0;}
-  .app-header h1{margin:0;font-size:19px;letter-spacing:0.2px;}
+  .app-header{background:var(--ink);color:var(--paper);padding:10px 16px 10px;position:relative;margin-bottom:0;}
+  .app-header h1{margin:0;font-size:19px;white-space:nowrap;letter-spacing:0.2px;}
   .app-header .tagline{margin:6px 0 0;font-size:13px;color:rgba(237,227,208,0.72);}
 
   main{flex:1;padding:26px 16px 16px;}
@@ -174,7 +174,7 @@
   .picker-item button.on{background:var(--ink);}
 
 
-  .header-right{position:absolute;top:14px;right:14px;display:flex;align-items:center;gap:10px;}
+  .header-right{position:absolute;top:50%;transform:translateY(-50%);right:14px;display:flex;align-items:center;gap:10px;}
   .app-version{font-size:12px;font-weight:600;letter-spacing:0.4px;color:rgba(237,227,208,0.6);}
   .header-btn{background:rgba(237,227,208,0.12);color:var(--paper);border:1px solid rgba(237,227,208,0.32);border-radius:50%;width:42px;height:42px;padding:0;font-size:22px;line-height:1;display:flex;align-items:center;justify-content:center;}
   .sheet-note{font-size:13px;color:var(--brown);line-height:1.5;margin:0 0 12px;}
@@ -228,8 +228,8 @@
   .cook-finish h2{font-size:28px;margin:0 0 6px;}
   .cook-finish p{color:var(--brown);margin:0 0 20px;}
   .cook-finish .fav-btn{width:auto;border-radius:24px;padding:0 20px;height:46px;font-size:16px;gap:8px;margin:0 auto;}
-  .app-header .brand{display:flex;flex-direction:column;align-items:flex-start;gap:8px;}
-  .app-header .brand svg{width:68px;height:68px;flex-shrink:0;border-radius:16px;}
+  .app-header .brand{display:flex;flex-direction:row;align-items:center;gap:12px;padding-right:104px;}
+  .app-header .brand svg{width:88px;height:88px;flex-shrink:0;border-radius:20px;}
   .plan-headrow{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:6px;}
   .plan-headrow .plan-date{margin:0;}
   .plan-title-line{display:flex;align-items:center;gap:8px;}
@@ -367,7 +367,7 @@
 <body>
 <div id="app">
   <header class="app-header">
-    <div class="header-right"><span class="app-version" id="app-version">v7.1</span><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button></div>
+    <div class="header-right"><span class="app-version" id="app-version">v7.2</span><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button></div>
     <div class="brand"><svg viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#2B2620"/><g transform="translate(256 262) scale(.9) translate(-256 -256)"> <!-- steam --> <g fill="none" stroke="#EDE3D0" stroke-width="12" stroke-linecap="round" opacity=".85"> <path d="M196 132c-18-22 18-34 0-58"/> <path d="M256 120c-18-22 18-34 0-58"/> <path d="M316 132c-18-22 18-34 0-58"/> </g> <!-- bowl back rim --> <ellipse cx="256" cy="232" rx="168" ry="44" fill="#FAF6EC"/> <!-- noodle pile --> <g fill="none" stroke="#E9B949" stroke-width="22" stroke-linecap="round"> <path d="M118 226c26-62 54 44 82-12s54 44 82-12 54 44 82-12" /> <path d="M132 206c24-58 50 38 78-8s50 40 78-8 48 36 74-6"/> <path d="M150 188c22-40 44 26 70-4s44 28 70-4 40 24 58 0"/> </g> <g fill="none" stroke="#C8962A" stroke-width="5" stroke-linecap="round" opacity=".55"> <path d="M132 214c26-56 52 40 80-8s52 42 80-8 52 38 80-8"/> </g> <!-- sauce and basil --> <ellipse cx="256" cy="188" rx="62" ry="26" fill="#B94A2F"/> <ellipse cx="238" cy="182" rx="22" ry="8" fill="#D8674A" opacity=".75"/> <path d="M286 170c30-26 62-14 66 6-30 22-58 16-66-6z" fill="#4D7A5A"/> <path d="M292 174c20-8 38-8 54 2" stroke="#2F5A3C" stroke-width="4" fill="none" stroke-linecap="round"/> <!-- bowl body --> <path d="M88 236c0 100 70 170 168 170s168-70 168-170c-40 28-100 42-168 42S128 264 88 236z" fill="#FAF6EC"/> <path d="M88 236c40 28 100 42 168 42s128-14 168-42" fill="none" stroke="#B94A2F" stroke-width="16" stroke-linecap="round"/> <path d="M120 318c34 54 82 76 136 76" fill="none" stroke="#D9CDB4" stroke-width="10" stroke-linecap="round" opacity=".8"/> <!-- bowl foot --> <rect x="196" y="402" width="120" height="22" rx="11" fill="#FAF6EC"/> <!-- eyes and smile for cartoon feel --> <circle cx="214" cy="330" r="11" fill="#2B2620"/> <circle cx="298" cy="330" r="11" fill="#2B2620"/> <circle cx="218" cy="326" r="3.5" fill="#fff"/> <circle cx="302" cy="326" r="3.5" fill="#fff"/> <path d="M232 352c14 16 34 16 48 0" fill="none" stroke="#2B2620" stroke-width="8" stroke-linecap="round"/> <circle cx="190" cy="350" r="12" fill="#D8674A" opacity=".45"/> <circle cx="322" cy="350" r="12" fill="#D8674A" opacity=".45"/> <!-- chopsticks --> <g stroke-linecap="round"> <line x1="366" y1="96" x2="296" y2="206" stroke="#C98A4A" stroke-width="10"/> <line x1="392" y1="112" x2="316" y2="214" stroke="#8A4A2F" stroke-width="10"/> </g> </g></svg><h1>The Recipe Box</h1></div>
   </header>
   <main id="main"><div class="loading">Opening the recipe box…</div></main>
@@ -1703,7 +1703,7 @@ async function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '7.1';
+const APP_VERSION = '7.2';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
