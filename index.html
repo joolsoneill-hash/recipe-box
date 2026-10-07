@@ -368,12 +368,34 @@
   .fold-head b{color:var(--brown);}
   .chip-row[hidden]{display:none;}
   .fold-head + .chip-row{margin-top:8px;}
+  /* cooking mode uses the same light look as the rest of the app */
+  #cook-overlay{background:var(--paper);color:var(--ink);}
+  #cook-overlay .cook-header{gap:10px;padding:12px 12px 8px;border-bottom:1px solid var(--line);background:var(--card);}
+  #cook-overlay .cook-exit{color:var(--ink);}
+  #cook-overlay .cook-progress{color:var(--brown);white-space:nowrap;}
+  .cook-recipe{flex:1;min-width:0;display:flex;align-items:center;gap:10px;}
+  .cook-recipe .thumb{width:44px;height:44px;border-radius:6px;flex-shrink:0;object-fit:cover;font-size:20px;}
+  .cook-rt{min-width:0;display:flex;flex-direction:column;}
+  .cook-rt strong{font-size:15px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+  .cook-rt small{font-size:11.5px;color:var(--brown);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+  #cook-overlay .cook-ings-panel{background:var(--card);border-color:var(--line-strong);}
+  #cook-overlay .cook-ing-row{border-top-color:var(--line);}
+  #cook-overlay .cook-ing-none{color:var(--brown);}
+  #cook-overlay .cook-dot{background:var(--line-strong);}
+  #cook-overlay .cook-dot.active{background:var(--tomato);}
+  #cook-overlay .cook-nav-btn{border-color:var(--line-strong);color:var(--ink);}
+  #cook-overlay .cook-nav-btn.primary{background:var(--tomato);border-color:var(--tomato);color:#fff;}
+  #cook-overlay .cook-ing-row .ce input,#cook-overlay .cook-step-edit{border-color:var(--line-strong);background:#fff;color:var(--ink);}
+  #cook-overlay .cook-ing-row .ce button,#cook-overlay .cook-edit-actions button{border-color:var(--line-strong);color:var(--ink);}
+  #cook-overlay .cook-ing-row .ce button.ok,#cook-overlay .cook-edit-actions button.ok{background:var(--herb);border-color:var(--herb);color:#fff;}
+  #cook-overlay .cook-edit-link{color:var(--brown);}
+  #cook-overlay .cook-step-area{cursor:pointer;}
 </style>
 </head>
 <body>
 <div id="app">
   <header class="app-header">
-    <div class="header-right"><span class="app-version" id="app-version">v7.5</span><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button></div>
+    <div class="header-right"><span class="app-version" id="app-version">v7.6</span><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button></div>
     <div class="brand"><svg viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#2B2620"/><g transform="translate(256 262) scale(.9) translate(-256 -256)"> <!-- steam --> <g fill="none" stroke="#EDE3D0" stroke-width="12" stroke-linecap="round" opacity=".85"> <path d="M196 132c-18-22 18-34 0-58"/> <path d="M256 120c-18-22 18-34 0-58"/> <path d="M316 132c-18-22 18-34 0-58"/> </g> <!-- bowl back rim --> <ellipse cx="256" cy="232" rx="168" ry="44" fill="#FAF6EC"/> <!-- noodle pile --> <g fill="none" stroke="#E9B949" stroke-width="22" stroke-linecap="round"> <path d="M118 226c26-62 54 44 82-12s54 44 82-12 54 44 82-12" /> <path d="M132 206c24-58 50 38 78-8s50 40 78-8 48 36 74-6"/> <path d="M150 188c22-40 44 26 70-4s44 28 70-4 40 24 58 0"/> </g> <g fill="none" stroke="#C8962A" stroke-width="5" stroke-linecap="round" opacity=".55"> <path d="M132 214c26-56 52 40 80-8s52 42 80-8 52 38 80-8"/> </g> <!-- sauce and basil --> <ellipse cx="256" cy="188" rx="62" ry="26" fill="#B94A2F"/> <ellipse cx="238" cy="182" rx="22" ry="8" fill="#D8674A" opacity=".75"/> <path d="M286 170c30-26 62-14 66 6-30 22-58 16-66-6z" fill="#4D7A5A"/> <path d="M292 174c20-8 38-8 54 2" stroke="#2F5A3C" stroke-width="4" fill="none" stroke-linecap="round"/> <!-- bowl body --> <path d="M88 236c0 100 70 170 168 170s168-70 168-170c-40 28-100 42-168 42S128 264 88 236z" fill="#FAF6EC"/> <path d="M88 236c40 28 100 42 168 42s128-14 168-42" fill="none" stroke="#B94A2F" stroke-width="16" stroke-linecap="round"/> <path d="M120 318c34 54 82 76 136 76" fill="none" stroke="#D9CDB4" stroke-width="10" stroke-linecap="round" opacity=".8"/> <!-- bowl foot --> <rect x="196" y="402" width="120" height="22" rx="11" fill="#FAF6EC"/> <!-- eyes and smile for cartoon feel --> <circle cx="214" cy="330" r="11" fill="#2B2620"/> <circle cx="298" cy="330" r="11" fill="#2B2620"/> <circle cx="218" cy="326" r="3.5" fill="#fff"/> <circle cx="302" cy="326" r="3.5" fill="#fff"/> <path d="M232 352c14 16 34 16 48 0" fill="none" stroke="#2B2620" stroke-width="8" stroke-linecap="round"/> <circle cx="190" cy="350" r="12" fill="#D8674A" opacity=".45"/> <circle cx="322" cy="350" r="12" fill="#D8674A" opacity=".45"/> <!-- chopsticks --> <g stroke-linecap="round"> <line x1="366" y1="96" x2="296" y2="206" stroke="#C98A4A" stroke-width="10"/> <line x1="392" y1="112" x2="316" y2="214" stroke="#8A4A2F" stroke-width="10"/> </g> </g></svg><h1>Recipe Box</h1></div>
   </header>
   <main id="main"><div class="loading">Opening the recipe box…</div></main>
@@ -418,6 +440,7 @@
 <div id="cook-overlay" class="cook-overlay hidden">
   <div class="cook-header">
     <button id="cook-exit-btn" class="cook-exit" aria-label="Exit cooking mode">×</button>
+    <div class="cook-recipe" id="cook-recipe"></div>
     <div class="cook-progress" id="cook-progress"></div>
   </div>
   <div class="cook-step-area" id="cook-step-area"></div>
@@ -1709,7 +1732,7 @@ async function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '7.5';
+const APP_VERSION = '7.6';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
@@ -2657,6 +2680,7 @@ function openCookMode(recipeId){
   cookState.stepIndex = 0;
   cookState.finished = false;
   cookState.editIng = null; cookState.editStep = null;
+  document.getElementById('cook-recipe').innerHTML = thumbHtml(r, true).replace(/ data-act="open-recipe" data-id="[^"]*"/, '') + `<div class="cook-rt"><strong>${esc(r.title)}</strong>${r.subtitle ? `<small>${esc(r.subtitle)}</small>` : ''}</div>`;
   const ap = activePlan();
   if(ap && ap.recipeIds.includes(recipeId) && !(ap.done && ap.done[recipeId])){
     ap.done = ap.done || {}; ap.done[recipeId] = true;   // starting to cook marks the meal as cooked
@@ -2736,7 +2760,6 @@ function renderCookStep(){
   document.getElementById('cook-step-area').innerHTML = `
     <div class="cook-step-main">
       <div>
-        <div class="cook-step-title">${esc(r.title)}${r.subtitle ? `<span class="cook-sub">${esc(r.subtitle)}</span>` : ''}</div>
         ${cookState.editStep === i
           ? `<textarea id="cs-text" class="cook-step-edit">${esc(r.steps[i])}</textarea><div class="cook-edit-actions"><button type="button" class="ok" data-cs-save="1">Save step</button><button type="button" data-cs-cancel="1">Cancel</button></div>`
           : `<div class="cook-step-text">${esc(r.steps[i])}</div><button type="button" class="cook-edit-link" data-cs-edit="1">✎ Edit this step</button>`}
@@ -2802,6 +2825,11 @@ cookStepArea.addEventListener('click', async (e)=>{
     const v = document.getElementById('cs-text').value.trim();
     if(v) r.steps[cookState.stepIndex] = v;
     cookState.editStep = null; renderCookStep(); await saveRecipe(r); showToast('Step saved to the recipe');
+  } else if(cookState.editStep === null || cookState.editStep === undefined){
+    if(t.closest('button,input,textarea,select,.cook-ings-panel')) return;
+    const box = cookStepArea.getBoundingClientRect();
+    if(e.clientX >= box.left + box.width / 2) document.getElementById('cook-next-btn').click();
+    else document.getElementById('cook-prev-btn').click();
   }
 });
 cookStepArea.addEventListener('touchstart', (e)=>{ cookTouchStartX = e.changedTouches[0].screenX; }, {passive:true});
