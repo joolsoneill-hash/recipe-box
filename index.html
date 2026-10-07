@@ -92,6 +92,9 @@
   .row2{display:flex;gap:10px;}
   .row2 .field{flex:1;}
   .ing-row{display:flex;gap:6px;margin-bottom:8px;align-items:center;}
+  .ing-block{margin-bottom:12px;}
+  .ing-block .ing-row{margin-bottom:4px;}
+  .ing-cat{width:100%;padding:6px 9px;font-size:12px;border:1px solid var(--line);border-radius:2px;background:var(--paper);color:var(--brown);}
   .ing-row input,.ing-row select{padding:8px 9px;font-size:13px;border:1px solid var(--line-strong);border-radius:2px;background:var(--card);color:var(--ink);}
   .ing-row .ing-name{flex:2;}
   .ing-row .ing-qty{flex:0.7;}
@@ -165,6 +168,16 @@
   .gi-name::first-letter{text-transform:uppercase;}
   .gi-note{display:block;font-size:12px;color:var(--brown);margin-top:1px;}
   .gi-qty{flex:0 0 auto;max-width:42%;text-align:right;font-weight:600;color:var(--brown);line-height:1.35;padding-left:8px;}
+  .gcat-head{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--herb);margin:18px 0 2px;padding-bottom:4px;border-bottom:2px solid var(--line-strong);}
+  .check-actions{display:flex;gap:8px;margin-bottom:4px;}
+  .check-actions .secondary-btn{margin-top:0;}
+  .extra-form{margin:0 0 16px;padding:12px;border:1px solid var(--line);background:var(--card);border-radius:2px;}
+  .extra-row{display:flex;gap:8px;margin-bottom:8px;}
+  .extra-row:last-child{margin-bottom:0;}
+  .extra-row input,.extra-row select{padding:9px 10px;font-size:14px;border:1px solid var(--line-strong);border-radius:2px;background:var(--paper);color:var(--ink);min-width:0;}
+  .extra-row input:first-child{flex:2;} .extra-row input:last-child{flex:1;}
+  .extra-row select{flex:1;}
+  .gi-del{border:none;background:none;color:var(--tomato);font-size:20px;line-height:1;padding:0 2px;flex-shrink:0;}
   .loading{text-align:center;padding:40px;color:var(--brown);font-size:13px;}
 
   /* Cooking mode */
@@ -190,7 +203,7 @@
 <body>
 <div id="app">
   <header class="app-header">
-    <span class="app-version" id="app-version">v3.3</span>
+    <span class="app-version" id="app-version">v3.4</span>
     <button type="button" class="header-btn" id="bug-header-btn">🐞 Report a bug</button>
     <h1>The Recipe Box</h1>
     <p class="tagline">Plan the week. Cook from cards.</p>
@@ -387,9 +400,62 @@ async function applyPendingImports(){
   }
 }
 
+/* ---------- INGREDIENT CATEGORIES ----------
+   Every ingredient carries a `category` (stored with the recipe in the database). New and imported
+   ingredients get a best guess from their name, which can be changed in the recipe form. */
+const CATEGORIES = [
+  {key:'produce', label:'Fruit & veg'},
+  {key:'meat',    label:'Meat, fish & alternatives'},
+  {key:'dairy',   label:'Dairy & eggs'},
+  {key:'bakery',  label:'Bakery'},
+  {key:'pantry',  label:'Pantry'},
+  {key:'spices',  label:'Herbs & spices'},
+  {key:'frozen',  label:'Frozen'},
+  {key:'drinks',  label:'Drinks'},
+  {key:'other',   label:'Other'}
+];
+const CAT_KEYS = CATEGORIES.map(c => c.key);
+const CAT_LABEL = Object.fromEntries(CATEGORIES.map(c => [c.key, c.label]));
+
+function guessCategory(rawName){
+  const n = String(rawName || '').toLowerCase().replace(/\([^)]*\)/g, ' ');
+  const has = re => re.test(n);
+  if(has(/\bfrozen\b|ice cream/)) return 'frozen';
+  // things that look like another category but belong in the pantry
+  if(has(/broth|\bstock\b|bouillon|coconut (milk|cream)|(almond|oat|soy|soya|rice) milk|(peanut|nut|almond|cashew) butter|tomato (paste|sauce|puree|passata)|bread ?crumbs?|\bpanko\b|baking (powder|soda)|bicarb|cream of tartar|corn ?(flour|starch|meal)|\bdried (cranberr|fig|date|apricot|raisin|fruit|mango)|raisin|sultana|\bdates?\b|vinegar|canned|tinned|\btin of\b|chickpea|lentil|kidney bean|black bean|cannellini/)) return 'pantry';
+  // spices, seasonings and dried herbs
+  if(has(/\bdried\b.*\b(sage|thyme|basil|parsley|oregano|rosemary|mint|dill|coriander|chives|tarragon)\b|\b(sage|thyme|basil|parsley|oregano|rosemary|mint|dill|coriander|chives|tarragon)\b.*\bdried\b/)) return 'spices';
+  if(has(/\b(salt|paprika|cumin|turmeric|cinnamon|nutmeg|oregano|cayenne|allspice|cardamom|saffron|seasoning|spice|spices|curry powder|garlic powder|onion powder|(pepper|chil+i|chilli) flakes|bay leaf|bay leaves|mixed herbs|peppercorns?|garam masala|za'atar|sumac|ground (ginger|coriander|cloves|mustard|black pepper|white pepper)|ginger powder)\b/)) return 'spices';
+  if(has(/\b(bell|capsicum|chil+i|jalape[nñ]o|red|green|yellow|orange)\s+peppers?\b|\bcapsicum\b/)) return 'produce';
+  if(has(/\bpepper\b/)) return 'spices';
+  if(has(/\b(milk|cream|yog(h)?urt|cheese|mozzarella|parmesan|cheddar|feta|ricotta|halloumi|butter|eggs?|ghee|kefir|mascarpone|paneer|cottage)\b/)) return 'dairy';
+  if(has(/\b(chicken|beef|pork|lamb|bacon|sausages?|mince|turkey|ham|salmon|tuna|prawns?|shrimps?|fish|fillets?|steak|veggie ground|plant.based|vegan|tofu|tempeh|seitan|meatballs?|chorizo|salami|anchov(y|ies))\b/)) return 'meat';
+  if(has(/\b(bread|buns?|rolls?|sourdough|tortillas?|wraps?|pita|naan|bagels?|croissants?|baguette|focaccia|muffins?|flatbread)\b/)) return 'bakery';
+  if(has(/(apple|banana|lemon|lime\b|oranges?\b|berr(y|ies)|grapes?\b|mango|pears?\b|peach|plum|melon|pineapple|avocado|tomato|onion|shallot|leek|garlic|potato|carrot|celery|broccoli|cauliflower|spinach|arugula|rocket|lettuce|kale|cabbage|mushroom|cucumber|zucchini|courgette|squash|pumpkin|eggplant|aubergine|sweetcorn|corn on|\bcorn\b|\bpeas?\b|green beans?|asparagus|ginger|chil+i|jalape|beetroot|radish|fennel|basil|parsley|coriander|cilantro|\bmint\b|thyme|rosemary|\bdill\b|chives|\bsage\b|greens|spring mix|salad|sprouts|bok choy|cress|\bfigs?\b|herbs?\b)/)) return 'produce';
+  if(has(/\b(wine|beer|soda|sparkling|kombucha|coffee|espresso|tea)\b/)) return 'drinks';
+  if(has(/(oil|sauce|paste|soy|mustard|mayo|mayonnaise|honey|syrup|molasses|treacle|sugar|flour|vanilla|extract|rice|quinoa|pasta|orzo|noodle|spaghetti|couscous|\boats?\b|cereal|granola|bean|nut\b|nuts\b|almond|walnut|cashew|pecan|pistachio|peanut|seeds?\b|tahini|jam\b|cocoa|chocolate|yeast|olives?\b|capers?\b|pickle|artichoke|hummus|crumbs)/)) return 'pantry';
+  if(has(/\bwater\b/)) return 'pantry';
+  return 'other';
+}
+
+async function migrateCategories(){
+  const changed = [];
+  Object.values(state.recipes).forEach(r=>{
+    let dirty = false;
+    (Array.isArray(r.ingredients) ? r.ingredients : []).forEach(i=>{
+      if(!CAT_KEYS.includes(i.category)){ i.category = guessCategory(i.name); dirty = true; }
+    });
+    if(dirty) changed.push(r);
+  });
+  for(const r of changed) await saveRecipe(r);
+}
+
+
 function normPlan(p){
   const ids = p.recipeIds ? (Array.isArray(p.recipeIds) ? p.recipeIds : Object.values(p.recipeIds)) : [];
-  return {id: p.id, name: p.name || 'Meal plan', created: p.created || 0, recipeIds: ids.filter(Boolean)};
+  const ex = p.extras ? (Array.isArray(p.extras) ? p.extras : Object.values(p.extras)) : [];
+  return {id: p.id, name: p.name || 'Meal plan', created: p.created || 0, recipeIds: ids.filter(Boolean),
+          extras: ex.filter(x => x && x.name).map(x => ({id: String(x.id || uid()), name: String(x.name), qty: String(x.qty || ''), category: CAT_KEYS.includes(x.category) ? x.category : guessCategory(x.name)}))};
 }
 function activePlan(){ return state.plans[state.activePlanId] || null; }
 function planRecipes(plan){ return plan ? plan.recipeIds.map(id => state.recipes[id]).filter(Boolean) : []; }
@@ -407,6 +473,7 @@ async function loadState(){
     }
 
     await applyPendingImports();
+    await migrateCategories();
 
     let plans = {};
     try { plans = (await dbGet('plans')) || {}; } catch(e){ plans = {}; }
@@ -424,7 +491,7 @@ async function loadState(){
         const rid = legacy[d] && legacy[d][m];
         if(rid && state.recipes[rid] && !ids.includes(rid)) ids.push(rid);
       }));
-      const plan = {id: uid(), name: ids.length ? 'This week' : 'My meal plan', created: Date.now(), recipeIds: ids};
+      const plan = {id: uid(), name: ids.length ? 'This week' : 'My meal plan', created: Date.now(), recipeIds: ids, extras: []};
       state.plans[plan.id] = plan;
       state.activePlanId = plan.id;
       await savePlan(plan);
@@ -664,7 +731,7 @@ function openNewPlanSheet(){
   document.getElementById('np-cancel').onclick = closeSheet;
   document.getElementById('np-create').onclick = async ()=>{
     const name = input.value.trim() || `Meal plan ${n}`;
-    const plan = {id: uid(), name, created: Date.now(), recipeIds: []};
+    const plan = {id: uid(), name, created: Date.now(), recipeIds: [], extras: []};
     state.plans[plan.id] = plan;
     state.activePlanId = plan.id;
     state.checks = {};
@@ -817,9 +884,11 @@ function buildGroceryList(){
       const raw = (ing.name || '').trim();
       if(!raw) return;
       const norm = normIngName(raw);
-      const g = groups[norm] || (groups[norm] = {norm, names:{}, g:0, hasG:false, ml:0, hasMl:false, metricVol:false, count:0, hasCount:false, others:{}, notes:[]});
+      const g = groups[norm] || (groups[norm] = {norm, names:{}, g:0, hasG:false, ml:0, hasMl:false, metricVol:false, count:0, hasCount:false, others:{}, notes:[], cats:{}});
       const shown = topName(raw);
       g.names[shown] = (g.names[shown] || 0) + 1;
+      const ck = CAT_KEYS.includes(ing.category) ? ing.category : guessCategory(raw);
+      g.cats[ck] = (g.cats[ck] || 0) + 1;
       const unit = (ing.unit || '').trim().toLowerCase();
       const rawQ = String(ing.qty === undefined || ing.qty === null ? '' : ing.qty).trim();
       const qty = parseQty(rawQ);
@@ -848,30 +917,88 @@ function buildGroceryList(){
     // display name: the most common wording; on a tie use the plural form for counts above one
     const plural = g.hasCount && g.count > 1;
     const name = Object.keys(g.names).sort((a,b)=> g.names[b] - g.names[a] || (plural ? b.length - a.length : a.length - b.length))[0];
-    return {key: g.norm.replace(/[.$#\[\]\/]/g, '_'), name, qtyText: parts.join(' + '), note: g.notes.join(', ')};
+    const cat = CAT_KEYS.slice().sort((a,b)=> (g.cats[b]||0) - (g.cats[a]||0))[0];
+    return {key: g.norm.replace(/[.$#\[\]\/]/g, '_'), name, qtyText: parts.join(' + '), note: g.notes.join(', '), cat, extra: false};
   }).sort((a,b)=>a.name.localeCompare(b.name));
+}
+
+function allGroceryItems(){
+  const plan = activePlan();
+  const items = buildGroceryList();
+  ((plan && plan.extras) || []).forEach(x=>{
+    items.push({key: 'extra-' + x.id, id: x.id, name: x.name, qtyText: x.qty, note: '', cat: x.category, extra: true});
+  });
+  return items;
 }
 
 function renderGrocery(){
   const plan = activePlan();
-  const items = buildGroceryList();
+  const items = allGroceryItems();
   let html = `<h3 style="font-size:14px;color:var(--brown);margin:0 0 14px;">Built from: ${plan ? esc(plan.name) : 'your meal plan'}</h3>`;
-  if(items.length===0){
-    html += `<div class="empty-state"><h3>Your list is empty</h3><p>Choose some meals in "Meal Plan" and your grocery list will fill in automatically.</p></div>`;
-  } else {
-    html += `<div class="grocery-group">`;
-    items.forEach(it=>{
+  html += `
+    <form id="extra-form" class="extra-form" autocomplete="off">
+      <div class="extra-row">
+        <input id="extra-name" placeholder="Add your own item" aria-label="Item name">
+        <input id="extra-qty" placeholder="Qty" aria-label="Quantity">
+      </div>
+      <div class="extra-row">
+        <select id="extra-cat" data-auto="1" aria-label="Category">${catOptionsHtml('other')}</select>
+        <button type="submit" class="small-btn">Add</button>
+      </div>
+    </form>`;
+  if(items.length === 0){
+    html += `<div class="empty-state"><h3>Your list is empty</h3><p>Choose some meals in "Meal Plan", or add your own items above.</p></div>`;
+    return html;
+  }
+  html += `<div class="check-actions"><button class="secondary-btn" data-act="check-all">Check all</button><button class="secondary-btn" data-act="clear-checks">Uncheck all</button></div>`;
+  CATEGORIES.forEach(c=>{
+    const list = items.filter(it => it.cat === c.key).sort((a,b)=>a.name.localeCompare(b.name));
+    if(!list.length) return;
+    html += `<div class="gcat-head">${esc(c.label)}</div><div class="grocery-group">`;
+    list.forEach(it=>{
       const checked = !!state.checks[it.key];
       html += `
         <label class="grocery-item ${checked?'checked':''}">
           <input type="checkbox" data-check-key="${esc(it.key)}" ${checked?'checked':''}>
           <span class="gi-name">${esc(it.name)}${it.note ? `<span class="gi-note">${esc(it.note)}</span>` : ''}</span>
           <span class="gi-qty">${esc(it.qtyText)}</span>
+          ${it.extra ? `<button type="button" class="gi-del" data-act="extra-del" data-id="${esc(it.id)}" aria-label="Remove item">×</button>` : ''}
         </label>`;
     });
-    html += `</div><button class="secondary-btn" data-act="clear-checks">Uncheck all</button>`;
-  }
+    html += `</div>`;
+  });
   return html;
+}
+
+function groceryAllChecked(){
+  const items = allGroceryItems();
+  return items.length > 0 && items.every(it => state.checks[it.key]);
+}
+
+function openAllDoneSheet(){
+  const plan = activePlan();
+  openSheet(`
+    <div class="sheet-handle"></div>
+    <h2>All done shopping?</h2>
+    <p style="font-size:13px;color:var(--brown);line-height:1.5;margin:0 0 14px;">Everything on your list is ticked. Would you like to wipe the grocery list and start again? This takes the meals out of "${esc(plan ? plan.name : 'your plan')}" and removes the items you added yourself. Your recipes are not touched.</p>
+    <button class="primary-btn" id="ad-wipe">Wipe list and start again</button>
+    <button class="secondary-btn" id="ad-uncheck">Just untick everything</button>
+    <button class="secondary-btn" id="ad-no">Not yet</button>
+  `);
+  document.getElementById('ad-no').onclick = closeSheet;
+  document.getElementById('ad-uncheck').onclick = async ()=>{
+    state.checks = {};
+    closeSheet();
+    await saveChecks();
+  };
+  document.getElementById('ad-wipe').onclick = async ()=>{
+    const p = activePlan();
+    if(p){ p.recipeIds = []; p.extras = []; }
+    state.checks = {};
+    closeSheet();
+    if(p) await savePlan(p);
+    await saveChecks();
+  };
 }
 
 /* ---------- IMPORT / EXPORT DATA ---------- */
@@ -941,7 +1068,7 @@ function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '3.3';
+const APP_VERSION = '3.4';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
@@ -1124,12 +1251,13 @@ Rules:
 - Convert all weight measurements to grams (g) or kilograms (kg), and all liquid volumes to millilitres (ml) or litres (l). Teaspoon (tsp), tablespoon (tbsp) and cup may stay as they are. Convert temperatures to degrees Celsius.
 - For whole or countable ingredients (eggs, garlic cloves, bell peppers, etc.) put the count as qty and leave unit as an empty string, folding the counting word into the ingredient name (e.g. "garlic cloves", "large eggs").
 - If a seasoning or oil (salt, pepper, oil, spices, etc.) only appears inside the instruction steps with per-step amounts, sum all of its occurrences into ONE ingredient entry with the total quantity.
+- For each ingredient set category to exactly one of: produce (fruit and vegetables, fresh herbs), meat (meat, fish, tofu and meat alternatives), dairy (milk, cheese, yoghurt, butter, eggs), bakery (bread, wraps, rolls), pantry (tins, oils, sauces, grains, pasta, flour, sugar, nuts, stock), spices (dried herbs, spices, salt, pepper), frozen, drinks, other.
 - Pick exactly one tag from: breakfast, lunch, dinner, snack, dessert, whichever best fits the dish.
 - Estimate total time in minutes and servings if not stated exactly.
 - Write each instruction step as a clear, standalone sentence or two, preserving all temperatures, times and quantities.
 
 Respond with ONLY one JSON object in exactly this shape, with no markdown code fences and no commentary before or after it:
-{"title":"","tag":"","time":0,"servings":0,"ingredients":[{"name":"","qty":"","unit":""}],"steps":[""]}`;
+{"title":"","tag":"","time":0,"servings":0,"ingredients":[{"name":"","qty":"","unit":"","category":""}],"steps":[""]}`;
 }
 
 function parseRecipeJson(data){
@@ -1156,9 +1284,10 @@ function normalizeDraft(d){
       ? d.ingredients.map(i => ({
           name: (i.name || '').toString(),
           qty: (i.qty !== undefined && i.qty !== null) ? i.qty.toString() : '',
-          unit: allowedUnits.includes((i.unit || '').toString()) ? (i.unit || '').toString() : ''
+          unit: allowedUnits.includes((i.unit || '').toString()) ? (i.unit || '').toString() : '',
+          category: CAT_KEYS.includes(i.category) ? i.category : guessCategory(i.name)
         }))
-      : [{name:'', qty:'', unit:''}],
+      : [{name:'', qty:'', unit:'', category:'other'}],
     steps: Array.isArray(d.steps) && d.steps.length ? d.steps.map(s => s.toString()) : [''],
     photo: d.photo || null
   };
@@ -1393,6 +1522,9 @@ function closeSheet(){
   render();
 }
 
+function catOptionsHtml(sel){
+  return CATEGORIES.map(c => `<option value="${c.key}" ${c.key === sel ? 'selected' : ''}>${esc(c.label)}</option>`).join('');
+}
 function ingredientRowHtml(ing, idx){
   const units = ['', 'g', 'kg', 'ml', 'l', 'tsp', 'tbsp', 'cup'];
   const unitLabels = {'':'no unit','g':'g','kg':'kg','ml':'ml','l':'l','tsp':'tsp','tbsp':'tbsp','cup':'cup'};
@@ -1401,12 +1533,17 @@ function ingredientRowHtml(ing, idx){
   if(currentUnit && !units.includes(currentUnit)){
     options += `<option value="${esc(currentUnit)}" selected>${esc(currentUnit)}</option>`;
   }
+  const hasCat = !!(ing && ing.name && CAT_KEYS.includes(ing.category));
+  const cat = hasCat ? ing.category : guessCategory(ing && ing.name);
   return `
-    <div class="ing-row" data-ing-idx="${idx}">
-      <input class="ing-name" placeholder="Ingredient" value="${esc(ing?.name||'')}">
-      <input class="ing-qty" placeholder="Qty" value="${esc(ing?.qty||'')}">
-      <select class="ing-unit">${options}</select>
-      <button type="button" class="remove-x" data-remove-ing="${idx}">×</button>
+    <div class="ing-block" data-ing-idx="${idx}">
+      <div class="ing-row">
+        <input class="ing-name" placeholder="Ingredient" value="${esc(ing?.name||'')}">
+        <input class="ing-qty" placeholder="Qty" value="${esc(ing?.qty||'')}">
+        <select class="ing-unit">${options}</select>
+        <button type="button" class="remove-x" data-remove-ing="${idx}">×</button>
+      </div>
+      <select class="ing-cat" data-auto="${hasCat ? '0' : '1'}" aria-label="Grocery category">${catOptionsHtml(cat)}</select>
     </div>`;
 }
 function stepRowHtml(step, idx){
@@ -1489,8 +1626,16 @@ function openRecipeForm(existingId, draft){
     document.getElementById('step-list').insertAdjacentHTML('beforeend', stepRowHtml(null, stepCount++));
   };
   form.addEventListener('click', (e)=>{
-    if(e.target.dataset.removeIng !== undefined) e.target.closest('.ing-row').remove();
+    if(e.target.dataset.removeIng !== undefined) e.target.closest('.ing-block').remove();
     if(e.target.dataset.removeStep !== undefined) e.target.closest('.step-row').remove();
+  });
+  form.addEventListener('input', (e)=>{
+    if(!e.target.classList.contains('ing-name')) return;
+    const sel = e.target.closest('.ing-block').querySelector('.ing-cat');
+    if(sel.dataset.auto !== '0') sel.value = guessCategory(e.target.value);
+  });
+  form.addEventListener('change', (e)=>{
+    if(e.target.classList.contains('ing-cat')) e.target.dataset.auto = '0';
   });
   document.getElementById('cancel-form-btn').onclick = closeSheet;
 
@@ -1501,8 +1646,9 @@ function openRecipeForm(existingId, draft){
     const tag = document.getElementById('f-tag').value;
     const time = document.getElementById('f-time').value || '0';
     const servings = document.getElementById('f-servings').value || '1';
-    const ingredients = Array.from(document.querySelectorAll('#ing-list .ing-row')).map(row=>({
+    const ingredients = Array.from(document.querySelectorAll('#ing-list .ing-block')).map(row=>({
       name: row.querySelector('.ing-name').value.trim(),
+      category: row.querySelector('.ing-cat').value,
       qty: row.querySelector('.ing-qty').value.trim(),
       unit: row.querySelector('.ing-unit').value.trim()
     })).filter(i=>i.name);
@@ -1582,6 +1728,22 @@ mainEl.addEventListener('click', async (e)=>{
       await saveActivePlanId();
       break;
     }
+    case 'check-all':
+      allGroceryItems().forEach(it => { state.checks[it.key] = true; });
+      render();
+      await saveChecks();
+      if(groceryAllChecked()) openAllDoneSheet();
+      break;
+    case 'extra-del': {
+      const plan = activePlan();
+      if(!plan) break;
+      plan.extras = (plan.extras || []).filter(x => x.id !== id);
+      delete state.checks['extra-' + id];
+      render();
+      await savePlan(plan);
+      await saveChecks();
+      break;
+    }
     case 'clear-checks':
       state.checks = {};
       render();
@@ -1602,10 +1764,31 @@ mainEl.addEventListener('change', async (e)=>{
     state.checks[t.dataset.checkKey] = t.checked;
     render();
     await saveChecks();
+    if(t.checked && groceryAllChecked()) openAllDoneSheet();
+  } else if(t.id === 'extra-cat'){
+    t.dataset.auto = '0';
   }
 });
 
+mainEl.addEventListener('submit', async (e)=>{
+  if(e.target.id !== 'extra-form') return;
+  e.preventDefault();
+  const plan = activePlan();
+  const name = document.getElementById('extra-name').value.trim();
+  if(!plan || !name) return;
+  const cat = document.getElementById('extra-cat').value;
+  plan.extras = (plan.extras || []).concat([{id: uid(), name, qty: document.getElementById('extra-qty').value.trim(), category: cat}]);
+  render();
+  const nm = document.getElementById('extra-name'); if(nm) nm.focus();
+  await savePlan(plan);
+});
+
 mainEl.addEventListener('input', (e)=>{
+  if(e.target.id === 'extra-name'){
+    const sel = document.getElementById('extra-cat');
+    if(sel && sel.dataset.auto !== '0') sel.value = guessCategory(e.target.value);
+    return;
+  }
   if(e.target.id === 'search-input'){
     const pos = e.target.selectionStart;
     state.searchTerm = e.target.value;
