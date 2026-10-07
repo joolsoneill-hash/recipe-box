@@ -277,7 +277,7 @@
 <body>
 <div id="app">
   <header class="app-header">
-    <span class="app-version" id="app-version">v5.1</span>
+    <span class="app-version" id="app-version">v5.2</span>
     <button type="button" class="header-btn" id="bug-header-btn">🐞 Report a bug</button>
     <h1>The Recipe Box</h1>
     <p class="tagline">Plan the week. Cook from cards.</p>
@@ -790,10 +790,6 @@ function renderPlan(){
   let html = `
     <div class="plan-current-label">Current plan</div>
     <h2 class="plan-date">${esc(planLabel(plan))}</h2>
-    ${plan.locked
-      ? `<div class="locked-note">🔒 Plan built and locked. ${plan.groceryDone ? 'Shopping is done.' : 'Your grocery list is ready.'}</div>
-         <button class="secondary-btn" data-act="go-list" style="margin-top:0;">See grocery list →</button>`
-      : ''}
     <div class="plan-count">${items.length} meal${items.length===1?'':'s'} chosen${plan.locked ? '' : ` · <span class="plan-add-link" data-act="add-meals">+ add</span>`}</div>
   `;
 
@@ -821,7 +817,9 @@ function renderPlan(){
   }
 
   if(plan.locked){
-    html += `<button class="add-btn" data-act="plan-edit" style="margin-top:12px;">Edit plan</button>`;
+    html += `<div class="locked-note" style="margin-top:14px;">🔒 Plan built and locked. ${plan.groceryDone ? 'Shopping is done.' : 'Your grocery list is ready.'}</div>
+      <button class="secondary-btn" data-act="go-list" style="margin-top:0;">See grocery list →</button>
+      <button class="add-btn" data-act="plan-edit" style="margin-top:12px;">Edit plan</button>`;
   } else {
     if(items.length){
       html += `<button class="add-btn" data-act="${plan.built ? 'plan-lock' : 'plan-build'}" style="margin-top:12px;background:var(--tomato);">${plan.built ? 'Save changes and lock plan' : 'Build plan and make grocery list'}</button>`;
@@ -1276,7 +1274,7 @@ function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '5.1';
+const APP_VERSION = '5.2';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
