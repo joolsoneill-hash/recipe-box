@@ -3,9 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>The Recipe Box — Shared</title>
+<meta name="theme-color" content="#2B2620">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Recipe Box">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>The Recipe Box</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <style>
@@ -29,12 +36,12 @@
     background-size: 14px 14px;
   }
   #app{max-width:520px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;padding-bottom:70px;position:relative;}
-  h1,h2,h3,.mono{font-family:'Special Elite',cursive;font-weight:400;}
+  h1,h2,h3{font-family:'Work Sans',sans-serif;font-weight:700;}
   button{font-family:'Work Sans',sans-serif;cursor:pointer;}
   input,textarea,select{font-family:'Work Sans',sans-serif;}
 
   .app-header{background:var(--ink);color:var(--paper);padding:26px 20px 34px;position:relative;}
-  .app-header h1{margin:0;font-size:24px;letter-spacing:0.5px;}
+  .app-header h1{margin:0;font-size:24px;letter-spacing:0.2px;}
   .app-header .tagline{margin:6px 0 0;font-size:13px;color:rgba(237,227,208,0.72);}
   .app-header::after{
     content:'';position:absolute;left:0;right:0;bottom:-13px;height:14px;background:var(--ink);
@@ -56,18 +63,18 @@
   .chip{padding:5px 12px;border-radius:14px;border:1px solid var(--line-strong);background:var(--card);font-size:12px;color:var(--brown);font-weight:600;}
   .chip.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
 
-  .add-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:12px;background:var(--herb);color:#fff;border:none;border-radius:2px;font-size:14px;font-weight:600;margin-bottom:18px;}
+  .add-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:12px;background:var(--herb);color:#fff;border:none;border-radius:2px;font-size:14px;font-weight:600;margin-bottom:10px;}
   .add-btn:active{opacity:0.85;}
 
   /* Recipe cards */
   .recipe-grid{display:flex;flex-direction:column;gap:18px;}
-  .recipe-card{background:var(--card);border:1px solid var(--line);border-radius:2px;padding:16px 14px 14px;position:relative;box-shadow:3px 3px 0 rgba(43,38,32,0.07);}
-  .card-tag{position:absolute;top:-10px;left:14px;padding:2px 10px;font-family:'Special Elite';font-size:10.5px;color:#fff;border-radius:1px;letter-spacing:0.4px;}
+  .recipe-card{background:var(--card);border:1px solid var(--line);border-radius:2px;padding:16px 14px 14px;position:relative;box-shadow:3px 3px 0 rgba(43,38,32,0.07);cursor:pointer;}
+  .card-tag{position:absolute;top:-10px;left:14px;padding:2px 10px;font-family:'Work Sans',sans-serif;font-weight:600;font-size:10.5px;color:#fff;border-radius:1px;letter-spacing:0.3px;}
   .recipe-card h3{margin:6px 0 4px;font-size:17px;line-height:1.3;}
   .recipe-meta{font-size:12.5px;color:var(--brown);margin-bottom:8px;}
   .recipe-ing-preview{font-size:13px;color:var(--ink);opacity:0.75;line-height:1.4;}
 
-  .empty-state{text-align:center;padding:50px 20px;color:var(--brown);}
+  .empty-state{text-align:center;padding:40px 20px;color:var(--brown);}
   .empty-state h3{font-size:16px;margin-bottom:6px;color:var(--ink);}
   .empty-state p{font-size:13px;line-height:1.5;}
 
@@ -92,7 +99,7 @@
   .small-btn{border:1px solid var(--line-strong);background:var(--card);border-radius:2px;padding:8px 10px;font-size:13px;color:var(--brown);}
   .remove-x{border:none;background:none;color:var(--tomato);font-size:18px;padding:0 4px;line-height:1;}
   .step-row{display:flex;gap:6px;margin-bottom:8px;align-items:flex-start;}
-  .step-num{font-family:'Special Elite';font-size:12px;color:var(--brown);padding-top:9px;width:16px;}
+  .step-num{font-weight:700;font-size:12px;color:var(--brown);padding-top:9px;width:20px;}
   .step-row textarea{flex:1;min-height:44px;font-size:13px;}
 
   .primary-btn{width:100%;padding:13px;background:var(--ink);color:var(--paper);border:none;border-radius:2px;font-size:14px;font-weight:600;margin-top:6px;}
@@ -103,25 +110,28 @@
   .detail-back{background:none;border:none;color:var(--brown);font-size:13px;margin-bottom:12px;padding:0;font-weight:600;}
   .detail-title{font-size:22px;margin:0 0 6px;}
   .detail-section{margin-top:20px;}
-  .detail-section h4{font-family:'Special Elite';font-size:13px;color:var(--brown);margin:0 0 10px;letter-spacing:0.3px;}
+  .detail-section h4{font-family:'Work Sans',sans-serif;font-weight:700;font-size:12.5px;color:var(--brown);margin:0 0 10px;letter-spacing:0.6px;text-transform:uppercase;}
   .ing-list{list-style:none;padding:0;margin:0;}
   .ing-list li{padding:8px 0;border-bottom:1px solid var(--line);font-size:14px;}
   .steps-list{padding-left:0;list-style:none;counter-reset:step;margin:0;}
   .steps-list li{counter-increment:step;padding:10px 0 10px 30px;border-bottom:1px solid var(--line);font-size:14px;line-height:1.5;position:relative;}
-  .steps-list li::before{content:counter(step);position:absolute;left:0;top:10px;font-family:'Special Elite';font-size:12px;color:var(--herb);width:20px;}
+  .steps-list li::before{content:counter(step);position:absolute;left:0;top:10px;font-weight:700;font-size:12px;color:var(--herb);width:20px;}
 
-  /* Week view */
-  .day-block{margin-bottom:18px;}
-  .day-title{font-size:15px;margin:0 0 8px;font-family:'Special Elite';}
-  .meal-slot{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:2px;padding:10px 12px;margin-bottom:6px;}
-  .meal-slot .meal-label{font-size:11px;color:var(--brown);font-weight:700;width:74px;flex-shrink:0;}
-  .meal-slot .meal-content{flex:1;font-size:13.5px;}
-  .meal-slot .meal-content.empty{color:var(--line-strong);color:#9c8f77;}
-  .meal-slot button{border:none;background:none;font-size:12px;color:var(--tomato);font-weight:600;padding:4px 6px;}
-  .week-actions{margin-top:6px;}
+  /* Meal plan view */
+  .plan-select-wrap{margin-bottom:12px;}
+  .plan-select-wrap label{display:block;font-size:12px;font-weight:600;color:var(--brown);margin-bottom:5px;}
+  .plan-select-wrap select{width:100%;padding:11px;border:1px solid var(--line-strong);border-radius:2px;background:var(--card);font-size:15px;font-weight:600;color:var(--ink);}
+  .plan-count{font-size:12.5px;color:var(--brown);margin:18px 0 8px;font-weight:600;}
+  .plan-item{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:2px;padding:12px;margin-bottom:8px;}
+  .plan-item-main{flex:1;cursor:pointer;}
+  .plan-item-title{font-size:14.5px;font-weight:600;line-height:1.35;}
+  .plan-item-meta{font-size:12px;color:var(--brown);margin-top:2px;}
+  .plan-item button{border:none;background:none;color:var(--tomato);font-size:12px;font-weight:600;padding:6px;}
 
-  .picker-item{padding:12px 10px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
-  .picker-item button{background:var(--herb);color:#fff;border:none;border-radius:2px;padding:6px 12px;font-size:12px;font-weight:600;}
+  .picker-item{padding:12px 10px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px;}
+  .picker-item span{flex:1;font-size:14px;line-height:1.35;}
+  .picker-item button{background:var(--herb);color:#fff;border:none;border-radius:2px;padding:7px 12px;font-size:12px;font-weight:600;min-width:74px;}
+  .picker-item button.on{background:var(--ink);}
 
   /* Grocery list */
   .grocery-group{margin-bottom:18px;}
@@ -135,9 +145,9 @@
   .cook-overlay.hidden{display:none;}
   .cook-header{display:flex;justify-content:space-between;align-items:center;padding:18px 18px 4px;}
   .cook-exit{background:none;border:none;color:var(--paper);font-size:28px;line-height:1;padding:4px 10px;}
-  .cook-progress{font-family:'Special Elite';font-size:13px;color:rgba(237,227,208,0.75);}
+  .cook-progress{font-weight:600;font-size:13px;color:rgba(237,227,208,0.75);}
   .cook-step-area{flex:1;display:flex;align-items:center;justify-content:center;padding:20px 30px;text-align:center;touch-action:pan-y;}
-  .cook-step-title{font-family:'Special Elite';font-size:13px;color:var(--gold);margin-bottom:16px;letter-spacing:0.3px;}
+  .cook-step-title{font-weight:600;font-size:13px;color:var(--gold);margin-bottom:16px;letter-spacing:0.3px;}
   .cook-step-text{font-size:clamp(20px,5.5vw,28px);line-height:1.55;}
   .cook-step-ings{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:22px;}
   .cook-ing-chip{background:rgba(237,227,208,0.12);color:var(--paper);border:1px solid rgba(237,227,208,0.32);padding:6px 13px;border-radius:14px;font-size:13px;}
@@ -159,7 +169,7 @@
   <main id="main"><div class="loading">Opening the recipe box…</div></main>
   <nav class="tabbar">
     <button data-tab="box" class="tab active">Recipes</button>
-    <button data-tab="week" class="tab">This Week</button>
+    <button data-tab="plan" class="tab">Meal Plan</button>
     <button data-tab="list" class="tab">Grocery List</button>
   </nav>
 </div>
@@ -167,35 +177,28 @@
   <div id="sheet" class="sheet"></div>
 </div>
 
-<div id="setup-overlay" class="cook-overlay">
+<!-- Setup / sign-in overlay: hidden until we know it is actually needed (prevents a flash on start-up) -->
+<div id="setup-overlay" class="cook-overlay hidden">
   <div style="flex:1;overflow-y:auto;padding:30px 24px;">
 
-    <div id="setup-stage-config">
-      <h2 style="font-family:'Special Elite';font-size:20px;margin:0 0 4px;">Connect the shared recipe box</h2>
-      <p style="font-size:13.5px;color:rgba(237,227,208,0.8);line-height:1.6;margin-bottom:16px;">This app stores its data in a free Firebase project, secured with Google Sign-In so only people you approve can see it. Set it up once (about 10 minutes), then repeat steps 5–6 on your wife's phone.</p>
-      <ol style="font-size:13px;color:rgba(237,227,208,0.8);line-height:1.7;padding-left:20px;margin-bottom:18px;">
-        <li>Go to <span style="color:var(--gold);">console.firebase.google.com</span> and create a free project.</li>
-        <li><strong>Build → Realtime Database</strong> → Create Database (any region, start in <em>locked mode</em>).</li>
-        <li><strong>Build → Authentication</strong> → Get started → enable the <strong>Google</strong> sign-in provider.</li>
-        <li><strong>Authentication → Settings → Authorized domains</strong> → add your GitHub Pages domain (e.g. <em>yourname.github.io</em>).</li>
-        <li>Project Settings (gear icon) → General → "Your apps" → add a Web app → copy the <strong>firebaseConfig</strong> object shown.</li>
-        <li>Paste that config below.</li>
-      </ol>
+    <div id="setup-stage-config" class="hidden">
+      <h2 style="font-size:20px;margin:0 0 4px;">Change shared database</h2>
+      <p style="font-size:13.5px;color:rgba(237,227,208,0.8);line-height:1.6;margin-bottom:16px;">Paste a Firebase config (JSON) to point this device at a different shared database. Leave this alone unless you know you need to change it.</p>
       <div class="field">
         <label style="color:rgba(237,227,208,0.8);">Firebase config (paste the whole object)</label>
         <textarea id="setup-config-input" placeholder='{"apiKey":"...","authDomain":"...","databaseURL":"...","projectId":"...","appId":"..."}' style="width:100%;min-height:120px;font-size:12px;font-family:monospace;padding:10px;border:1px solid rgba(237,227,208,0.35);border-radius:2px;background:rgba(237,227,208,0.08);color:var(--paper);"></textarea>
       </div>
       <div id="setup-status" style="font-size:13px;color:var(--gold);min-height:18px;margin-bottom:6px;"></div>
-      <button class="cook-nav-btn primary" id="setup-save-config-btn" style="width:100%;">Save & Continue</button>
-      <p style="font-size:12px;color:rgba(237,227,208,0.6);line-height:1.6;margin-top:16px;">Last step: in <strong>Realtime Database → Rules</strong>, restrict access to just your two Google accounts — I'll give you the exact rule text after you connect.</p>
+      <button class="cook-nav-btn primary" id="setup-save-config-btn" style="width:100%;">Save & Reload</button>
+      <button class="cook-nav-btn" id="setup-reset-config-btn" style="width:100%;margin-top:10px;">Reset to the built-in database</button>
+      <button class="cook-nav-btn" id="setup-cancel-config-btn" style="width:100%;margin-top:10px;">Cancel</button>
     </div>
 
     <div id="setup-stage-login" class="hidden">
-      <h2 style="font-family:'Special Elite';font-size:20px;margin:0 0 10px;">Sign in</h2>
-      <p style="font-size:13.5px;color:rgba(237,227,208,0.8);line-height:1.6;margin-bottom:20px;">Sign in with the Google account you want to use for this recipe box.</p>
+      <h2 style="font-size:20px;margin:0 0 10px;">Sign in</h2>
+      <p style="font-size:13.5px;color:rgba(237,227,208,0.8);line-height:1.6;margin-bottom:20px;">Sign in with the Google account you use for this recipe box.</p>
       <button class="cook-nav-btn primary" id="google-signin-btn" style="width:100%;">Sign in with Google</button>
       <div id="login-status" style="font-size:13px;color:var(--gold);min-height:18px;margin-top:10px;"></div>
-      <button class="cook-nav-btn" id="setup-back-btn" style="width:100%;margin-top:10px;">← Edit Firebase config</button>
     </div>
 
   </div>
@@ -215,30 +218,41 @@
 </div>
 
 <script>
-const DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-const MEALS = ['breakfast','lunch','dinner'];
 const TAG_COLORS = {breakfast:'var(--herb)', lunch:'var(--gold)', dinner:'var(--tomato)', snack:'var(--brown)', dessert:'var(--brown)'};
 const TAG_LABELS = {breakfast:'Breakfast', lunch:'Lunch', dinner:'Dinner', snack:'Snack', dessert:'Dessert'};
+const LEGACY_DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const LEGACY_MEALS = ['breakfast','lunch','dinner'];
+
+/* ---------- STATE + NAVIGATION STACK ---------- */
+const HOME_VIEW = {tab:'box', recipeId:null};
+let viewStack = [HOME_VIEW];
+const currentView = () => viewStack[viewStack.length - 1];
 
 let state = {
   recipes: {},
-  planner: {},
+  plans: {},
+  activePlanId: null,
   checks: {},
-  tab: 'box',
   searchTerm: '',
   activeFilter: 'all',
   loaded: false
 };
+let loadingState = false;
+let deferredInstall = null;
+
+function uid(){
+  return (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'id-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+}
 
 const SAMPLE_RECIPES = () => {
   const mk = (title, tag, time, servings, ingredients, steps) => {
-    const id = crypto.randomUUID();
+    const id = uid();
     return [id, {id, title, tag, time, servings, ingredients, steps}];
   };
   return Object.fromEntries([
     mk('Weeknight Lemon Chicken', 'dinner', 35, 4,
       [{name:'chicken thighs',qty:'6',unit:''},{name:'lemon',qty:'2',unit:''},{name:'garlic cloves',qty:'4',unit:''},{name:'olive oil',qty:'2',unit:'tbsp'},{name:'rosemary',qty:'1',unit:'tsp'}],
-      ['Preheat oven to 425°F.','Toss chicken with oil, garlic, lemon juice, and rosemary.','Roast 30-35 minutes until skin is golden and juices run clear.']),
+      ['Preheat oven to 220°C.','Toss chicken with oil, garlic, lemon juice, and rosemary.','Roast 30-35 minutes until skin is golden and juices run clear.']),
     mk('Overnight Oats', 'breakfast', 5, 1,
       [{name:'rolled oats',qty:'0.5',unit:'cup'},{name:'milk',qty:'0.5',unit:'cup'},{name:'yogurt',qty:'2',unit:'tbsp'},{name:'honey',qty:'1',unit:'tsp'},{name:'berries',qty:'0.5',unit:'cup'}],
       ['Stir oats, milk, yogurt, and honey together in a jar.','Refrigerate overnight.','Top with berries before eating.']),
@@ -294,12 +308,15 @@ const IMPORTED_RECIPES = [
 ];
 
 /* ---------- FIREBASE AUTH + STORAGE (shared, Google Sign-In required) ---------- */
-// Firebase web config is NOT a secret: it only identifies the project.
+// The Firebase web config is NOT a secret: it only identifies the project.
 // Access is protected by Google Sign-In + the Realtime Database rules (email whitelist).
 const DEFAULT_FIREBASE_CONFIG = {"apiKey":"AIzaSyAAVlcygCcJXlK0LkfIh3oiEMc6sZhEVFo","authDomain":"recipe-box-oneill.firebaseapp.com","databaseURL":"https://recipe-box-oneill-default-rtdb.firebaseio.com","projectId":"recipe-box-oneill","storageBucket":"recipe-box-oneill.firebasestorage.app","messagingSenderId":"809735084570","appId":"1:809735084570:web:e6fbe32739f5a901014fa3"};
 let FIREBASE_CONFIG = DEFAULT_FIREBASE_CONFIG;
-try { const saved = JSON.parse(localStorage.getItem('recipeBoxFirebaseConfig') || 'null'); if(saved && saved.apiKey && saved.databaseURL) FIREBASE_CONFIG = saved; } catch(e){}
-let DB_URL = FIREBASE_CONFIG?.databaseURL || '';
+try {
+  const saved = JSON.parse(localStorage.getItem('recipeBoxFirebaseConfig') || 'null');
+  if(saved && saved.apiKey && saved.databaseURL) FIREBASE_CONFIG = saved;
+} catch(e){}
+let DB_URL = FIREBASE_CONFIG.databaseURL || '';
 let auth = null;
 
 async function authedDbUrl(path){
@@ -326,6 +343,7 @@ async function dbDelete(path){
 async function applyPendingImports(){
   let importedIds = [];
   try { importedIds = (await dbGet('importedIds')) || []; } catch(e){ importedIds = []; }
+  if(!Array.isArray(importedIds)) importedIds = Object.values(importedIds);
   let changed = false;
   for(const recipe of IMPORTED_RECIPES){
     if(!importedIds.includes(recipe.id)){
@@ -340,30 +358,72 @@ async function applyPendingImports(){
   }
 }
 
+function normPlan(p){
+  const ids = p.recipeIds ? (Array.isArray(p.recipeIds) ? p.recipeIds : Object.values(p.recipeIds)) : [];
+  return {id: p.id, name: p.name || 'Meal plan', created: p.created || 0, recipeIds: ids.filter(Boolean)};
+}
+function activePlan(){ return state.plans[state.activePlanId] || null; }
+function planRecipes(plan){ return plan ? plan.recipeIds.map(id => state.recipes[id]).filter(Boolean) : []; }
+
 async function loadState(){
+  if(loadingState) return;
+  loadingState = true;
   try {
-    state.recipes = (await dbGet('recipes')) || {};
-  } catch(e){ console.error('load recipes failed', e); state.recipes = {}; }
+    try { state.recipes = (await dbGet('recipes')) || {}; }
+    catch(e){ console.error('load recipes failed', e); state.recipes = {}; }
 
-  if(Object.keys(state.recipes).length === 0){
-    state.recipes = SAMPLE_RECIPES();
-    try { await dbSet('recipes', state.recipes); } catch(e){}
+    if(Object.keys(state.recipes).length === 0){
+      state.recipes = SAMPLE_RECIPES();
+      try { await dbSet('recipes', state.recipes); } catch(e){}
+    }
+
+    await applyPendingImports();
+
+    let plans = {};
+    try { plans = (await dbGet('plans')) || {}; } catch(e){ plans = {}; }
+    state.plans = {};
+    Object.keys(plans).forEach(id => { state.plans[id] = normPlan({...plans[id], id}); });
+    try { state.activePlanId = await dbGet('activePlanId'); } catch(e){ state.activePlanId = null; }
+    try { state.checks = (await dbGet('checks')) || {}; } catch(e){ state.checks = {}; }
+
+    if(Object.keys(state.plans).length === 0){
+      // First run of the list-based meal plan: carry over anything from the old day/meal scheduler.
+      let legacy = {};
+      try { legacy = (await dbGet('planner')) || {}; } catch(e){ legacy = {}; }
+      const ids = [];
+      LEGACY_DAYS.forEach(d => LEGACY_MEALS.forEach(m => {
+        const rid = legacy[d] && legacy[d][m];
+        if(rid && state.recipes[rid] && !ids.includes(rid)) ids.push(rid);
+      }));
+      const plan = {id: uid(), name: ids.length ? 'This week' : 'My meal plan', created: Date.now(), recipeIds: ids};
+      state.plans[plan.id] = plan;
+      state.activePlanId = plan.id;
+      await savePlan(plan);
+      await saveActivePlanId();
+    }
+    if(!state.plans[state.activePlanId]){
+      state.activePlanId = Object.keys(state.plans)[0];
+      await saveActivePlanId();
+    }
+    state.loaded = true;
+    render();
+  } finally {
+    loadingState = false;
   }
-
-  await applyPendingImports();
-
-  try { state.planner = (await dbGet('planner')) || {}; } catch(e){ state.planner = {}; }
-  try { state.checks = (await dbGet('checks')) || {}; } catch(e){ state.checks = {}; }
-  state.loaded = true;
-  render();
 }
 
 async function saveRecipe(recipe){ try{ await dbSet('recipes/' + recipe.id, recipe); }catch(e){ console.error('save recipe failed', e); } }
 async function deleteRecipeStorage(id){ try{ await dbDelete('recipes/' + id); }catch(e){ console.error('delete recipe failed', e); } }
-async function savePlanner(){ try{ await dbSet('planner', state.planner); }catch(e){ console.error('save planner failed', e); } }
+async function savePlan(plan){ try{ await dbSet('plans/' + plan.id, plan); }catch(e){ console.error('save plan failed', e); } }
+async function deletePlanStorage(id){ try{ await dbDelete('plans/' + id); }catch(e){ console.error('delete plan failed', e); } }
+async function saveActivePlanId(){ try{ await dbSet('activePlanId', state.activePlanId); }catch(e){ console.error('save active plan failed', e); } }
 async function saveChecks(){ try{ await dbSet('checks', state.checks); }catch(e){ console.error('save checks failed', e); } }
 
-function esc(s){ const d=document.createElement('div'); d.textContent=s??''; return d.innerHTML; }
+function esc(s){
+  const d = document.createElement('div');
+  d.textContent = s ?? '';
+  return d.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
 
 function resizeImage(file, maxDim=900, quality=0.72){
   return new Promise((resolve, reject)=>{
@@ -387,13 +447,39 @@ function resizeImage(file, maxDim=900, quality=0.72){
   });
 }
 
+/* ---------- RENDER + NAVIGATION ---------- */
+function setActiveTabButton(tab){
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+}
+
 function render(){
   if(!state.loaded) return;
+  const v = currentView();
   const main = document.getElementById('main');
-  if(state.tab==='box') main.innerHTML = renderBox();
-  else if(state.tab==='week') main.innerHTML = renderWeek();
+  if(v.recipeId){
+    if(state.recipes[v.recipeId]){
+      main.innerHTML = renderRecipeDetail(v.recipeId);
+    } else {
+      viewStack.pop();
+      if(!viewStack.length) viewStack = [HOME_VIEW];
+      return render();
+    }
+  }
+  else if(v.tab === 'box') main.innerHTML = renderBox();
+  else if(v.tab === 'plan') main.innerHTML = renderPlan();
   else main.innerHTML = renderGrocery();
-  attachMainHandlers();
+  setActiveTabButton(v.tab);
+}
+
+function goTo(view){ viewStack.push(view); render(); window.scrollTo(0, 0); }
+function goBack(){
+  if(viewStack.length > 1){ viewStack.pop(); render(); window.scrollTo(0, 0); return true; }
+  return false;
+}
+function goTab(tab){
+  viewStack = (tab === 'box') ? [HOME_VIEW] : [HOME_VIEW, {tab, recipeId:null}];
+  render();
+  window.scrollTo(0, 0);
 }
 
 /* ---------- RECIPE BOX ---------- */
@@ -411,13 +497,9 @@ function renderBox(){
       <input type="text" id="search-input" placeholder="Search recipes…" value="${esc(state.searchTerm)}">
     </div>
     <div class="chip-row">
-      ${tags.map(t=>`<button class="chip ${state.activeFilter===t?'active':''}" data-filter="${t}">${t==='all'?'All':TAG_LABELS[t]||t}</button>`).join('')}
+      ${tags.map(t=>`<button class="chip ${state.activeFilter===t?'active':''}" data-act="filter" data-id="${esc(t)}">${t==='all'?'All':esc(TAG_LABELS[t]||t)}</button>`).join('')}
     </div>
-    <button class="add-btn" id="add-recipe-btn">+ Add a recipe</button>
-    <button class="secondary-btn" id="import-data-btn" style="margin-bottom:8px;">⇩ Import data</button>
-    <button class="secondary-btn" id="export-data-btn" style="margin-bottom:8px;">⇪ Export all data</button>
-    <button class="secondary-btn" id="change-db-btn" style="margin-bottom:8px;">⚙ Change shared database</button>
-    <button class="secondary-btn" id="sign-out-btn" style="margin-bottom:18px;">Sign out</button>
+    <button class="add-btn" data-act="add-recipe" style="margin-bottom:18px;">+ Add a recipe</button>
   `;
 
   if(filtered.length===0){
@@ -427,33 +509,44 @@ function renderBox(){
     filtered.forEach(r=>{
       const ingPreview = r.ingredients.slice(0,3).map(i=>i.name).join(', ') + (r.ingredients.length>3?'…':'');
       html += `
-        <div class="recipe-card" data-recipe-id="${r.id}">
-          ${r.photo ? `<img src="${r.photo}" style="width:100%;height:140px;object-fit:cover;display:block;border-radius:2px 2px 0 0;margin:-16px -14px 12px;">` : ''}
-          <span class="card-tag" style="background:${TAG_COLORS[r.tag]||'var(--brown)'};top:${r.photo?'8px':'-10px'};">${TAG_LABELS[r.tag]||r.tag}</span>
+        <div class="recipe-card" data-act="open-recipe" data-id="${esc(r.id)}">
+          ${r.photo ? `<img src="${r.photo}" alt="" style="width:100%;height:140px;object-fit:cover;display:block;border-radius:2px 2px 0 0;margin:-16px -14px 12px;width:calc(100% + 28px);max-width:none;">` : ''}
+          <span class="card-tag" style="background:${TAG_COLORS[r.tag]||'var(--brown)'};top:${r.photo?'8px':'-10px'};">${esc(TAG_LABELS[r.tag]||r.tag)}</span>
           <h3>${esc(r.title)}</h3>
-          <div class="recipe-meta">${r.time} min · serves ${r.servings}</div>
+          <div class="recipe-meta">${esc(r.time)} min · serves ${esc(r.servings)}</div>
           <div class="recipe-ing-preview">${esc(ingPreview)}</div>
         </div>`;
     });
     html += `</div>`;
   }
+
+  html += `<div style="margin-top:28px;">`;
+  if(deferredInstall) html += `<button class="secondary-btn" data-act="install-app">⬇ Install app on this device</button>`;
+  html += `
+    <button class="secondary-btn" data-act="import-data">⇩ Import data</button>
+    <button class="secondary-btn" data-act="export-data">⇪ Export all data</button>
+    <button class="secondary-btn" data-act="change-db">⚙ Change shared database</button>
+    <button class="secondary-btn" data-act="sign-out">Sign out</button>
+  </div>`;
   return html;
 }
 
 function renderRecipeDetail(id){
   const r = state.recipes[id];
   if(!r) return renderBox();
+  const plan = activePlan();
+  const inPlan = !!(plan && plan.recipeIds.includes(id));
   return `
-    <button class="detail-back" id="back-to-box">‹ Back to Recipes</button>
-    ${r.photo ? `<img src="${r.photo}" style="width:100%;height:200px;object-fit:cover;border-radius:4px;margin-bottom:12px;display:block;">` : ''}
-    <span class="card-tag" style="position:static;display:inline-block;background:${TAG_COLORS[r.tag]||'var(--brown)'}">${TAG_LABELS[r.tag]||r.tag}</span>
+    <button class="detail-back" data-act="back">‹ Back</button>
+    ${r.photo ? `<img src="${r.photo}" alt="" style="width:100%;height:200px;object-fit:cover;border-radius:4px;margin-bottom:12px;display:block;">` : ''}
+    <span class="card-tag" style="position:static;display:inline-block;background:${TAG_COLORS[r.tag]||'var(--brown)'}">${esc(TAG_LABELS[r.tag]||r.tag)}</span>
     <h2 class="detail-title" style="margin-top:8px;">${esc(r.title)}</h2>
-    <div class="recipe-meta">${r.time} min · serves ${r.servings}</div>
+    <div class="recipe-meta">${esc(r.time)} min · serves ${esc(r.servings)}</div>
 
     <div class="detail-section">
       <h4>Ingredients</h4>
       <ul class="ing-list">
-        ${r.ingredients.map(i=>`<li>${esc(i.qty)} ${esc(i.unit)} ${esc(i.name)}`.trim()+`</li>`).join('')}
+        ${r.ingredients.map(i=>`<li>${[esc(i.qty), esc(i.unit), esc(i.name)].filter(Boolean).join(' ')}</li>`).join('')}
       </ul>
     </div>
 
@@ -465,67 +558,165 @@ function renderRecipeDetail(id){
     </div>
 
     <div class="detail-section">
-      <button class="primary-btn" id="cook-btn" data-recipe-id="${r.id}" style="background:var(--tomato);">▶ Start cooking</button>
-      <button class="secondary-btn" id="assign-btn" data-recipe-id="${r.id}">Add to this week's plan</button>
-      <button class="secondary-btn" id="edit-recipe-btn" data-recipe-id="${r.id}">Edit recipe</button>
-      <button class="danger-btn" id="delete-recipe-btn" data-recipe-id="${r.id}">Delete recipe</button>
+      <button class="primary-btn" data-act="cook" data-id="${esc(r.id)}" style="background:var(--tomato);">▶ Start cooking</button>
+      <button class="secondary-btn" data-act="plan-toggle" data-id="${esc(r.id)}">${inPlan ? '✓ In meal plan — tap to remove' : '+ Add to meal plan'}${plan ? ` (${esc(plan.name)})` : ''}</button>
+      <button class="secondary-btn" data-act="edit-recipe" data-id="${esc(r.id)}">Edit recipe</button>
+      <button class="danger-btn" data-act="delete-recipe" data-id="${esc(r.id)}">Delete recipe</button>
     </div>
   `;
 }
 
-/* ---------- WEEK VIEW ---------- */
-function renderWeek(){
-  let html = '';
-  DAYS.forEach(day=>{
-    html += `<div class="day-block"><h3 class="day-title">${day}</h3>`;
-    MEALS.forEach(meal=>{
-      const rid = state.planner[day]?.[meal];
-      const recipe = rid ? state.recipes[rid] : null;
+/* ---------- MEAL PLAN VIEW ---------- */
+function renderPlan(){
+  const plans = Object.values(state.plans).sort((a,b)=>(a.created||0)-(b.created||0));
+  const plan = activePlan();
+  if(!plan) return `<div class="loading">No meal plan yet.</div>`;
+  const items = planRecipes(plan);
+
+  let html = `
+    <div class="plan-select-wrap">
+      <label for="plan-select">Meal plan</label>
+      <select id="plan-select">
+        ${plans.map(p=>`<option value="${esc(p.id)}" ${p.id===plan.id?'selected':''}>${esc(p.name)}</option>`).join('')}
+      </select>
+    </div>
+    <button class="add-btn" data-act="add-meals">+ Add meals from your recipes</button>
+    <button class="secondary-btn" data-act="new-plan" style="margin-top:0;">Create new meal plan</button>
+    <div class="plan-count">${items.length} meal${items.length===1?'':'s'} chosen</div>
+  `;
+
+  if(items.length === 0){
+    html += `<div class="empty-state"><h3>No meals chosen yet</h3><p>Tap "Add meals from your recipes" to build this plan. Your grocery list is built from the plan you have selected.</p></div>`;
+  } else {
+    items.forEach(r=>{
       html += `
-        <div class="meal-slot">
-          <span class="meal-label">${meal[0].toUpperCase()+meal.slice(1)}</span>
-          <span class="meal-content ${recipe?'':'empty'}">${recipe?esc(recipe.title):'Nothing planned'}</span>
-          ${recipe
-            ? `<button data-clear-day="${day}" data-clear-meal="${meal}">Remove</button>`
-            : `<button data-pick-day="${day}" data-pick-meal="${meal}">+ Add</button>`}
+        <div class="plan-item">
+          <div class="plan-item-main" data-act="open-recipe" data-id="${esc(r.id)}">
+            <div class="plan-item-title">${esc(r.title)}</div>
+            <div class="plan-item-meta">${esc(TAG_LABELS[r.tag]||r.tag)} · ${esc(r.time)} min · serves ${esc(r.servings)}</div>
+          </div>
+          <button data-act="plan-remove" data-id="${esc(r.id)}">Remove</button>
         </div>`;
     });
-    html += `</div>`;
-  });
-  html += `<button class="secondary-btn" id="clear-week-btn">Clear entire week</button>`;
+  }
+
+  html += `<div style="margin-top:24px;">
+    <button class="secondary-btn" data-act="plan-rename">Rename this plan</button>
+    ${items.length ? `<button class="secondary-btn" data-act="plan-clear">Clear all meals from this plan</button>` : ''}
+    ${plans.length > 1 ? `<button class="danger-btn" data-act="plan-delete">Delete this plan</button>` : ''}
+  </div>`;
   return html;
 }
 
-function renderPickerSheet(day, meal){
-  const recipes = Object.values(state.recipes);
-  let html = `<div class="sheet-handle"></div><h2>${TAG_LABELS[meal]} — ${day}</h2>`;
-  if(recipes.length===0){
-    html += `<div class="empty-state"><p>Add a recipe first, then come back to plan your week.</p></div>`;
+async function togglePlanRecipe(rid){
+  const plan = activePlan();
+  if(!plan) return;
+  const i = plan.recipeIds.indexOf(rid);
+  if(i >= 0) plan.recipeIds.splice(i, 1); else plan.recipeIds.push(rid);
+  render();
+  await savePlan(plan);
+}
+
+function openNewPlanSheet(){
+  const n = Object.keys(state.plans).length + 1;
+  openSheet(`
+    <div class="sheet-handle"></div>
+    <h2>Create new meal plan</h2>
+    <p style="font-size:13px;color:var(--brown);line-height:1.5;margin:0 0 14px;">This starts a fresh list of meals. Your other plans are kept and you can switch between them. The grocery list follows the plan you have selected, and its ticks start fresh.</p>
+    <div class="field"><label>Plan name</label><input id="np-name" value="Meal plan ${n}"></div>
+    <button class="primary-btn" id="np-create">Create plan and choose meals</button>
+    <button class="secondary-btn" id="np-cancel">Cancel</button>
+  `);
+  const input = document.getElementById('np-name');
+  input.focus(); input.select();
+  document.getElementById('np-cancel').onclick = closeSheet;
+  document.getElementById('np-create').onclick = async ()=>{
+    const name = input.value.trim() || `Meal plan ${n}`;
+    const plan = {id: uid(), name, created: Date.now(), recipeIds: []};
+    state.plans[plan.id] = plan;
+    state.activePlanId = plan.id;
+    state.checks = {};
+    closeSheet();
+    goTab('plan');
+    openMealPicker();
+    await savePlan(plan);
+    await saveActivePlanId();
+    await saveChecks();
+  };
+}
+
+function openRenamePlanSheet(){
+  const plan = activePlan();
+  if(!plan) return;
+  openSheet(`
+    <div class="sheet-handle"></div>
+    <h2>Rename meal plan</h2>
+    <div class="field"><label>Plan name</label><input id="rn-name" value="${esc(plan.name)}"></div>
+    <button class="primary-btn" id="rn-save">Save</button>
+    <button class="secondary-btn" id="rn-cancel">Cancel</button>
+  `);
+  document.getElementById('rn-cancel').onclick = closeSheet;
+  document.getElementById('rn-save').onclick = async ()=>{
+    const name = document.getElementById('rn-name').value.trim();
+    if(!name) return;
+    plan.name = name;
+    closeSheet();
+    await savePlan(plan);
+  };
+}
+
+function openMealPicker(){
+  const plan = activePlan();
+  if(!plan) return;
+  const recipes = Object.values(state.recipes).sort((a,b)=>a.title.localeCompare(b.title));
+  let html = `<div class="sheet-handle"></div><h2>Choose meals for "${esc(plan.name)}"</h2>`;
+  if(recipes.length === 0){
+    html += `<div class="empty-state"><p>Add a recipe first, then come back to build your plan.</p></div>`;
   } else {
+    html += `<div class="field"><input id="picker-search" type="text" placeholder="Search recipes…"></div><div id="picker-list">`;
     recipes.forEach(r=>{
-      html += `<div class="picker-item"><span>${esc(r.title)}</span><button data-set-day="${day}" data-set-meal="${meal}" data-set-recipe="${r.id}">Add</button></div>`;
+      const on = plan.recipeIds.includes(r.id);
+      html += `<div class="picker-item" data-title="${esc(r.title.toLowerCase())}"><span>${esc(r.title)}</span><button type="button" data-picker-id="${esc(r.id)}" class="${on?'on':''}">${on?'Added ✓':'Add'}</button></div>`;
+    });
+    html += `</div>`;
+  }
+  html += `<button class="primary-btn" id="picker-done">Done</button>`;
+  openSheet(html);
+
+  document.getElementById('picker-done').onclick = closeSheet;
+  const list = document.getElementById('picker-list');
+  if(list){
+    list.addEventListener('click', async (e)=>{
+      const btn = e.target.closest('[data-picker-id]');
+      if(!btn) return;
+      const rid = btn.dataset.pickerId;
+      const i = plan.recipeIds.indexOf(rid);
+      if(i >= 0) plan.recipeIds.splice(i, 1); else plan.recipeIds.push(rid);
+      const on = plan.recipeIds.includes(rid);
+      btn.classList.toggle('on', on);
+      btn.textContent = on ? 'Added ✓' : 'Add';
+      await savePlan(plan);
+    });
+    document.getElementById('picker-search').addEventListener('input', (e)=>{
+      const q = e.target.value.trim().toLowerCase();
+      list.querySelectorAll('.picker-item').forEach(row=>{
+        row.style.display = (!q || row.dataset.title.includes(q)) ? '' : 'none';
+      });
     });
   }
-  html += `<button class="secondary-btn" id="close-sheet">Cancel</button>`;
-  return html;
 }
 
 /* ---------- GROCERY LIST ---------- */
 function buildGroceryList(){
   const map = {};
-  DAYS.forEach(day=>{
-    MEALS.forEach(meal=>{
-      const rid = state.planner[day]?.[meal];
-      if(!rid) return;
-      const recipe = state.recipes[rid];
-      if(!recipe) return;
-      recipe.ingredients.forEach(ing=>{
-        const key = (ing.name.trim().toLowerCase())+'|'+(ing.unit||'').trim().toLowerCase();
-        if(!map[key]) map[key] = {name:ing.name.trim(), unit:(ing.unit||'').trim(), qty:0, qtyIsNumeric:true, parts:[]};
-        const n = parseFloat(ing.qty);
-        if(!isNaN(n) && map[key].qtyIsNumeric){ map[key].qty += n; }
-        else { map[key].qtyIsNumeric = false; map[key].parts.push(ing.qty); }
-      });
+  planRecipes(activePlan()).forEach(recipe=>{
+    recipe.ingredients.forEach(ing=>{
+      const rawKey = (ing.name.trim().toLowerCase())+'|'+(ing.unit||'').trim().toLowerCase();
+      const key = rawKey.replace(/[.$#\[\]\/]/g, '_'); // Firebase keys cannot contain these
+      if(!map[key]) map[key] = {name:ing.name.trim(), unit:(ing.unit||'').trim(), qty:0, qtyIsNumeric:true, parts:[]};
+      const n = parseFloat(ing.qty);
+      if(!isNaN(n) && map[key].qtyIsNumeric){ map[key].qty += n; }
+      else { map[key].qtyIsNumeric = false; map[key].parts.push(ing.qty); }
     });
   });
   return Object.entries(map).map(([key, v])=>{
@@ -538,37 +729,37 @@ function buildGroceryList(){
 }
 
 function renderGrocery(){
+  const plan = activePlan();
   const items = buildGroceryList();
-  let html = `<h3 style="font-size:14px;color:var(--brown);margin-bottom:14px;">Built from this week's plan</h3>`;
+  let html = `<h3 style="font-size:14px;color:var(--brown);margin:0 0 14px;">Built from: ${plan ? esc(plan.name) : 'your meal plan'}</h3>`;
   if(items.length===0){
-    html += `<div class="empty-state"><h3>Your list is empty</h3><p>Plan some meals in "This Week" and your grocery list will fill in automatically.</p></div>`;
+    html += `<div class="empty-state"><h3>Your list is empty</h3><p>Choose some meals in "Meal Plan" and your grocery list will fill in automatically.</p></div>`;
   } else {
     html += `<div class="grocery-group">`;
     items.forEach(it=>{
       const checked = !!state.checks[it.key];
       html += `
         <label class="grocery-item ${checked?'checked':''}">
-          <input type="checkbox" data-check-key="${it.key}" ${checked?'checked':''}>
-          <span>${esc(it.qtyDisplay)} ${esc(it.unit)} ${esc(it.name)}</span>
+          <input type="checkbox" data-check-key="${esc(it.key)}" ${checked?'checked':''}>
+          <span>${[esc(it.qtyDisplay), esc(it.unit), esc(it.name)].filter(Boolean).join(' ')}</span>
         </label>`;
     });
-    html += `</div><button class="secondary-btn" id="clear-checks-btn">Uncheck all</button>`;
+    html += `</div><button class="secondary-btn" data-act="clear-checks">Uncheck all</button>`;
   }
   return html;
 }
 
-/* ---------- IMPORT DATA (paste JSON exported from the Claude-hosted version) ---------- */
+/* ---------- IMPORT / EXPORT DATA ---------- */
 function openImportDataSheet(){
-  const html = `
+  openSheet(`
     <div class="sheet-handle"></div>
     <h2>Import data</h2>
-    <p style="font-size:13px;color:var(--brown);line-height:1.5;margin-bottom:12px;">Paste the JSON you copied from "Export all data" in the Claude-hosted version. This merges into the shared database — it won't erase anything already here.</p>
+    <p style="font-size:13px;color:var(--brown);line-height:1.5;margin-bottom:12px;">Paste JSON copied from "Export all data". This merges into the shared database — it won't erase anything already here.</p>
     <textarea id="import-data-textarea" placeholder="Paste exported JSON here…" style="width:100%;min-height:160px;font-size:12px;font-family:monospace;padding:10px;border:1px solid var(--line-strong);border-radius:2px;background:var(--card);color:var(--ink);"></textarea>
     <div id="import-data-status" style="font-size:13px;color:var(--brown);margin:8px 0;min-height:16px;"></div>
     <button class="primary-btn" id="import-data-submit-btn">Import</button>
     <button class="secondary-btn" id="import-data-cancel-btn">Cancel</button>
-  `;
-  openSheet(html);
+  `);
   document.getElementById('import-data-cancel-btn').addEventListener('click', closeSheet);
   document.getElementById('import-data-submit-btn').addEventListener('click', async ()=>{
     const status = document.getElementById('import-data-status');
@@ -584,35 +775,32 @@ function openImportDataSheet(){
           await saveRecipe(parsed.recipes[id]);
         }
       }
-      if(parsed.planner){
-        state.planner = {...state.planner, ...parsed.planner};
-        await savePlanner();
-      }
-      if(parsed.checks){
-        state.checks = {...state.checks, ...parsed.checks};
-        await saveChecks();
+      if(parsed.plans){
+        for(const id in parsed.plans){
+          if(!state.plans[id]){
+            state.plans[id] = normPlan({...parsed.plans[id], id});
+            await savePlan(state.plans[id]);
+          }
+        }
       }
       closeSheet();
-      render();
     } catch(e){
       console.error('import failed', e);
-      status.textContent = 'Import failed — check your database connection and try again.';
+      status.textContent = 'Import failed — check your connection and try again.';
     }
   });
 }
 
-/* ---------- EXPORT DATA (for moving to the shared version) ---------- */
 function openExportSheet(){
-  const payload = JSON.stringify({recipes: state.recipes, planner: state.planner, checks: state.checks}, null, 0);
-  const html = `
+  const payload = JSON.stringify({recipes: state.recipes, plans: state.plans, activePlanId: state.activePlanId, checks: state.checks});
+  openSheet(`
     <div class="sheet-handle"></div>
     <h2>Export all data</h2>
-    <p style="font-size:13px;color:var(--brown);line-height:1.5;margin-bottom:12px;">Copy this and paste it into the "Import data" box on the shared version of the app.</p>
+    <p style="font-size:13px;color:var(--brown);line-height:1.5;margin-bottom:12px;">A full copy of your recipes and meal plans, as a backup or to move to another database.</p>
     <textarea id="export-textarea" readonly style="width:100%;min-height:160px;font-size:11px;font-family:monospace;padding:10px;border:1px solid var(--line-strong);border-radius:2px;background:var(--card);color:var(--ink);">${esc(payload)}</textarea>
     <button class="primary-btn" id="export-copy-btn">Copy to clipboard</button>
     <button class="secondary-btn" id="export-close-btn">Close</button>
-  `;
-  openSheet(html);
+  `);
   document.getElementById('export-close-btn').addEventListener('click', closeSheet);
   document.getElementById('export-copy-btn').addEventListener('click', async ()=>{
     const btn = document.getElementById('export-copy-btn');
@@ -627,7 +815,8 @@ function openExportSheet(){
   });
 }
 
-/* ---------- SHEET (add/edit recipe) ---------- */
+/* ---------- SHEET (modal) ---------- */
+function sheetIsOpen(){ return !document.getElementById('sheet-overlay').classList.contains('hidden'); }
 function openSheet(html){
   document.getElementById('sheet').innerHTML = html;
   document.getElementById('sheet-overlay').classList.remove('hidden');
@@ -635,6 +824,7 @@ function openSheet(html){
 function closeSheet(){
   document.getElementById('sheet-overlay').classList.add('hidden');
   document.getElementById('sheet').innerHTML = '';
+  render();
 }
 
 function ingredientRowHtml(ing, idx){
@@ -650,7 +840,7 @@ function ingredientRowHtml(ing, idx){
       <input class="ing-name" placeholder="Ingredient" value="${esc(ing?.name||'')}">
       <input class="ing-qty" placeholder="Qty" value="${esc(ing?.qty||'')}">
       <select class="ing-unit">${options}</select>
-      <button class="remove-x" data-remove-ing="${idx}">×</button>
+      <button type="button" class="remove-x" data-remove-ing="${idx}">×</button>
     </div>`;
 }
 function stepRowHtml(step, idx){
@@ -658,7 +848,7 @@ function stepRowHtml(step, idx){
     <div class="step-row" data-step-idx="${idx}">
       <span class="step-num">${idx+1}.</span>
       <textarea placeholder="Describe this step">${esc(step||'')}</textarea>
-      <button class="remove-x" data-remove-step="${idx}">×</button>
+      <button type="button" class="remove-x" data-remove-step="${idx}">×</button>
     </div>`;
 }
 
@@ -670,8 +860,8 @@ function openRecipeForm(existingId, draft){
     <form id="recipe-form">
       <div class="field">
         <label>Photo</label>
-        <div id="photo-preview-wrap">${r.photo ? `<img id="photo-preview" src="${r.photo}" style="width:100%;max-height:180px;object-fit:cover;border-radius:2px;margin-bottom:8px;display:block;">` : ''}</div>
-        <input type="file" accept="image/*" capture="environment" id="f-photo">
+        <div id="photo-preview-wrap">${r.photo ? `<img id="photo-preview" src="${r.photo}" alt="" style="width:100%;max-height:180px;object-fit:cover;border-radius:2px;margin-bottom:8px;display:block;">` : ''}</div>
+        <input type="file" accept="image/*" id="f-photo">
         <button type="button" class="small-btn" id="remove-photo-btn" style="margin-top:6px;display:${r.photo?'block':'none'};">Remove photo</button>
       </div>
       <div class="field"><label>Title</label><input id="f-title" value="${esc(r.title)}" required></div>
@@ -714,7 +904,7 @@ function openRecipeForm(existingId, draft){
     if(!file) return;
     try {
       currentPhotoData = await resizeImage(file);
-      document.getElementById('photo-preview-wrap').innerHTML = `<img id="photo-preview" src="${currentPhotoData}" style="width:100%;max-height:180px;object-fit:cover;border-radius:2px;margin-bottom:8px;display:block;">`;
+      document.getElementById('photo-preview-wrap').innerHTML = `<img id="photo-preview" src="${currentPhotoData}" alt="" style="width:100%;max-height:180px;object-fit:cover;border-radius:2px;margin-bottom:8px;display:block;">`;
       removePhotoBtn.style.display = 'block';
     } catch(err){ console.error('photo resize failed', err); }
   });
@@ -725,23 +915,20 @@ function openRecipeForm(existingId, draft){
     photoInput.value = '';
   });
 
+  const form = document.getElementById('recipe-form');
   document.getElementById('add-ing-btn').onclick = ()=>{
     document.getElementById('ing-list').insertAdjacentHTML('beforeend', ingredientRowHtml(null, ingCount++));
   };
   document.getElementById('add-step-btn').onclick = ()=>{
     document.getElementById('step-list').insertAdjacentHTML('beforeend', stepRowHtml(null, stepCount++));
   };
-  document.getElementById('sheet').addEventListener('click', (e)=>{
-    if(e.target.dataset.removeIng !== undefined){
-      e.target.closest('.ing-row').remove();
-    }
-    if(e.target.dataset.removeStep !== undefined){
-      e.target.closest('.step-row').remove();
-    }
+  form.addEventListener('click', (e)=>{
+    if(e.target.dataset.removeIng !== undefined) e.target.closest('.ing-row').remove();
+    if(e.target.dataset.removeStep !== undefined) e.target.closest('.step-row').remove();
   });
   document.getElementById('cancel-form-btn').onclick = closeSheet;
 
-  document.getElementById('recipe-form').addEventListener('submit', async (e)=>{
+  form.addEventListener('submit', async (e)=>{
     e.preventDefault();
     const title = document.getElementById('f-title').value.trim();
     if(!title) return;
@@ -755,179 +942,128 @@ function openRecipeForm(existingId, draft){
     })).filter(i=>i.name);
     const steps = Array.from(document.querySelectorAll('#step-list textarea')).map(t=>t.value.trim()).filter(s=>s);
 
-    const id = existingId || crypto.randomUUID();
+    const id = existingId || uid();
     const recipe = {id, title, tag, time: parseInt(time)||0, servings: parseInt(servings)||1, ingredients, steps, photo: currentPhotoData};
     state.recipes[id] = recipe;
-    await saveRecipe(recipe);
     closeSheet();
-    state.tab = 'box';
-    setActiveTabButton();
-    render();
+    if(!existingId) goTab('box');
+    await saveRecipe(recipe);
   });
 }
 
-/* ---------- EVENT WIRING ---------- */
-function setActiveTabButton(){
-  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active', b.dataset.tab===state.tab));
-}
+/* ---------- MAIN-AREA EVENTS (delegated, attached once) ---------- */
+const mainEl = document.getElementById('main');
+
+mainEl.addEventListener('click', async (e)=>{
+  const el = e.target.closest('[data-act]');
+  if(!el) return;
+  const act = el.dataset.act, id = el.dataset.id;
+  switch(act){
+    case 'filter': state.activeFilter = id; render(); break;
+    case 'add-recipe': openRecipeForm(null); break;
+    case 'import-data': openImportDataSheet(); break;
+    case 'export-data': openExportSheet(); break;
+    case 'change-db':
+      document.getElementById('setup-config-input').value = JSON.stringify(FIREBASE_CONFIG, null, 2);
+      showConfigStage();
+      break;
+    case 'sign-out': if(auth) auth.signOut(); break;
+    case 'install-app':
+      if(deferredInstall){ deferredInstall.prompt(); try { await deferredInstall.userChoice; } catch(err){} deferredInstall = null; render(); }
+      break;
+    case 'open-recipe': goTo({tab: currentView().tab, recipeId: id}); break;
+    case 'back': goBack(); break;
+    case 'cook': openCookMode(id); break;
+    case 'plan-toggle': togglePlanRecipe(id); break;
+    case 'edit-recipe': openRecipeForm(id); break;
+    case 'delete-recipe': {
+      const r = state.recipes[id];
+      if(!r || !confirm(`Delete "${r.title}"? This can't be undone.`)) break;
+      delete state.recipes[id];
+      const touched = [];
+      Object.values(state.plans).forEach(p=>{
+        const before = p.recipeIds.length;
+        p.recipeIds = p.recipeIds.filter(x => x !== id);
+        if(p.recipeIds.length !== before) touched.push(p);
+      });
+      goBack();
+      await deleteRecipeStorage(id);
+      for(const p of touched) await savePlan(p);
+      break;
+    }
+    case 'new-plan': openNewPlanSheet(); break;
+    case 'add-meals': openMealPicker(); break;
+    case 'plan-remove': togglePlanRecipe(id); break;
+    case 'plan-rename': openRenamePlanSheet(); break;
+    case 'plan-clear': {
+      const plan = activePlan();
+      if(!plan || !confirm(`Remove all meals from "${plan.name}"?`)) break;
+      plan.recipeIds = [];
+      render();
+      await savePlan(plan);
+      break;
+    }
+    case 'plan-delete': {
+      const plan = activePlan();
+      if(!plan || Object.keys(state.plans).length < 2 || !confirm(`Delete the plan "${plan.name}"?`)) break;
+      delete state.plans[plan.id];
+      state.activePlanId = Object.values(state.plans).sort((a,b)=>(a.created||0)-(b.created||0))[0].id;
+      render();
+      await deletePlanStorage(plan.id);
+      await saveActivePlanId();
+      break;
+    }
+    case 'clear-checks':
+      state.checks = {};
+      render();
+      await saveChecks();
+      break;
+  }
+});
+
+mainEl.addEventListener('change', async (e)=>{
+  const t = e.target;
+  if(t.id === 'plan-select'){
+    state.activePlanId = t.value;
+    state.checks = {};
+    render();
+    await saveActivePlanId();
+    await saveChecks();
+  } else if(t.dataset && t.dataset.checkKey !== undefined){
+    state.checks[t.dataset.checkKey] = t.checked;
+    render();
+    await saveChecks();
+  }
+});
+
+mainEl.addEventListener('input', (e)=>{
+  if(e.target.id === 'search-input'){
+    const pos = e.target.selectionStart;
+    state.searchTerm = e.target.value;
+    render();
+    const input = document.getElementById('search-input');
+    if(input){ input.focus(); try { input.setSelectionRange(pos, pos); } catch(err){} }
+  }
+});
 
 document.querySelectorAll('.tab').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    state.tab = btn.dataset.tab;
-    setActiveTabButton();
-    render();
-  });
+  btn.addEventListener('click', ()=>{ if(state.loaded) goTab(btn.dataset.tab); });
 });
 
 document.getElementById('sheet-overlay').addEventListener('click', (e)=>{
-  if(e.target.id==='sheet-overlay') closeSheet();
+  if(e.target.id === 'sheet-overlay') closeSheet();
 });
 
-function attachMainHandlers(){
-  const main = document.getElementById('main');
-
-  const searchInput = document.getElementById('search-input');
-  if(searchInput){
-    searchInput.addEventListener('input', (e)=>{ state.searchTerm = e.target.value; render(); });
-  }
-  main.querySelectorAll('[data-filter]').forEach(chip=>{
-    chip.addEventListener('click', ()=>{ state.activeFilter = chip.dataset.filter; render(); });
-  });
-  const addBtn = document.getElementById('add-recipe-btn');
-  if(addBtn) addBtn.addEventListener('click', ()=>openRecipeForm(null));
-
-  const importBtn = document.getElementById('import-data-btn');
-  if(importBtn) importBtn.addEventListener('click', openImportDataSheet);
-
-  const exportBtn = document.getElementById('export-data-btn');
-  if(exportBtn) exportBtn.addEventListener('click', openExportSheet);
-
-  const changeDbBtn = document.getElementById('change-db-btn');
-  if(changeDbBtn) changeDbBtn.addEventListener('click', ()=>{
-    document.getElementById('setup-config-input').value = JSON.stringify(FIREBASE_CONFIG || {}, null, 2);
-    showConfigStage();
-  });
-
-  const signOutBtn = document.getElementById('sign-out-btn');
-  if(signOutBtn) signOutBtn.addEventListener('click', ()=>{
-    if(auth) auth.signOut();
-  });
-
-  main.querySelectorAll('.recipe-card').forEach(card=>{
-    card.addEventListener('click', ()=>{
-      main.innerHTML = renderRecipeDetail(card.dataset.recipeId);
-      attachDetailHandlers();
-    });
-  });
-
-  main.querySelectorAll('[data-pick-day]').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      openSheet(renderPickerSheet(btn.dataset.pickDay, btn.dataset.pickMeal));
-      wirePickerSheet();
-    });
-  });
-  main.querySelectorAll('[data-clear-day]').forEach(btn=>{
-    btn.addEventListener('click', async ()=>{
-      const day = btn.dataset.clearDay, meal = btn.dataset.clearMeal;
-      if(state.planner[day]) delete state.planner[day][meal];
-      await savePlanner();
-      render();
-    });
-  });
-  const clearWeekBtn = document.getElementById('clear-week-btn');
-  if(clearWeekBtn) clearWeekBtn.addEventListener('click', async ()=>{
-    state.planner = {};
-    await savePlanner();
-    render();
-  });
-
-  main.querySelectorAll('[data-check-key]').forEach(cb=>{
-    cb.addEventListener('change', async ()=>{
-      state.checks[cb.dataset.checkKey] = cb.checked;
-      await saveChecks();
-      render();
-    });
-  });
-  const clearChecksBtn = document.getElementById('clear-checks-btn');
-  if(clearChecksBtn) clearChecksBtn.addEventListener('click', async ()=>{
-    state.checks = {};
-    await saveChecks();
-    render();
-  });
-}
-
-function attachDetailHandlers(){
-  const backBtn = document.getElementById('back-to-box');
-  if(backBtn) backBtn.addEventListener('click', ()=>{ render(); });
-
-  const cookBtn = document.getElementById('cook-btn');
-  if(cookBtn) cookBtn.addEventListener('click', ()=>openCookMode(cookBtn.dataset.recipeId));
-
-  const assignBtn = document.getElementById('assign-btn');
-  if(assignBtn) assignBtn.addEventListener('click', ()=>{
-    const recipeId = assignBtn.dataset.recipeId;
-    openSheet(renderAssignSheet(recipeId));
-    wireAssignSheet(recipeId);
-  });
-
-  const editBtn = document.getElementById('edit-recipe-btn');
-  if(editBtn) editBtn.addEventListener('click', ()=>openRecipeForm(editBtn.dataset.recipeId));
-
-  const deleteBtn = document.getElementById('delete-recipe-btn');
-  if(deleteBtn) deleteBtn.addEventListener('click', async ()=>{
-    const id = deleteBtn.dataset.recipeId;
-    delete state.recipes[id];
-    Object.values(state.planner).forEach(dayObj=>{
-      MEALS.forEach(m=>{ if(dayObj[m]===id) delete dayObj[m]; });
-    });
-    await deleteRecipeStorage(id);
-    await savePlanner();
-    render();
-  });
-}
-
-function renderAssignSheet(recipeId){
-  let html = `<div class="sheet-handle"></div><h2>Add to which slot?</h2>`;
-  DAYS.forEach(day=>{
-    html += `<div class="field"><label>${day}</label><div class="row2">`;
-    MEALS.forEach(meal=>{
-      html += `<button type="button" class="small-btn" data-assign-day="${day}" data-assign-meal="${meal}" style="flex:1;">${TAG_LABELS[meal]}</button>`;
-    });
-    html += `</div></div>`;
-  });
-  html += `<button class="secondary-btn" id="close-sheet">Cancel</button>`;
-  return html;
-}
-function wireAssignSheet(recipeId){
-  document.querySelectorAll('[data-assign-day]').forEach(btn=>{
-    btn.addEventListener('click', async ()=>{
-      const day = btn.dataset.assignDay, meal = btn.dataset.assignMeal;
-      if(!state.planner[day]) state.planner[day] = {};
-      state.planner[day][meal] = recipeId;
-      await savePlanner();
-      closeSheet();
-    });
-  });
-  const closeBtn = document.getElementById('close-sheet');
-  if(closeBtn) closeBtn.addEventListener('click', closeSheet);
-}
-function wirePickerSheet(){
-  document.querySelectorAll('[data-set-day]').forEach(btn=>{
-    btn.addEventListener('click', async ()=>{
-      const day = btn.dataset.setDay, meal = btn.dataset.setMeal, rid = btn.dataset.setRecipe;
-      if(!state.planner[day]) state.planner[day] = {};
-      state.planner[day][meal] = rid;
-      await savePlanner();
-      closeSheet();
-      render();
-    });
-  });
-  const closeBtn = document.getElementById('close-sheet');
-  if(closeBtn) closeBtn.addEventListener('click', closeSheet);
-}
+window.addEventListener('beforeinstallprompt', (e)=>{
+  e.preventDefault();
+  deferredInstall = e;
+  if(state.loaded) render();
+});
+window.addEventListener('appinstalled', ()=>{ deferredInstall = null; if(state.loaded) render(); });
 
 /* ---------- COOKING MODE ---------- */
 const cookState = { recipeId: null, stepIndex: 0, wakeLock: null };
+function cookIsOpen(){ return !document.getElementById('cook-overlay').classList.contains('hidden'); }
 
 function openCookMode(recipeId){
   const r = state.recipes[recipeId];
@@ -1025,6 +1161,46 @@ cookStepArea.addEventListener('touchend', (e)=>{
   }
 }, {passive:true});
 
+/* ---------- BACK BUTTON / SWIPE-BACK HANDLING ----------
+   The browser history always holds two entries: [guard, cur]. When the user goes back we land on
+   'guard', work out what "back one page" means inside the app (close cooking mode, close a sheet,
+   leave a recipe, return to Recipes), then push 'cur' again so the next back works the same way.
+   On the home screen the first back does nothing; a second back within 3 seconds lets the app close. */
+let exitArmedUntil = 0;
+
+function ensureHistory(){
+  const st = history.state;
+  if(st && st.k === 'cur') return;
+  if(st && st.k === 'guard'){ history.pushState({k:'cur'}, ''); return; }
+  history.replaceState({k:'guard'}, '');
+  history.pushState({k:'cur'}, '');
+}
+// Chrome only trusts history entries created during a real tap, so set this up on the first touch.
+document.addEventListener('pointerdown', ensureHistory, {passive:true});
+
+function handleBack(){
+  if(cookIsOpen()){ closeCookMode(); return 'handled'; }
+  if(sheetIsOpen()){ closeSheet(); return 'handled'; }
+  if(!document.getElementById('setup-overlay').classList.contains('hidden')) return 'handled';
+  if(state.loaded && goBack()) return 'handled';
+  return 'home';
+}
+
+window.addEventListener('popstate', (e)=>{
+  if(!(e.state && e.state.k === 'guard')) return;
+  const result = handleBack();
+  if(result === 'home'){
+    if(Date.now() < exitArmedUntil){
+      exitArmedUntil = 0;
+      history.back();   // second back in a row at home: let the app/browser leave
+      return;
+    }
+    exitArmedUntil = Date.now() + 3000;
+  }
+  history.pushState({k:'cur'}, '');
+});
+
+/* ---------- SIGN-IN / START-UP ---------- */
 function showConfigStage(){
   document.getElementById('setup-overlay').classList.remove('hidden');
   document.getElementById('setup-stage-config').classList.remove('hidden');
@@ -1039,26 +1215,27 @@ function hideSetupOverlay(){
   document.getElementById('setup-overlay').classList.add('hidden');
 }
 
+function showOffline(){
+  document.getElementById('main').innerHTML = `
+    <div class="empty-state"><h3>Can't reach the recipe box</h3>
+    <p>Check your internet connection, then try again.</p>
+    <button class="primary-btn" onclick="location.reload()">Try again</button></div>`;
+}
+
 function initFirebaseAuth(){
+  if(typeof firebase === 'undefined'){ showOffline(); return; }
   if(!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
   auth = firebase.auth();
+  auth.getRedirectResult().catch(e => console.error('redirect sign-in failed', e));
   auth.onAuthStateChanged(user => {
     if(user){
       hideSetupOverlay();
-      loadState();
+      if(!state.loaded) loadState();
     } else {
+      state.loaded = false;
       showLoginStage();
     }
   });
-}
-
-function bootApp(){
-  if(!FIREBASE_CONFIG || !FIREBASE_CONFIG.databaseURL || !FIREBASE_CONFIG.apiKey){
-    showConfigStage();
-    return;
-  }
-  DB_URL = FIREBASE_CONFIG.databaseURL;
-  initFirebaseAuth();
 }
 
 document.getElementById('setup-save-config-btn').addEventListener('click', () => {
@@ -1068,26 +1245,36 @@ document.getElementById('setup-save-config-btn').addEventListener('click', () =>
   try { cfg = JSON.parse(raw); } catch(e){ status.textContent = "That doesn't look like valid JSON."; return; }
   if(!cfg.databaseURL || !cfg.apiKey){ status.textContent = 'Missing databaseURL or apiKey in that config.'; return; }
   localStorage.setItem('recipeBoxFirebaseConfig', JSON.stringify(cfg));
-  FIREBASE_CONFIG = cfg;
-  status.textContent = '';
-  bootApp();
+  location.reload();
+});
+document.getElementById('setup-reset-config-btn').addEventListener('click', () => {
+  localStorage.removeItem('recipeBoxFirebaseConfig');
+  location.reload();
+});
+document.getElementById('setup-cancel-config-btn').addEventListener('click', () => {
+  if(auth && auth.currentUser) hideSetupOverlay(); else showLoginStage();
 });
 
 document.getElementById('google-signin-btn').addEventListener('click', async () => {
   const status = document.getElementById('login-status');
   status.textContent = 'Opening Google sign-in…';
+  const provider = new firebase.auth.GoogleAuthProvider();
   try {
-    const provider = new firebase.auth.GoogleAuthProvider();
     await auth.signInWithPopup(provider);
   } catch(e){
     console.error('sign-in failed', e);
+    if(e && (e.code === 'auth/popup-blocked' || e.code === 'auth/operation-not-supported-in-this-environment')){
+      try { await auth.signInWithRedirect(provider); return; } catch(e2){ e = e2; }
+    }
     status.textContent = 'Sign-in failed: ' + (e.message || e.code || 'unknown error');
   }
 });
 
-document.getElementById('setup-back-btn').addEventListener('click', showConfigStage);
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+}
 
-bootApp();
+initFirebaseAuth();
 </script>
 </body>
 </html>
