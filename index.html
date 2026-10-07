@@ -143,6 +143,10 @@
   .plan-hint{font-size:12px;color:var(--brown);margin:8px 0 0;}
   .gro-total{display:flex;justify-content:space-between;align-items:baseline;font-size:15px;margin:0 0 12px;padding:10px 12px;background:var(--card);border:1px solid var(--line);border-radius:2px;}
   .gro-total span{font-size:12px;color:var(--brown);}
+  .serv-line{margin-top:7px;font-size:13px;color:var(--brown);display:flex;align-items:center;gap:8px;}
+  .stepper{display:inline-flex;align-items:center;border:1px solid var(--line-strong);border-radius:2px;background:var(--paper);}
+  .stepper strong{min-width:30px;text-align:center;color:var(--ink);font-size:14px;}
+  .plan-item .stepper button{border:none;background:none;color:var(--ink);font-size:18px;font-weight:600;padding:2px 12px;line-height:1.4;}
   .plan-count{font-size:12.5px;color:var(--brown);margin:18px 0 8px;font-weight:600;}
   .plan-item{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:2px;padding:12px;margin-bottom:8px;}
   .plan-item-main{flex:1;cursor:pointer;}
@@ -230,7 +234,7 @@
 <body>
 <div id="app">
   <header class="app-header">
-    <span class="app-version" id="app-version">v3.9</span>
+    <span class="app-version" id="app-version">v4.0</span>
     <button type="button" class="header-btn" id="bug-header-btn">🐞 Report a bug</button>
     <h1>The Recipe Box</h1>
     <p class="tagline">Plan the week. Cook from cards.</p>
@@ -486,6 +490,7 @@ function normPlan(p){
   const built = p.built === undefined ? legacyBuilt : !!p.built;
   const locked = p.locked === undefined ? built : !!p.locked;
   return {id: p.id, name: p.name || 'Meal plan', created: p.created || 0, recipeIds: ids.filter(Boolean), built, locked,
+          servings: Object.fromEntries(Object.entries(p.servings || {}).map(([k,v]) => [k, Math.min(99, Math.max(1, parseInt(v) || 1))])),
           extras: ex.filter(x => x && x.name).map(x => ({id: String(x.id || uid()), name: String(x.name), qty: String(x.qty || ''), category: CAT_KEYS.includes(x.category) ? x.category : guessCategory(x.name)}))};
 }
 function planLabel(p){
@@ -499,6 +504,25 @@ function planLabel(p){
   return label;
 }
 function activePlan(){ return state.plans[state.activePlanId] || null; }
+// How many people a meal is planned for, and how much to scale its quantities.
+function planServings(plan, recipe){
+  const base = parseInt(recipe.servings) || 1;
+  const n = plan && plan.servings && plan.servings[recipe.id];
+  return n ? n : base;
+}
+function scaleFactorFor(recipe){
+  const plan = activePlan();
+  if(!plan || !plan.recipeIds.includes(recipe.id)) return 1;
+  return planServings(plan, recipe) / (parseInt(recipe.servings) || 1);
+}
+function scaleQty(qty, unit, f){
+  if(!f || Math.abs(f - 1) < 1e-9) return qty;
+  const n = parseQty(qty);
+  if(isNaN(n)) return qty;
+  const v = n * f;
+  if(MASS_G[unit] || unit === 'ml') return String(v >= 10 ? Math.round(v) : Math.round(v * 10) / 10);
+  return fmtFrac(v);
+}
 function planRecipes(plan){ return plan ? plan.recipeIds.map(id => state.recipes[id]).filter(Boolean) : []; }
 
 async function loadState(){
@@ -676,13 +700,14 @@ function renderRecipeDetail(id){
   if(!r) return renderBox();
   const plan = activePlan();
   const inPlan = !!(plan && plan.recipeIds.includes(id));
+  const sf = scaleFactorFor(r);
   const rtab = currentView().rtab === 'steps' ? 'steps' : 'ingredients';
   return `
     <button class="detail-back" data-act="back">‹ Back</button>
     ${r.photo ? `<img src="${r.photo}" alt="" style="width:100%;height:200px;object-fit:cover;border-radius:4px;margin-bottom:12px;display:block;">` : ''}
     <span class="card-tag" style="position:static;display:inline-block;background:${TAG_COLORS[r.tag]||'var(--brown)'}">${esc(TAG_LABELS[r.tag]||r.tag)}</span>
     <h2 class="detail-title" style="margin-top:8px;">${esc(r.title)}</h2>
-    <div class="recipe-meta">${esc(r.time)} min · serves ${esc(r.servings)}</div>
+    <div class="recipe-meta">${esc(r.time)} min · serves ${esc(r.servings)}${Math.abs(sf - 1) > 1e-9 ? ` · <strong>scaled for ${planServings(plan, r)}</strong>` : ''}</div>
 
     <button class="primary-btn" data-act="cook" data-id="${esc(r.id)}" style="background:var(--tomato);margin:14px 0 4px;">▶ Start cooking</button>
 
@@ -694,8 +719,9 @@ function renderRecipeDetail(id){
     ${rtab === 'ingredients' ? `
     <div class="detail-section" style="margin-top:12px;">
       <ul class="ing-list">
-        ${r.ingredients.map(i=>`<li>${[esc(i.qty), esc(i.unit), esc(i.name)].filter(Boolean).join(' ')}</li>`).join('')}
+        ${r.ingredients.map(i=>`<li>${[esc(scaleQty(i.qty, (i.unit||'').toLowerCase(), sf)), esc(i.unit), esc(i.name)].filter(Boolean).join(' ')}</li>`).join('')}
       </ul>
+      ${Math.abs(sf - 1) > 1e-9 ? `<p class="plan-hint">Quantities are scaled for ${planServings(plan, r)} people. Amounts written inside the steps are not changed.</p>` : ''}
     </div>` : `
     <div class="detail-section" style="margin-top:12px;">
       <ol class="steps-list">
@@ -737,7 +763,11 @@ function renderPlan(){
         <div class="plan-item">
           <div class="plan-item-main" data-act="open-recipe" data-id="${esc(r.id)}">
             <div class="plan-item-title">${esc(r.title)}</div>
-            <div class="plan-item-meta">${esc(TAG_LABELS[r.tag]||r.tag)} · ${esc(r.time)} min · serves ${esc(r.servings)}</div>
+            <div class="plan-item-meta">${esc(TAG_LABELS[r.tag]||r.tag)} · ${esc(r.time)} min · recipe serves ${esc(r.servings)}</div>
+            ${plan.locked
+              ? `<div class="serv-line">Cooking for <strong>${planServings(plan, r)}</strong></div>`
+              : `<div class="serv-line">Cooking for
+                  <span class="stepper"><button data-act="serv-dec" data-id="${esc(r.id)}" aria-label="Fewer servings">−</button><strong>${planServings(plan, r)}</strong><button data-act="serv-inc" data-id="${esc(r.id)}" aria-label="More servings">+</button></span></div>`}
           </div>
           ${plan.locked ? '' : `<button data-act="plan-remove" data-id="${esc(r.id)}">Remove</button>`}
         </div>`;
@@ -788,7 +818,7 @@ async function togglePlanRecipe(rid){
   const plan = activePlan();
   if(!plan || plan.locked) return;
   const i = plan.recipeIds.indexOf(rid);
-  if(i >= 0) plan.recipeIds.splice(i, 1); else plan.recipeIds.push(rid);
+  if(i >= 0){ plan.recipeIds.splice(i, 1); if(plan.servings) delete plan.servings[rid]; } else plan.recipeIds.push(rid);
   render();
   await savePlan(plan);
 }
@@ -843,7 +873,7 @@ function openMealPicker(){
       if(!btn) return;
       const rid = btn.dataset.pickerId;
       const i = plan.recipeIds.indexOf(rid);
-      if(i >= 0) plan.recipeIds.splice(i, 1); else plan.recipeIds.push(rid);
+      if(i >= 0){ plan.recipeIds.splice(i, 1); if(plan.servings) delete plan.servings[rid]; } else plan.recipeIds.push(rid);
       const on = plan.recipeIds.includes(rid);
       btn.classList.toggle('on', on);
       btn.textContent = on ? 'Added ✓' : 'Add';
@@ -933,6 +963,7 @@ function formatVolume(ml, metric){
 function buildGroceryList(){
   const groups = {};
   planRecipes(activePlan()).forEach(recipe=>{
+    const factor = scaleFactorFor(recipe);
     (recipe.ingredients || []).forEach(ing=>{
       const raw = (ing.name || '').trim();
       if(!raw) return;
@@ -944,7 +975,7 @@ function buildGroceryList(){
       g.cats[ck] = (g.cats[ck] || 0) + 1;
       const unit = (ing.unit || '').trim().toLowerCase();
       const rawQ = String(ing.qty === undefined || ing.qty === null ? '' : ing.qty).trim();
-      const qty = parseQty(rawQ);
+      const qty = parseQty(rawQ) * factor;
       if(isNaN(qty)){ if(rawQ && !g.notes.includes(rawQ)) g.notes.push(rawQ); return; }
       if(MASS_G[unit]){ g.g += qty * MASS_G[unit]; g.hasG = true; }
       else if(VOL_ML[unit]){
@@ -1127,7 +1158,7 @@ function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '3.9';
+const APP_VERSION = '4.0';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
@@ -1768,6 +1799,17 @@ mainEl.addEventListener('click', async (e)=>{
     case 'new-plan': openNewPlanSheet(); break;
     case 'add-meals': if(activePlan() && !activePlan().locked) openMealPicker(); break;
     case 'rtab': currentView().rtab = (id === 'steps') ? 'steps' : 'ingredients'; render(); break;
+    case 'serv-dec': case 'serv-inc': {
+      const plan = activePlan(), r = state.recipes[id];
+      if(!plan || plan.locked || !r || !plan.recipeIds.includes(id)) break;
+      const cur = planServings(plan, r);
+      const next = Math.min(99, Math.max(1, cur + (act === 'serv-inc' ? 1 : -1)));
+      plan.servings = plan.servings || {};
+      plan.servings[id] = next;
+      render();
+      await savePlan(plan);
+      break;
+    }
     case 'go-plan': goTab('plan'); break;
     case 'go-list': goTab('list'); break;
     case 'plan-build': case 'plan-lock': {
@@ -1961,7 +2003,7 @@ function renderCookStep(){
   const ingredientsHtml = `<div class="cook-ings-panel">
       <div class="cook-ings-title">Ingredients for this step</div>
       ${stepIngredients.length
-        ? stepIngredients.map(ing => `<div class="cook-ing-row"><span>${esc(ing.name)}</span><span class="cook-ing-qty">${esc([ing.qty, ing.unit].filter(Boolean).join(' '))}</span></div>`).join('')
+        ? stepIngredients.map(ing => `<div class="cook-ing-row"><span>${esc(ing.name)}</span><span class="cook-ing-qty">${esc([scaleQty(ing.qty, (ing.unit||'').toLowerCase(), scaleFactorFor(r)), ing.unit].filter(Boolean).join(' '))}</span></div>`).join('')
         : `<div class="cook-ing-none">None listed for this step</div>`}
     </div>`;
   document.getElementById('cook-step-area').innerHTML = `
