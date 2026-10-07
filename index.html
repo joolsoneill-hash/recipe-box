@@ -136,6 +136,10 @@
   .prev-empty,.prev-extras{font-size:13px;color:var(--brown);padding:6px 0;}
   .prev-actions{display:flex;gap:8px;margin-top:8px;}
   .prev-del{color:var(--tomato);}
+  .locked-note{background:var(--card);border:1px solid var(--line-strong);border-radius:2px;padding:11px 12px;font-size:13px;color:var(--brown);margin-bottom:10px;line-height:1.4;}
+  .plan-hint{font-size:12px;color:var(--brown);margin:8px 0 0;}
+  .gro-total{display:flex;justify-content:space-between;align-items:baseline;font-size:15px;margin:0 0 12px;padding:10px 12px;background:var(--card);border:1px solid var(--line);border-radius:2px;}
+  .gro-total span{font-size:12px;color:var(--brown);}
   .plan-count{font-size:12.5px;color:var(--brown);margin:18px 0 8px;font-weight:600;}
   .plan-item{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:2px;padding:12px;margin-bottom:8px;}
   .plan-item-main{flex:1;cursor:pointer;}
@@ -215,7 +219,7 @@
 <body>
 <div id="app">
   <header class="app-header">
-    <span class="app-version" id="app-version">v3.5</span>
+    <span class="app-version" id="app-version">v3.6</span>
     <button type="button" class="header-btn" id="bug-header-btn">🐞 Report a bug</button>
     <h1>The Recipe Box</h1>
     <p class="tagline">Plan the week. Cook from cards.</p>
@@ -467,7 +471,10 @@ async function migrateCategories(){
 function normPlan(p){
   const ids = p.recipeIds ? (Array.isArray(p.recipeIds) ? p.recipeIds : Object.values(p.recipeIds)) : [];
   const ex = p.extras ? (Array.isArray(p.extras) ? p.extras : Object.values(p.extras)) : [];
-  return {id: p.id, name: p.name || 'Meal plan', created: p.created || 0, recipeIds: ids.filter(Boolean),
+  const legacyBuilt = ids.filter(Boolean).length > 0;
+  const built = p.built === undefined ? legacyBuilt : !!p.built;
+  const locked = p.locked === undefined ? built : !!p.locked;
+  return {id: p.id, name: p.name || 'Meal plan', created: p.created || 0, recipeIds: ids.filter(Boolean), built, locked,
           extras: ex.filter(x => x && x.name).map(x => ({id: String(x.id || uid()), name: String(x.name), qty: String(x.qty || ''), category: CAT_KEYS.includes(x.category) ? x.category : guessCategory(x.name)}))};
 }
 function planLabel(p){
@@ -514,7 +521,7 @@ async function loadState(){
         const rid = legacy[d] && legacy[d][m];
         if(rid && state.recipes[rid] && !ids.includes(rid)) ids.push(rid);
       }));
-      const plan = {id: uid(), name: ids.length ? 'This week' : 'My meal plan', created: Date.now(), recipeIds: ids, extras: []};
+      const plan = {id: uid(), name: ids.length ? 'This week' : 'My meal plan', created: Date.now(), recipeIds: ids, extras: [], built: false, locked: false};
       state.plans[plan.id] = plan;
       state.activePlanId = plan.id;
       await savePlan(plan);
@@ -681,7 +688,7 @@ function renderRecipeDetail(id){
 
     <div class="detail-section">
       <button class="primary-btn" data-act="cook" data-id="${esc(r.id)}" style="background:var(--tomato);">▶ Start cooking</button>
-      <button class="secondary-btn" data-act="plan-toggle" data-id="${esc(r.id)}">${inPlan ? '✓ In meal plan — tap to remove' : '+ Add to meal plan'}${plan ? ` (${esc(planLabel(plan))})` : ''}</button>
+      ${plan && plan.locked ? `<div class="locked-note">🔒 Your meal plan is locked. Tap "Edit plan" in Meal Plan to change it.</div>` : `<button class="secondary-btn" data-act="plan-toggle" data-id="${esc(r.id)}">${inPlan ? '✓ In meal plan — tap to remove' : '+ Add to meal plan'}${plan ? ` (${esc(planLabel(plan))})` : ''}</button>`}
       <button class="secondary-btn" data-act="edit-recipe" data-id="${esc(r.id)}">Edit recipe</button>
       <button class="danger-btn" data-act="delete-recipe" data-id="${esc(r.id)}">Delete recipe</button>
     </div>
@@ -698,7 +705,10 @@ function renderPlan(){
   let html = `
     <div class="plan-current-label">Current plan</div>
     <h2 class="plan-date">${esc(planLabel(plan))}</h2>
-    <button class="add-btn" data-act="add-meals">+ Add meals from your recipes</button>
+    ${plan.locked
+      ? `<div class="locked-note">🔒 Plan built and locked. Your grocery list is ready.</div>
+         <button class="secondary-btn" data-act="go-list" style="margin-top:0;">See grocery list →</button>`
+      : `<button class="add-btn" data-act="add-meals">+ Add meals from your recipes</button>`}
     <button class="secondary-btn" data-act="new-plan" style="margin-top:0;">Start a new meal plan</button>
     <div class="plan-count">${items.length} meal${items.length===1?'':'s'} chosen</div>
   `;
@@ -713,13 +723,19 @@ function renderPlan(){
             <div class="plan-item-title">${esc(r.title)}</div>
             <div class="plan-item-meta">${esc(TAG_LABELS[r.tag]||r.tag)} · ${esc(r.time)} min · serves ${esc(r.servings)}</div>
           </div>
-          <button data-act="plan-remove" data-id="${esc(r.id)}">Remove</button>
+          ${plan.locked ? '' : `<button data-act="plan-remove" data-id="${esc(r.id)}">Remove</button>`}
         </div>`;
     });
   }
 
-  if(items.length){
-    html += `<button class="secondary-btn" data-act="plan-clear" style="margin-top:12px;">Clear all meals from this plan</button>`;
+  if(plan.locked){
+    html += `<button class="add-btn" data-act="plan-edit" style="margin-top:12px;">Edit plan</button>`;
+  } else {
+    if(items.length){
+      html += `<button class="add-btn" data-act="${plan.built ? 'plan-lock' : 'plan-build'}" style="margin-top:12px;background:var(--tomato);">${plan.built ? 'Save changes and lock plan' : 'Build plan and make grocery list'}</button>`;
+      if(plan.built) html += `<p class="plan-hint">Your grocery list is already built and updates as you change the meals.</p>`;
+      html += `<button class="secondary-btn" data-act="plan-clear">Clear all meals from this plan</button>`;
+    }
   }
 
   const previous = plans.filter(p => p.id !== plan.id);
@@ -754,7 +770,7 @@ function renderPlan(){
 
 async function togglePlanRecipe(rid){
   const plan = activePlan();
-  if(!plan) return;
+  if(!plan || plan.locked) return;
   const i = plan.recipeIds.indexOf(rid);
   if(i >= 0) plan.recipeIds.splice(i, 1); else plan.recipeIds.push(rid);
   render();
@@ -771,7 +787,7 @@ function openNewPlanSheet(){
   `);
   document.getElementById('np-cancel').onclick = closeSheet;
   document.getElementById('np-create').onclick = async ()=>{
-    const plan = {id: uid(), name: '', created: Date.now(), recipeIds: [], extras: []};
+    const plan = {id: uid(), name: '', created: Date.now(), recipeIds: [], extras: [], built: false, locked: false};
     plan.name = planLabel({...plan});
     state.plans[plan.id] = plan;
     state.activePlanId = plan.id;
@@ -945,7 +961,7 @@ function buildGroceryList(){
 
 function allGroceryItems(){
   const plan = activePlan();
-  const items = buildGroceryList();
+  const items = (plan && plan.built) ? buildGroceryList() : [];
   ((plan && plan.extras) || []).forEach(x=>{
     items.push({key: 'extra-' + x.id, id: x.id, name: x.name, qtyText: x.qty, note: '', cat: x.category, extra: true});
   });
@@ -967,10 +983,15 @@ function renderGrocery(){
         <button type="submit" class="small-btn">Add</button>
       </div>
     </form>`;
-  if(items.length === 0){
-    html += `<div class="empty-state"><h3>Your list is empty</h3><p>Choose some meals in "Meal Plan", or add your own items above.</p></div>`;
+  if(plan && !plan.built){
+    html += `<div class="empty-state"><h3>${plan.recipeIds.length ? 'Plan not built yet' : 'Your list is empty'}</h3><p>${plan.recipeIds.length ? 'Tap "Build plan" in Meal Plan and the groceries for your meals will appear here.' : 'Choose some meals in "Meal Plan" and build the plan, or add your own items above.'}</p><button class="secondary-btn" data-act="go-plan">Go to Meal Plan</button></div>`;
+    if(items.length === 0) return html;
+  } else if(items.length === 0){
+    html += `<div class="empty-state"><h3>Your list is empty</h3><p>Add your own items above, or choose some meals in "Meal Plan".</p></div>`;
     return html;
   }
+  const ticked = items.filter(it => state.checks[it.key]).length;
+  html += `<div class="gro-total"><div><strong>${items.length}</strong> item${items.length===1?'':'s'} in total</div><span>${ticked} of ${items.length} ticked</span></div>`;
   html += `<div class="check-actions"><button class="secondary-btn" data-act="check-all">Check all</button><button class="secondary-btn" data-act="clear-checks">Uncheck all</button></div>`;
   CATEGORIES.forEach(c=>{
     const list = items.filter(it => it.cat === c.key).sort((a,b)=>a.name.localeCompare(b.name));
@@ -1014,7 +1035,7 @@ function openAllDoneSheet(){
   };
   document.getElementById('ad-wipe').onclick = async ()=>{
     const p = activePlan();
-    if(p){ p.recipeIds = []; p.extras = []; }
+    if(p){ p.recipeIds = []; p.extras = []; p.built = false; p.locked = false; }
     state.checks = {};
     closeSheet();
     if(p) await savePlan(p);
@@ -1089,7 +1110,7 @@ function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '3.5';
+const APP_VERSION = '3.6';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
@@ -1728,7 +1749,26 @@ mainEl.addEventListener('click', async (e)=>{
       break;
     }
     case 'new-plan': openNewPlanSheet(); break;
-    case 'add-meals': openMealPicker(); break;
+    case 'add-meals': if(activePlan() && !activePlan().locked) openMealPicker(); break;
+    case 'go-plan': goTab('plan'); break;
+    case 'go-list': goTab('list'); break;
+    case 'plan-build': case 'plan-lock': {
+      const plan = activePlan();
+      if(!plan || !plan.recipeIds.length) break;
+      plan.built = true; plan.locked = true;
+      render();
+      window.scrollTo(0, 0);
+      await savePlan(plan);
+      break;
+    }
+    case 'plan-edit': {
+      const plan = activePlan();
+      if(!plan) break;
+      plan.locked = false;
+      render();
+      await savePlan(plan);
+      break;
+    }
     case 'plan-remove': togglePlanRecipe(id); break;
     case 'plan-expand': state.openPlans[id] = !state.openPlans[id]; render(); break;
     case 'plan-activate':
@@ -1750,7 +1790,7 @@ mainEl.addEventListener('click', async (e)=>{
     }
     case 'plan-clear': {
       const plan = activePlan();
-      if(!plan || !confirm(`Remove all meals from the plan for ${planLabel(plan)}?`)) break;
+      if(!plan || plan.locked || !confirm(`Remove all meals from the plan for ${planLabel(plan)}?`)) break;
       plan.recipeIds = [];
       render();
       await savePlan(plan);
