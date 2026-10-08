@@ -41,7 +41,7 @@
   input,textarea,select{font-family:'Work Sans',sans-serif;}
 
   .app-header{background:var(--ink);color:var(--paper);padding:10px 16px 10px;position:relative;margin-bottom:0;}
-  .app-header h1{margin:0;font-family:"Marcellus",Georgia,serif;font-weight:400;letter-spacing:0.5px;font-size:28.5px;white-space:nowrap;letter-spacing:0.2px;}
+  .app-header h1{margin:0;font-family:"Marcellus",Georgia,serif;font-weight:400;letter-spacing:0.5px;font-size:32.8px;white-space:nowrap;letter-spacing:0.2px;}
   .app-header .tagline{margin:6px 0 0;font-size:13px;color:rgba(237,227,208,0.72);}
 
   main{flex:1;padding:26px 16px 16px;}
@@ -75,6 +75,8 @@
   .star-svg{width:62%;height:62%;display:block;}
   .fav-line .fav-btn .star-svg,.cook-finish .fav-btn .star-svg{width:22px;height:22px;}
   .recipe-meta{font-size:12.5px;color:var(--brown);margin-bottom:8px;}
+  .cooked-btn{display:block;width:100%;margin:18px 0 4px;padding:14px;font:inherit;font-size:15px;font-weight:600;border-radius:2px;border:1px solid var(--ink);background:none;color:var(--ink);}
+  .cooked-btn.on{background:var(--herb);border-color:var(--herb);color:#fff;}
   .cook-stat{font-size:12px;color:var(--herb);font-weight:600;margin:-4px 0 8px;}
   .plan-item .cook-stat{margin:2px 0 0;}
   .recipe-ing-preview{font-size:13px;color:var(--ink);opacity:0.75;line-height:1.4;}
@@ -177,14 +179,14 @@
   .picker-item button.on{background:var(--ink);}
 
 
-  .header-right{position:absolute;top:50%;transform:translateY(-50%);right:14px;display:flex;align-items:center;gap:10px;}
-  .header-btn#menu-header-btn{font-size:24px;padding-bottom:6px;}
+  .header-right{position:absolute;top:50%;transform:translateY(-50%);right:12px;display:flex;flex-direction:column;align-items:center;gap:5px;}
+  .header-btn#menu-header-btn{font-size:20px;padding-bottom:5px;}
   .app-menu{position:absolute;top:calc(100% - 4px);right:14px;min-width:210px;background:var(--card);border:1px solid var(--ink);border-radius:2px;box-shadow:0 6px 18px rgba(43,38,32,.35);z-index:60;}
   .app-menu button{display:block;width:100%;text-align:left;padding:14px 16px;font:inherit;font-size:15px;font-weight:600;color:var(--ink);background:none;border:none;border-top:1px solid var(--line);border-radius:0;}
   .app-menu button:first-child{border-top:none;}
   .app-menu button:active{background:var(--paper-dark);}
   .app-version{font-size:12px;font-weight:600;letter-spacing:0.4px;color:rgba(237,227,208,0.6);}
-  .header-btn{background:rgba(237,227,208,0.12);color:var(--paper);border:1px solid rgba(237,227,208,0.32);border-radius:50%;width:42px;height:42px;padding:0;font-size:22px;line-height:1;display:flex;align-items:center;justify-content:center;}
+  .header-btn{background:rgba(237,227,208,0.12);color:var(--paper);border:1px solid rgba(237,227,208,0.32);border-radius:50%;width:34px;height:34px;padding:0;font-size:18px;line-height:1;display:flex;align-items:center;justify-content:center;}
   .sheet-note{font-size:13px;color:var(--brown);line-height:1.5;margin:0 0 12px;}
   .sheet-status{font-size:13px;color:var(--brown);min-height:18px;margin:8px 0;line-height:1.4;}
   .sheet-steps{font-size:13px;color:var(--ink);line-height:1.6;padding-left:20px;margin:0 0 14px;}
@@ -236,7 +238,7 @@
   .cook-finish h2{font-size:28px;margin:0 0 6px;}
   .cook-finish p{color:var(--brown);margin:0 0 20px;}
   .cook-finish .fav-btn{width:auto;border-radius:24px;padding:0 20px;height:46px;font-size:16px;gap:8px;margin:0 auto;}
-  .app-header .brand{display:flex;flex-direction:row;align-items:center;gap:12px;padding-right:104px;}
+  .app-header .brand{display:flex;flex-direction:row;align-items:center;gap:12px;padding-right:56px;}
   .app-header .brand svg{width:88px;height:88px;flex-shrink:0;border-radius:20px;}
   .plan-headrow{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:6px;}
   .plan-headrow .plan-date{margin:0;}
@@ -434,7 +436,7 @@
 <body>
 <div id="app" class="booting">
   <header class="app-header">
-    <div class="header-right"><span class="app-version" id="app-version">v9.6</span><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button><button type="button" class="header-btn" id="menu-header-btn" aria-label="More options" aria-haspopup="true" aria-expanded="false">⋯</button></div>
+    <div class="header-right"><button type="button" class="header-btn" id="menu-header-btn" aria-label="More options" aria-haspopup="true" aria-expanded="false">⋯</button><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button><span class="app-version" id="app-version">v9.8</span></div>
     <div class="app-menu" id="app-menu" hidden></div>
     <div class="brand"><svg viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#2B2620"/><defs><clipPath id="rr"><rect width="512" height="512" rx="112"/></clipPath> <pattern id="gh" width="64" height="64" patternUnits="userSpaceOnUse"><rect width="64" height="64" fill="#F6EEDC"/><rect width="32" height="64" fill="#C8452D" opacity=".5"/><rect width="64" height="32" fill="#C8452D" opacity=".5"/></pattern></defs><g clip-path="url(#rr)"><path d="M0 408 Q256 388 512 408 V512 H0Z" fill="url(#gh)"/><path d="M0 408 Q256 388 512 408" fill="none" stroke="#2B2620" stroke-opacity=".25" stroke-width="3"/></g><g transform="translate(256 262) scale(.9) translate(-256 -256)"> <!-- steam --> <g fill="none" stroke="#EDE3D0" stroke-width="12" stroke-linecap="round" opacity=".85"> <path d="M206 120c-18-22 18-34 0-58"/><path d="M256 108c-18-22 18-34 0-58"/><path d="M306 120c-18-22 18-34 0-58"/> </g> <!-- shallow pasta bowl: underside, rim, well --> <path d="M52 322c4 52 84 86 204 86s200-34 204-86z" fill="#EFE6D0"/> <path d="M52 322c4 52 84 86 204 86s200-34 204-86c-30 20-100 32-204 32S82 342 52 322z" fill="#E4D8BC" opacity=".6"/> <rect x="190" y="402" width="132" height="18" rx="9" fill="#EFE6D0"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="#FAF6EC"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="none" stroke="#D9CDB4" stroke-width="5"/> <!-- painted rim --> <ellipse cx="256" cy="322" rx="186" ry="55" fill="none" stroke="#2F5D8C" stroke-width="7"/> <ellipse cx="256" cy="322" rx="164" ry="46" fill="none" stroke="#2F5D8C" stroke-width="3"/> <circle cx="432" cy="330" r="5" fill="#E9B949"/><circle cx="408" cy="354" r="5" fill="#E9B949"/><circle cx="344" cy="373" r="5" fill="#E9B949"/><circle cx="256" cy="379" r="5" fill="#E9B949"/><circle cx="168" cy="373" r="5" fill="#E9B949"/><circle cx="103" cy="355" r="5" fill="#E9B949"/><circle cx="80" cy="330" r="5" fill="#E9B949"/><circle cx="103" cy="305" r="5" fill="#E9B949"/><circle cx="167" cy="286" r="5" fill="#E9B949"/><circle cx="255" cy="280" r="5" fill="#E9B949"/><circle cx="343" cy="286" r="5" fill="#E9B949"/><circle cx="408" cy="304" r="5" fill="#E9B949"/> <!-- well --> <ellipse cx="256" cy="324" rx="138" ry="36" fill="#F1E8D2"/> <!-- spaghetti nest --> <g fill="none" stroke="#F0CF6E" stroke-width="18" stroke-linecap="round"> <path d="M130 318c26-30 50 18 76-4s50 22 76-4 50 18 76-4"/> <ellipse cx="256" cy="302" rx="104" ry="30"/> <ellipse cx="256" cy="278" rx="80" ry="24"/> <ellipse cx="256" cy="256" rx="56" ry="17"/> <ellipse cx="256" cy="238" rx="32" ry="10"/> <path d="M360 326c20 6 36 14 40 24" /> </g> <g fill="none" stroke="#C8962A" stroke-width="4" stroke-linecap="round" opacity=".5"> <ellipse cx="256" cy="310" rx="104" ry="30"/><ellipse cx="256" cy="286" rx="80" ry="24"/><ellipse cx="256" cy="264" rx="56" ry="17"/> </g> <!-- sauce and basil --> <ellipse cx="256" cy="226" rx="30" ry="12" fill="#B94A2F"/> <ellipse cx="248" cy="222" rx="11" ry="4" fill="#D8674A" opacity=".8"/> <path d="M262 218c8-24 32-26 40-12-10 18-30 22-40 12z" fill="#4D7A5A"/> <path d="M268 216c10-6 20-8 30-4" stroke="#2F5A3C" stroke-width="3.5" fill="none" stroke-linecap="round"/> <!-- fork --> <g stroke-linecap="round" stroke-linejoin="round" fill="none"> <line x1="410" y1="150" x2="306" y2="238" stroke="#9AA3AB" stroke-width="16"/> <line x1="410" y1="150" x2="306" y2="238" stroke="#DDE2E6" stroke-width="9"/> <g stroke="#9AA3AB" stroke-width="14"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> <g stroke="#DDE2E6" stroke-width="7"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> </g> </g> <g><circle cx="74" cy="446" r="28" fill="#D2452E"/><ellipse cx="64" cy="436" rx="9" ry="6" fill="#fff" opacity=".35"/> <path d="M74 418c-4-8-14-10-20-6 6 6 12 8 20 6z M74 418c4-8 14-10 20-6-6 6-12 8-20 6z M74 418l0-10" fill="#4D7A5A" stroke="#2F5A3C" stroke-width="3" stroke-linejoin="round"/></g> <g><path d="M438 452c10-26 40-30 54-14-12 22-40 28-54 14z" fill="#4D7A5A"/><path d="M446 450c14-8 28-10 42-6" stroke="#2F5A3C" stroke-width="4" fill="none" stroke-linecap="round"/></g></svg><h1>Tavola</h1></div>
   </header>
@@ -719,7 +721,31 @@ function cookStats(id){
     const t = typeof v === 'number' ? v : (p.created || 0);
     if(t > last) last = t;
   });
+  // cooks logged from the recipe page when the meal was not in the plan
+  const rc = state.recipes[id];
+  adhocCooks(rc).forEach(t => { n++; if(t > last) last = t; });
   return {n, last};
+}
+function adhocCooks(r){ return r && r.cooks ? Object.values(r.cooks).filter(t => typeof t === 'number') : []; }
+function sameDay(a, b){ return new Date(a).toDateString() === new Date(b).toDateString(); }
+// is this recipe ticked as cooked right now? In the current plan it is the plan tick; otherwise a cook logged today
+function cookedNow(r){
+  const pl = activePlan();
+  if(pl && pl.recipeIds.includes(r.id)) return !!(pl.done && pl.done[r.id]);
+  return adhocCooks(r).some(t => sameDay(t, Date.now()));
+}
+async function toggleCooked(r){
+  const pl = activePlan();
+  if(pl && pl.recipeIds.includes(r.id)){
+    pl.done = pl.done || {};
+    if(pl.done[r.id]) delete pl.done[r.id]; else pl.done[r.id] = Date.now();
+    render(); await savePlan(pl);
+  } else {
+    const list = adhocCooks(r);
+    r.cooks = cookedNow(r) ? list.filter(t => !sameDay(t, Date.now())) : [...list, Date.now()];
+    render();
+    try { if(r.cooks.length) await dbSet('recipes/' + r.id + '/cooks', r.cooks); else await dbDelete('recipes/' + r.id + '/cooks'); } catch(e){ console.error('save cook failed', e); }
+  }
 }
 function cookStatText(id){
   const {n, last} = cookStats(id);
@@ -1092,6 +1118,8 @@ function renderRecipeDetail(id){
         ${r.steps.map(s=>`<li>${esc(s)}</li>`).join('')}
       </ol>
     </div>`}
+
+    <button class="cooked-btn ${cookedNow(r)?'on':''}" data-act="recipe-cooked" data-id="${esc(r.id)}">${cookedNow(r) ? 'Cooked ✓ (tap to undo)' : 'Cooked'}</button>
 
     <div class="detail-section">
       ${plan && plan.locked ? `<div class="locked-note">Your meal plan is locked. Tap "Edit plan" in Menu to change it.</div>` : ''}
@@ -1886,7 +1914,7 @@ async function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '9.6';
+const APP_VERSION = '9.8';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
@@ -2606,6 +2634,7 @@ mainEl.addEventListener('click', async (e)=>{
       if(pl.done[id]) delete pl.done[id]; else pl.done[id] = Date.now();
       render(); await savePlan(pl); break;
     }
+    case 'recipe-cooked': { const r = state.recipes[id]; if(r) await toggleCooked(r); break; }
     case 'add-recipe': openAddChoiceSheet(); break;
     case 'import-recipe': openImportSheet(); break;
     case 'where-used': e.preventDefault(); openWhereUsedSheet(id); break;
