@@ -225,6 +225,7 @@
   .done-col input{-webkit-appearance:none;appearance:none;width:24px;height:24px;margin:0;border-radius:50%;border:2px solid var(--line-strong);background:transparent;cursor:pointer;position:relative;transition:background .15s,border-color .15s;}
   .done-col input:checked{background:var(--herb);border-color:var(--herb);}
   .done-col input:checked::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:700;}
+  .np-total{font-size:14px;color:var(--ink);margin:0 0 8px;}
   .plan-add-link{color:var(--herb);font-weight:700;cursor:pointer;}
   .plan-item.done{opacity:.5;}
   .plan-item.done .plan-item-title{text-decoration:line-through;}
@@ -378,7 +379,12 @@
   .np-recipe{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 10px;font-size:14px;border-top:1px solid var(--line);cursor:pointer;}
   .np-recipe:first-child{border-top:none}
   .np-recipe.on{background:rgba(107,122,56,.16);}
-  .np-recipe b{color:var(--herb);font-size:16px;flex-shrink:0;}
+  .np-recipe .thumb{cursor:pointer;width:46px;height:46px;flex-shrink:0;}
+  .np-rt{flex:1;min-width:0;line-height:1.3;}
+  .np-rt strong{display:block;font-size:14px;color:var(--ink);}
+  .np-rt .pick-sub,.np-rt small{display:block;font-style:normal;font-size:11.5px;color:var(--brown);margin-top:1px;}
+  .np-recipe{justify-content:flex-start;}
+  .np-recipe b{margin-left:auto;color:var(--herb);font-size:16px;flex-shrink:0;}
   .extra-seg{margin:0;flex:1;}
   .extra-seg button{padding:9px 10px;font-size:14px;}
   .fold-head{display:flex;align-items:center;gap:8px;width:100%;margin:8px 0 0;padding:10px 12px;background:var(--card);border:1px solid var(--line-strong);border-radius:4px;font:inherit;font-size:14px;color:var(--ink);text-align:left;}
@@ -436,7 +442,7 @@
 <body>
 <div id="app" class="booting">
   <header class="app-header">
-    <div class="header-right"><button type="button" class="header-btn" id="menu-header-btn" aria-label="More options" aria-haspopup="true" aria-expanded="false">⋯</button><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button><span class="app-version" id="app-version">v10.0</span></div>
+    <div class="header-right"><button type="button" class="header-btn" id="menu-header-btn" aria-label="More options" aria-haspopup="true" aria-expanded="false">⋯</button><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button><span class="app-version" id="app-version">v0.12</span></div>
     <div class="app-menu" id="app-menu" hidden></div>
     <div class="brand"><svg viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#2B2620"/><defs><clipPath id="rr"><rect width="512" height="512" rx="112"/></clipPath> <pattern id="gh" width="64" height="64" patternUnits="userSpaceOnUse"><rect width="64" height="64" fill="#F6EEDC"/><rect width="32" height="64" fill="#C8452D" opacity=".5"/><rect width="64" height="32" fill="#C8452D" opacity=".5"/></pattern></defs><g clip-path="url(#rr)"><path d="M0 408 Q256 388 512 408 V512 H0Z" fill="url(#gh)"/><path d="M0 408 Q256 388 512 408" fill="none" stroke="#2B2620" stroke-opacity=".25" stroke-width="3"/></g><g transform="translate(256 262) scale(.9) translate(-256 -256)"> <!-- steam --> <g fill="none" stroke="#EDE3D0" stroke-width="12" stroke-linecap="round" opacity=".85"> <path d="M206 120c-18-22 18-34 0-58"/><path d="M256 108c-18-22 18-34 0-58"/><path d="M306 120c-18-22 18-34 0-58"/> </g> <!-- shallow pasta bowl: underside, rim, well --> <path d="M52 322c4 52 84 86 204 86s200-34 204-86z" fill="#EFE6D0"/> <path d="M52 322c4 52 84 86 204 86s200-34 204-86c-30 20-100 32-204 32S82 342 52 322z" fill="#E4D8BC" opacity=".6"/> <rect x="190" y="402" width="132" height="18" rx="9" fill="#EFE6D0"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="#FAF6EC"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="none" stroke="#D9CDB4" stroke-width="5"/> <!-- painted rim --> <ellipse cx="256" cy="322" rx="186" ry="55" fill="none" stroke="#2F5D8C" stroke-width="7"/> <ellipse cx="256" cy="322" rx="164" ry="46" fill="none" stroke="#2F5D8C" stroke-width="3"/> <circle cx="432" cy="330" r="5" fill="#E9B949"/><circle cx="408" cy="354" r="5" fill="#E9B949"/><circle cx="344" cy="373" r="5" fill="#E9B949"/><circle cx="256" cy="379" r="5" fill="#E9B949"/><circle cx="168" cy="373" r="5" fill="#E9B949"/><circle cx="103" cy="355" r="5" fill="#E9B949"/><circle cx="80" cy="330" r="5" fill="#E9B949"/><circle cx="103" cy="305" r="5" fill="#E9B949"/><circle cx="167" cy="286" r="5" fill="#E9B949"/><circle cx="255" cy="280" r="5" fill="#E9B949"/><circle cx="343" cy="286" r="5" fill="#E9B949"/><circle cx="408" cy="304" r="5" fill="#E9B949"/> <!-- well --> <ellipse cx="256" cy="324" rx="138" ry="36" fill="#F1E8D2"/> <!-- spaghetti nest --> <g fill="none" stroke="#F0CF6E" stroke-width="18" stroke-linecap="round"> <path d="M130 318c26-30 50 18 76-4s50 22 76-4 50 18 76-4"/> <ellipse cx="256" cy="302" rx="104" ry="30"/> <ellipse cx="256" cy="278" rx="80" ry="24"/> <ellipse cx="256" cy="256" rx="56" ry="17"/> <ellipse cx="256" cy="238" rx="32" ry="10"/> <path d="M360 326c20 6 36 14 40 24" /> </g> <g fill="none" stroke="#C8962A" stroke-width="4" stroke-linecap="round" opacity=".5"> <ellipse cx="256" cy="310" rx="104" ry="30"/><ellipse cx="256" cy="286" rx="80" ry="24"/><ellipse cx="256" cy="264" rx="56" ry="17"/> </g> <!-- sauce and basil --> <ellipse cx="256" cy="226" rx="30" ry="12" fill="#B94A2F"/> <ellipse cx="248" cy="222" rx="11" ry="4" fill="#D8674A" opacity=".8"/> <path d="M262 218c8-24 32-26 40-12-10 18-30 22-40 12z" fill="#4D7A5A"/> <path d="M268 216c10-6 20-8 30-4" stroke="#2F5A3C" stroke-width="3.5" fill="none" stroke-linecap="round"/> <!-- fork --> <g stroke-linecap="round" stroke-linejoin="round" fill="none"> <line x1="410" y1="150" x2="306" y2="238" stroke="#9AA3AB" stroke-width="16"/> <line x1="410" y1="150" x2="306" y2="238" stroke="#DDE2E6" stroke-width="9"/> <g stroke="#9AA3AB" stroke-width="14"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> <g stroke="#DDE2E6" stroke-width="7"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> </g> </g> <g><circle cx="74" cy="446" r="28" fill="#D2452E"/><ellipse cx="64" cy="436" rx="9" ry="6" fill="#fff" opacity=".35"/> <path d="M74 418c-4-8-14-10-20-6 6 6 12 8 20 6z M74 418c4-8 14-10 20-6-6 6-12 8-20 6z M74 418l0-10" fill="#4D7A5A" stroke="#2F5A3C" stroke-width="3" stroke-linejoin="round"/></g> <g><path d="M438 452c10-26 40-30 54-14-12 22-40 28-54 14z" fill="#4D7A5A"/><path d="M446 450c14-8 28-10 42-6" stroke="#2F5A3C" stroke-width="4" fill="none" stroke-linecap="round"/></g></svg><h1>Tavola</h1></div>
   </header>
@@ -496,8 +502,8 @@
 </div>
 
 <script>
-const TAG_COLORS = {breakfast:'var(--herb)', lunch:'var(--gold)', dinner:'var(--tomato)', snack:'var(--brown)', dessert:'var(--brown)'};
-const TAG_LABELS = {breakfast:'Breakfast', lunch:'Lunch', dinner:'Dinner', snack:'Snack', dessert:'Dessert'};
+const TAG_COLORS = {breakfast:'var(--herb)', dinner:'var(--tomato)', snack:'var(--brown)', dessert:'var(--brown)'};
+const TAG_LABELS = {breakfast:'Breakfast', dinner:'Dinner', snack:'Snack', dessert:'Dessert'};
 const LEGACY_DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 const LEGACY_MEALS = ['breakfast','lunch','dinner'];
 
@@ -606,6 +612,10 @@ function guessCategory(rawName){
 function migrateCategories(){
   const writes = [];
   Object.values(state.recipes).forEach(r=>{
+    if(!TAG_LABELS[r.tag]){   // the old Lunch type (or anything unknown) is now Dinner
+      r.tag = 'dinner';
+      writes.push(dbSet('recipes/' + r.id + '/tag', 'dinner'));
+    }
     if(!CUISINE_KEYS.includes(r.cuisine)){
       r.cuisine = guessCuisine(fullTitle(r), r.ingredients);
       writes.push(dbSet('recipes/' + r.id + '/cuisine', r.cuisine));
@@ -1194,11 +1204,11 @@ function renderPlan(){
         <button type="button" class="lock-btn ${plan.locked?'locked':''}" data-act="${items.length || plan.locked ? lockAct : 'noop'}" aria-label="${plan.locked ? 'Plan locked. Tap to edit' : 'Plan unlocked'}">${lockIcon}</button>
       </div>
     </div>
-    <div class="plan-count" style="margin-top:6px;">${items.length} meal${items.length===1?'':'s'} chosen${plan.locked ? '' : ` · <span class="plan-add-link" data-act="add-meals">+ add</span>`}</div>
+    <div class="plan-count" style="margin-top:6px;">${items.length} meal${items.length===1?'':'s'} chosen${plan.locked ? '' : ` · <span class="plan-add-link" data-act="add-meals">edit</span>`}</div>
   `;
 
   if(items.length === 0){
-    html += `<div class="empty-state"><h3>No meals chosen yet</h3><p>Tap "+ add" above to choose meals for this plan. Your grocery list is built from the current plan.</p></div>`;
+    html += `<div class="empty-state"><h3>No meals chosen yet</h3><p>Tap "edit" above to choose meals for this plan. Your grocery list is built from the current plan.</p></div>`;
   } else {
     items.forEach(r=>{ html += planItemHtml(plan, r); });
   }
@@ -1261,9 +1271,10 @@ async function toggleDraft(id){
   await savePlan(d);
 }
 
-function openNewPlanSheet(){
-  const old = activePlan();
-  const drafts = draftIds();
+function openNewPlanSheet(editPlan){
+  const edit = editPlan || null;           // editing an existing plan uses the same screen as starting one
+  const old = edit ? null : activePlan();
+  const drafts = edit ? edit.recipeIds.filter(id => state.recipes[id]) : draftIds();
   const uncooked = old ? old.recipeIds.filter(id => state.recipes[id] && !(old.done && old.done[id])) : [];
   const recipes = Object.values(state.recipes);
   const tags = CUISINES.map(c=>c.key).filter(t => recipes.some(r => recipeCuisines(r).includes(t)));
@@ -1279,13 +1290,17 @@ function openNewPlanSheet(){
     carriedItems.forEach(it => skip.add(it.key));   // every grocery starts unticked; tick the ones you need
   }
   function body(){
-    let h = `<div class="sheet-handle"></div><h2>Start a new meal plan</h2>
-      <p style="font-size:13px;color:var(--brown);line-height:1.5;margin:0 0 6px;">This starts a draft menu in the Planner. Your current menu and grocery list stay as they are until you build the draft.</p>`;
-    h += `<div class="btn-row"><button type="button" class="secondary-btn" id="np-fridge">What's in my fridge?</button><button type="button" class="secondary-btn" id="np-again">Cook again</button></div>`;
-    if(sel.size){
-      h += `<div class="np-sec"><h3>Chosen for the new plan (${sel.size})</h3>${Array.from(sel).filter(id=>state.recipes[id]).map(id=>`<span class="np-chip">${esc(state.recipes[id].title)}<button type="button" data-np-pick="${esc(id)}" aria-label="Remove">×</button></span>`).join('')}${drafts.length?`<div style="font-size:12px;color:var(--brown)">Meals already in your draft menu are here.</div>`:''}</div>`;
+    const total = new Set([...sel, ...(carryOn ? uncooked : [])]).size;
+    let h = `<div class="sheet-handle"></div><h2>${edit ? 'Edit meal plan' : 'Start a new meal plan'}</h2>
+      <div class="np-total">Meals planned: <strong>${total}</strong></div>`;
+    if(!edit){
+      h += `<p style="font-size:13px;color:var(--brown);line-height:1.5;margin:0 0 6px;">This starts a draft menu in the Planner. Your current menu and grocery list stay as they are until you build the draft.</p>`;
+      h += `<div class="btn-row"><button type="button" class="secondary-btn" id="np-fridge">What's in my fridge?</button><button type="button" class="secondary-btn" id="np-again">Cook again</button></div>`;
     }
-    if(uncooked.length){
+    if(sel.size){
+      h += `<div class="np-sec"><h3>Chosen (${sel.size})</h3>${Array.from(sel).filter(id=>state.recipes[id]).map(id=>`<span class="np-chip">${esc(state.recipes[id].title)}<button type="button" data-np-pick="${esc(id)}" aria-label="Remove">×</button></span>`).join('')}</div>`;
+    }
+    if(uncooked.length && !edit){
       h += `<div class="np-sec"><label class="np-opt"><input type="checkbox" id="np-carry" ${carryOn?'checked':''}><span>Include the ${uncooked.length} meal${uncooked.length===1?'':'s'} not cooked yet from the current plan<br><small style="color:var(--brown)">${uncooked.map(id=>esc(state.recipes[id].title)).join(', ')}</small></span></label>`;
       if(carryOn){
         h += `<label class="np-opt"><input type="radio" name="np-cm" value="none" ${carryMode==='none'?'checked':''}><span>No groceries needed, I already have them</span></label>
@@ -1297,22 +1312,22 @@ function openNewPlanSheet(){
       h += `</div>`;
     }
     if(tags.length){
-      h += `<div class="np-sec"><h3>Choose meals by cuisine</h3><div style="font-size:12px;color:var(--brown);margin-bottom:4px;">Tap a cuisine to open it and pick meals, or use + to have a random one suggested. Suggestions appear at the top of the list.</div>`;
+      h += `<div class="np-sec"><h3>Choose meals by cuisine</h3><div style="font-size:12px;color:var(--brown);margin-bottom:4px;">Tap a cuisine to open it and pick meals, or use + to have a random one suggested. The number is how many meals you have from that cuisine.</div>`;
       tags.forEach(t=>{
         const list = recipes.filter(r => recipeCuisines(r).includes(t));
         const nSel = list.filter(r => sel.has(r.id)).length;
         const isOpen = openCu.has(t);
-        h += `<div class="np-cu"><div class="np-row"><span class="np-cu-head" data-np-tog="${t}">${isOpen?'▾':'▸'} ${esc(cuiLabel(t))} <small style="color:var(--brown)">(${list.length})${nSel?` · <strong>${nSel} chosen</strong>`:''}</small></span><span class="stepper"><button type="button" data-np-dec="${t}" aria-label="Remove a suggestion">−</button><strong>${(sugg[t]||[]).length}</strong><button type="button" data-np-inc="${t}" aria-label="Suggest one more">+</button></span></div>`;
+        h += `<div class="np-cu"><div class="np-row"><span class="np-cu-head" data-np-tog="${t}">${isOpen?'▾':'▸'} ${esc(cuiLabel(t))} <small style="color:var(--brown)">(${list.length} recipes)</small></span><span class="stepper"><button type="button" data-np-dec="${t}" aria-label="Remove a meal">−</button><strong>${nSel}</strong><button type="button" data-np-inc="${t}" aria-label="Suggest one more">+</button></span></div>`;
         if(isOpen){
           const rank = r => (sugg[t]||[]).includes(r.id) ? 0 : (sel.has(r.id) ? 1 : 2);
           const sorted = list.slice().sort((a,b)=> rank(a)-rank(b) || a.title.localeCompare(b.title));
-          h += `<div class="np-list">${sorted.map(r=>`<div class="np-recipe ${sel.has(r.id)?'on':''}" data-np-pick="${esc(r.id)}"><span>${(sugg[t]||[]).includes(r.id)?'🎲 ':''}${esc(r.title)}${r.subtitle?`<em class="pick-sub">${esc(r.subtitle)}</em>`:''}</span><b>${sel.has(r.id)?'✓':'+'}</b></div>`).join('')}</div>`;
+          h += `<div class="np-list">${sorted.map(r=>`<div class="np-recipe ${sel.has(r.id)?'on':''}" data-np-pick="${esc(r.id)}">${thumbHtml(r, true).replace(/ data-act="open-recipe" data-id="[^"]*"/, '')}<span class="np-rt"><strong>${(sugg[t]||[]).includes(r.id)?'🎲 ':''}${esc(r.title)}</strong>${r.subtitle?`<em class="pick-sub">${esc(r.subtitle)}</em>`:''}<small>${esc(TAG_LABELS[r.tag]||r.tag)}${r.time?' · '+esc(r.time)+' min':''}</small></span><b>${sel.has(r.id)?'✓':'+'}</b></div>`).join('')}</div>`;
         }
         h += `</div>`;
       });
       h += `</div>`;
     }
-    h += `<div class="btn-row" style="margin-top:12px;"><button class="primary-btn" id="np-create">Start draft</button><button class="secondary-btn" id="np-cancel">Cancel</button></div>`;
+    h += `<div class="btn-row" style="margin-top:12px;"><button class="primary-btn" id="np-create">${edit ? 'Save' : 'Start draft'}</button><button class="secondary-btn" id="np-cancel">Cancel</button></div>`;
     return h;
   }
   function draw(){
@@ -1320,8 +1335,10 @@ function openNewPlanSheet(){
     openSheet(body());
     const sc2 = document.querySelector('.sheet'); if(sc2) sc2.scrollTop = top;
     document.getElementById('np-cancel').onclick = closeSheet;
-    document.getElementById('np-fridge').onclick = ()=>{ ideasState.fromPlanner = false; openIdeasSheet('fridge', true); };
-    document.getElementById('np-again').onclick = ()=>{ ideasState.fromPlanner = false; openIdeasSheet('again', true); };
+    if(!edit){
+      document.getElementById('np-fridge').onclick = ()=>{ ideasState.fromPlanner = false; openIdeasSheet('fridge', true); };
+  document.getElementById('np-again').onclick = ()=>{ ideasState.fromPlanner = false; openIdeasSheet('again', true); };
+    }
     const c = document.getElementById('np-carry');
     if(c) c.onchange = ()=>{ carryOn = c.checked; draw(); };
     document.querySelectorAll('input[name=np-cm]').forEach(r => r.onchange = ()=>{ carryMode = r.value; draw(); });
@@ -1335,10 +1352,22 @@ function openNewPlanSheet(){
       const pick = pool[Math.floor(Math.random()*pool.length)];
       sel.add(pick.id); (sugg[t] = sugg[t] || []).unshift(pick.id); openCu.add(t); draw();
     });
-    document.querySelectorAll('[data-np-dec]').forEach(b => b.onclick = ()=>{ const t=b.dataset.npDec; const l = sugg[t]||[]; if(!l.length) return; const id = l.shift(); sel.delete(id); draw(); });
+    document.querySelectorAll('[data-np-dec]').forEach(b => b.onclick = ()=>{ const t=b.dataset.npDec; const l = sugg[t]||[]; let id = l.shift();
+      if(!id){ const mine = Array.from(sel).filter(x => state.recipes[x] && recipeCuisines(state.recipes[x]).includes(t)); id = mine[mine.length-1]; }
+      if(!id) return; sel.delete(id); Object.keys(sugg).forEach(k=>{ sugg[k] = sugg[k].filter(x=>x!==id); }); draw(); });
     document.getElementById('np-create').onclick = create;
   }
   async function create(){
+    if(edit){
+      const keep = edit.recipeIds.filter(id => sel.has(id));
+      sel.forEach(id => { if(state.recipes[id] && !keep.includes(id)) keep.push(id); });
+      if(edit.servings) Object.keys(edit.servings).forEach(id => { if(!keep.includes(id)) delete edit.servings[id]; });
+      if(edit.carried) edit.carried = edit.carried.filter(id => keep.includes(id));
+      edit.recipeIds = keep;
+      closeSheet(); render();
+      await savePlan(edit);
+      return;
+    }
     const plan = {id: uid(), name: '', created: Date.now(), recipeIds: [], extras: [], built: false, locked: false};
     plan.name = planLabel({...plan});
     if(carryOn && uncooked.length){
@@ -1360,8 +1389,7 @@ function openNewPlanSheet(){
     state.plans[plan.id] = plan;
     closeSheet();
     goTab('planner');
-    if(!plan.recipeIds.length) openMealPicker();
-    else showToast(plan.recipeIds.length + ' meal' + (plan.recipeIds.length===1?'':'s') + ' in your draft menu.');
+    showToast(plan.recipeIds.length + ' meal' + (plan.recipeIds.length===1?'':'s') + ' in your draft menu.');
     await savePlan(plan);
     if(prevDraft) await deletePlanStorage(prevDraft.id);
   }
@@ -1378,7 +1406,7 @@ function renderPlanner(){
     <p class="planner-lead">Line up meals for your next menu. It stays here as a draft until you build it. Then it moves to the Menu tab and your grocery list is made.</p>
     <button class="primary-btn" data-act="new-plan">📅 Start a new meal plan</button>
     <div class="btn-row"><button type="button" class="secondary-btn" data-act="ideas-planner" data-id="fridge">What's in my fridge?</button><button type="button" class="secondary-btn" data-act="ideas-planner" data-id="again">Cook again</button></div>
-    <div class="planner-sec"><h3>Draft menu${items.length ? ` (${items.length})` : ''}${d ? ` · <span class="plan-add-link" data-act="add-meals">+ add</span>` : ''}</h3>`;
+    <div class="planner-sec"><h3>Draft menu${items.length ? ` (${items.length})` : ''}${d ? ` · <span class="plan-add-link" data-act="add-meals">edit</span>` : ''}</h3>`;
   if(!items.length) h += `<p class="planner-lead">Nothing in your draft yet. Tap "+ Add to draft menu" on a recipe in the Recipes tab, or use the tools above.</p>`;
   else {
     h += items.map(r => planItemHtml(d, r)).join('');
@@ -1472,69 +1500,6 @@ function openIdeasSheet(tab, forNew){
   }
   document.querySelectorAll('[data-idea-tab]').forEach(b=>b.onclick=()=>{ ideasState.tab=b.dataset.ideaTab; openIdeasSheet(); });
   bindIdeas();
-}
-
-function openMealPicker(){
-  const plan = viewPlan();
-  if(!plan) return;
-  const recipes = Object.values(state.recipes).sort((a,b)=>a.title.localeCompare(b.title));
-  const present = CUISINES.filter(c => recipes.some(r => recipeCuisines(r).includes(c.key)));
-  let filter = 'all';
-  let html = `<div class="sheet-handle"></div><h2>Choose meals for ${esc(planLabel(plan))}</h2>`;
-  if(recipes.length === 0){
-    html += `<div class="empty-state"><p>Add a recipe first, then come back to build your plan.</p></div>`;
-  } else {
-    html += `<div class="field" style="margin-bottom:8px;"><input id="picker-search" type="text" placeholder="Search recipes…"></div>
-      <div class="chip-row picker-chips" id="picker-chips"><button type="button" class="chip active" data-pcuisine="all">All</button><button type="button" class="chip" data-pcuisine="fav">Favourites</button>${present.map(c=>`<button type="button" class="chip" data-pcuisine="${c.key}">${esc(c.label)}</button>`).join('')}</div>
-      <div id="picker-list">`;
-    recipes.forEach(r=>{
-      const on = plan.recipeIds.includes(r.id);
-      html += `<div class="picker-item" data-title="${esc(fullTitle(r).toLowerCase())}" data-cuisine="${esc(recipeCuisines(r).join(' '))}" data-fav="${r.fav?'1':'0'}" data-rid="${esc(r.id)}">${thumbHtml(r, true).replace(/ data-act="open-recipe" data-id="[^"]*"/, '')}<span>${esc(r.title)}${r.subtitle ? `<em class="pick-sub">${esc(r.subtitle)}</em>` : ''}<small>${esc(cuisineLabels(r))} · ${esc(TAG_LABELS[r.tag]||r.tag)}</small></span><button type="button" class="fav-btn ${r.fav?'on':''}" data-fav-id="${esc(r.id)}" aria-label="Favourite">${starSvg(r.fav)}</button><button type="button" data-picker-id="${esc(r.id)}" class="${on?'on':''}">${on?'Added':'Add'}</button></div>`;
-    });
-    html += `</div>`;
-  }
-  html += `<button class="primary-btn" id="picker-done">Done</button>`;
-  openSheet(html);
-
-  document.getElementById('picker-done').onclick = closeSheet;
-  const list = document.getElementById('picker-list');
-  if(list){
-    const apply = ()=>{
-      const q = document.getElementById('picker-search').value.trim().toLowerCase();
-      list.querySelectorAll('.picker-item').forEach(row=>{
-        const okQ = !q || row.dataset.title.includes(q);
-        const okC = filter === 'all' || (filter === 'fav' ? row.dataset.fav === '1' : row.dataset.cuisine.split(' ').includes(filter));
-        row.style.display = (okQ && okC) ? '' : 'none';
-      });
-    };
-    list.addEventListener('click', async (e)=>{
-      const fb = e.target.closest('[data-fav-id]');
-      if(fb){
-        const on = await setFavourite(fb.dataset.favId);
-        fb.classList.toggle('on', on); fb.innerHTML = starSvg(on);
-        fb.closest('.picker-item').dataset.fav = on ? '1' : '0';
-        apply();
-        return;
-      }
-      const btn = e.target.closest('[data-picker-id]');
-      if(!btn) return;
-      const rid = btn.dataset.pickerId;
-      const i = plan.recipeIds.indexOf(rid);
-      if(i >= 0){ plan.recipeIds.splice(i, 1); if(plan.servings) delete plan.servings[rid]; } else plan.recipeIds.push(rid);
-      const on = plan.recipeIds.includes(rid);
-      btn.classList.toggle('on', on);
-      btn.textContent = on ? 'Added' : 'Add';
-      await savePlan(plan);
-    });
-    document.getElementById('picker-search').addEventListener('input', apply);
-    document.getElementById('picker-chips').addEventListener('click', (e)=>{
-      const c = e.target.closest('[data-pcuisine]');
-      if(!c) return;
-      filter = c.dataset.pcuisine;
-      document.querySelectorAll('#picker-chips .chip').forEach(x => x.classList.toggle('active', x === c));
-      apply();
-    });
-  }
 }
 
 /* ---------- GROCERY LIST ----------
@@ -1937,7 +1902,7 @@ async function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '10.0';
+const APP_VERSION = '0.12';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
@@ -2134,7 +2099,7 @@ Rules:
 - If a seasoning or oil (salt, pepper, oil, spices, etc.) only appears inside the instruction steps with per-step amounts, sum all of its occurrences into ONE ingredient entry with the total quantity.
 - For each ingredient set category to exactly one of: produce (fruit and vegetables, fresh herbs), meat (meat, fish, tofu and meat alternatives), dairy (milk, cheese, yoghurt, butter, eggs), bakery (bread, wraps, rolls), pantry (tins, oils, sauces, grains, pasta, flour, sugar, nuts, stock), spices (dried herbs, spices, salt, pepper), frozen, drinks, other.
 - Set cuisine to exactly one of: italian, mexican, asian, indian, mediterranean, middle-eastern, french, american, salad, soup, burgers, other, whichever best describes the dish.
-- Pick exactly one tag from: breakfast, lunch, dinner, snack, dessert, whichever best fits the dish.
+- Pick exactly one tag from: breakfast, dinner, snack, dessert, whichever best fits the dish.
 - Estimate total time in minutes and servings if not stated exactly.
 - Write each instruction step as a clear, standalone sentence or two, preserving all temperatures, times and quantities.
 
@@ -2155,7 +2120,7 @@ function parseRecipeJson(data){
 }
 
 function normalizeDraft(d){
-  const allowedTags = ['breakfast','lunch','dinner','snack','dessert'];
+  const allowedTags = ['breakfast','dinner','snack','dessert'];
   const allowedUnits = ['', 'g', 'kg', 'ml', 'l', 'tsp', 'tbsp', 'cup'];
   return {
     title: (d.title || 'Imported Recipe').toString(),
@@ -2703,7 +2668,7 @@ mainEl.addEventListener('click', async (e)=>{
       break;
     }
     case 'new-plan': openNewPlanSheet(); break;
-    case 'add-meals': { const vp = viewPlan(); if(vp && !vp.locked) openMealPicker(); break; }
+    case 'add-meals': { const vp = viewPlan(); if(vp && !vp.locked) openNewPlanSheet(vp); break; }
     case 'go-planner': goTab('planner'); break;
     case 'draft-discard': {
       const dr = curDraft();
