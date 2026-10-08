@@ -20,7 +20,7 @@
     --paper:#EDE3D0;
     --paper-dark:#E2D5BC;
     --ink:#2B2620;
-    --herb:#4C6B4F;
+    --herb:#6B7A38;
     --gold:#C08A2E;
     --tomato:#B8462F;
     --brown:#7A5C3E;
@@ -59,7 +59,7 @@
   .chip{padding:5px 12px;border-radius:14px;border:1px solid var(--line-strong);background:var(--card);font-size:12px;color:var(--brown);font-weight:600;}
   .chip.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
 
-  .add-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:12px;background:var(--herb);color:#fff;border:none;border-radius:2px;font-size:14px;font-weight:600;margin-bottom:10px;}
+  .add-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:12px;background:var(--tomato);color:#fff;border:none;border-radius:2px;font-size:14px;font-weight:600;margin-bottom:10px;}
   .add-btn:active{opacity:0.85;}
 
   /* Recipe cards */
@@ -108,8 +108,9 @@
   .step-num{font-weight:700;font-size:12px;color:var(--brown);padding-top:9px;width:20px;}
   .step-row textarea{flex:1;min-height:44px;font-size:13px;}
 
-  .primary-btn{width:100%;padding:13px;background:var(--ink);color:var(--paper);border:none;border-radius:2px;font-size:14px;font-weight:600;margin-top:6px;}
-  .secondary-btn{width:100%;padding:12px;background:none;border:1px solid var(--line-strong);color:var(--brown);border-radius:2px;font-size:13px;margin-top:8px;}
+  .primary-btn{display:block;width:100%;padding:12px;background:var(--tomato);color:#fff;border:none;border-radius:2px;font-size:14px;font-weight:600;margin-top:8px;}
+  .primary-btn:disabled{opacity:.45;}
+  .secondary-btn{display:block;width:100%;padding:12px;background:none;border:1px solid var(--line-strong);color:var(--brown);border-radius:2px;font-size:13px;font-weight:600;margin-top:8px;}
   .danger-btn{width:100%;padding:12px;background:none;border:1px solid var(--tomato);color:var(--tomato);border-radius:2px;font-size:13px;margin-top:8px;}
 
   /* Detail view */
@@ -338,8 +339,8 @@
   .np-chip{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line-strong);border-radius:14px;padding:4px 6px 4px 10px;font-size:13px;margin:0 6px 6px 0;}
   .np-chip button{border:none;background:none;font-size:16px;color:var(--brown);padding:0 4px;}
   .draft-banner{background:var(--card);border:1px dashed var(--herb);border-radius:6px;padding:9px 12px;font-size:13px;margin:10px 0;color:var(--brown);}
-  .card-next{display:block;width:100%;margin-top:10px;padding:8px;font:inherit;font-size:13px;font-weight:700;border-radius:6px;border:1.5px solid var(--herb);background:transparent;color:var(--herb);}
-  .card-next.on{background:var(--herb);color:#fff;}
+  .card-next{display:block;width:100%;margin-top:10px;padding:10px;font:inherit;font-size:13px;font-weight:600;border-radius:2px;border:1px solid var(--line-strong);background:none;color:var(--brown);}
+  .card-next.on{background:var(--herb);border-color:var(--herb);color:#fff;}
   .cook-ing-row{cursor:pointer}
   .cook-ing-row.editing{display:block;cursor:default}
   .cook-ing-row .ce{display:flex;gap:8px;margin-top:6px;}
@@ -358,7 +359,7 @@
   .np-list{margin:0 0 8px;border:1px solid var(--line-strong);border-radius:4px;background:var(--card);}
   .np-recipe{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 10px;font-size:14px;border-top:1px solid var(--line);cursor:pointer;}
   .np-recipe:first-child{border-top:none}
-  .np-recipe.on{background:rgba(76,107,79,.14);}
+  .np-recipe.on{background:rgba(107,122,56,.16);}
   .np-recipe b{color:var(--herb);font-size:16px;flex-shrink:0;}
   .extra-seg{margin:0;flex:1;}
   .extra-seg button{padding:9px 10px;font-size:14px;}
@@ -401,7 +402,6 @@
   #cook-overlay .cook-edit-link{margin-top:0;padding:4px 0;font-size:14px;}
   #cook-overlay .cook-step-main{align-items:flex-start;justify-content:flex-start;padding:22px 20px 16px;}
   #cook-overlay .cook-step-main > div{width:100%;}
-  .plan-start-btn{display:block;width:100%;margin-top:20px;padding:12px;border-radius:2px;border:1.5px solid var(--herb);background:transparent;color:var(--herb);font-size:14px;font-weight:700;}
   .tab{font-size:13px;padding-left:2px;padding-right:2px;white-space:nowrap;}
   @media (max-width:380px){.tab{font-size:11.5px;}}
   .planner-title{font-size:22px;margin:0 0 6px;}
@@ -410,12 +410,15 @@
   .planner-sec h3{font-size:14px;margin:0 0 10px;}
   .planner-row{cursor:pointer}
   .planner-row .small-btn{flex-shrink:0;margin-left:8px}
+  .btn-row{display:flex;gap:8px;margin-top:8px;}
+  .btn-row > button{flex:1;min-width:0;width:auto;margin-top:0;}
+  .idea-btns{margin:8px 0 0;}
 </style>
 </head>
 <body>
 <div id="app">
   <header class="app-header">
-    <div class="header-right"><span class="app-version" id="app-version">v9.0</span><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button></div>
+    <div class="header-right"><span class="app-version" id="app-version">v9.1</span><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button></div>
     <div class="brand"><svg viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#2B2620"/><defs><clipPath id="rr"><rect width="512" height="512" rx="112"/></clipPath> <pattern id="gh" width="64" height="64" patternUnits="userSpaceOnUse"><rect width="64" height="64" fill="#F6EEDC"/><rect width="32" height="64" fill="#C8452D" opacity=".5"/><rect width="64" height="32" fill="#C8452D" opacity=".5"/></pattern></defs><g clip-path="url(#rr)"><path d="M0 408 Q256 388 512 408 V512 H0Z" fill="url(#gh)"/><path d="M0 408 Q256 388 512 408" fill="none" stroke="#2B2620" stroke-opacity=".25" stroke-width="3"/></g><g transform="translate(256 262) scale(.9) translate(-256 -256)"> <!-- steam --> <g fill="none" stroke="#EDE3D0" stroke-width="12" stroke-linecap="round" opacity=".85"> <path d="M206 120c-18-22 18-34 0-58"/><path d="M256 108c-18-22 18-34 0-58"/><path d="M306 120c-18-22 18-34 0-58"/> </g> <!-- shallow pasta bowl: underside, rim, well --> <path d="M52 322c4 52 84 86 204 86s200-34 204-86z" fill="#EFE6D0"/> <path d="M52 322c4 52 84 86 204 86s200-34 204-86c-30 20-100 32-204 32S82 342 52 322z" fill="#E4D8BC" opacity=".6"/> <rect x="190" y="402" width="132" height="18" rx="9" fill="#EFE6D0"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="#FAF6EC"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="none" stroke="#D9CDB4" stroke-width="5"/> <!-- painted rim --> <ellipse cx="256" cy="322" rx="186" ry="55" fill="none" stroke="#2F5D8C" stroke-width="7"/> <ellipse cx="256" cy="322" rx="164" ry="46" fill="none" stroke="#2F5D8C" stroke-width="3"/> <circle cx="432" cy="330" r="5" fill="#E9B949"/><circle cx="408" cy="354" r="5" fill="#E9B949"/><circle cx="344" cy="373" r="5" fill="#E9B949"/><circle cx="256" cy="379" r="5" fill="#E9B949"/><circle cx="168" cy="373" r="5" fill="#E9B949"/><circle cx="103" cy="355" r="5" fill="#E9B949"/><circle cx="80" cy="330" r="5" fill="#E9B949"/><circle cx="103" cy="305" r="5" fill="#E9B949"/><circle cx="167" cy="286" r="5" fill="#E9B949"/><circle cx="255" cy="280" r="5" fill="#E9B949"/><circle cx="343" cy="286" r="5" fill="#E9B949"/><circle cx="408" cy="304" r="5" fill="#E9B949"/> <!-- well --> <ellipse cx="256" cy="324" rx="138" ry="36" fill="#F1E8D2"/> <!-- spaghetti nest --> <g fill="none" stroke="#F0CF6E" stroke-width="18" stroke-linecap="round"> <path d="M130 318c26-30 50 18 76-4s50 22 76-4 50 18 76-4"/> <ellipse cx="256" cy="302" rx="104" ry="30"/> <ellipse cx="256" cy="278" rx="80" ry="24"/> <ellipse cx="256" cy="256" rx="56" ry="17"/> <ellipse cx="256" cy="238" rx="32" ry="10"/> <path d="M360 326c20 6 36 14 40 24" /> </g> <g fill="none" stroke="#C8962A" stroke-width="4" stroke-linecap="round" opacity=".5"> <ellipse cx="256" cy="310" rx="104" ry="30"/><ellipse cx="256" cy="286" rx="80" ry="24"/><ellipse cx="256" cy="264" rx="56" ry="17"/> </g> <!-- sauce and basil --> <ellipse cx="256" cy="226" rx="30" ry="12" fill="#B94A2F"/> <ellipse cx="248" cy="222" rx="11" ry="4" fill="#D8674A" opacity=".8"/> <path d="M262 218c8-24 32-26 40-12-10 18-30 22-40 12z" fill="#4D7A5A"/> <path d="M268 216c10-6 20-8 30-4" stroke="#2F5A3C" stroke-width="3.5" fill="none" stroke-linecap="round"/> <!-- fork --> <g stroke-linecap="round" stroke-linejoin="round" fill="none"> <line x1="410" y1="150" x2="306" y2="238" stroke="#9AA3AB" stroke-width="16"/> <line x1="410" y1="150" x2="306" y2="238" stroke="#DDE2E6" stroke-width="9"/> <g stroke="#9AA3AB" stroke-width="14"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> <g stroke="#DDE2E6" stroke-width="7"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> </g> </g> <g><circle cx="74" cy="446" r="28" fill="#D2452E"/><ellipse cx="64" cy="436" rx="9" ry="6" fill="#fff" opacity=".35"/> <path d="M74 418c-4-8-14-10-20-6 6 6 12 8 20 6z M74 418c4-8 14-10 20-6-6 6-12 8-20 6z M74 418l0-10" fill="#4D7A5A" stroke="#2F5A3C" stroke-width="3" stroke-linejoin="round"/></g> <g><path d="M438 452c10-26 40-30 54-14-12 22-40 28-54 14z" fill="#4D7A5A"/><path d="M446 450c14-8 28-10 42-6" stroke="#2F5A3C" stroke-width="4" fill="none" stroke-linecap="round"/></g></svg><h1>Tavola</h1></div>
   </header>
   <main id="main"><div class="loading">Opening Tavola…</div></main>
@@ -467,8 +470,8 @@
   <div class="cook-step-area" id="cook-step-area"></div>
   <div class="cook-dots" id="cook-dots"></div>
   <div class="cook-nav">
-    <button id="cook-prev-btn" class="cook-nav-btn">‹ Back</button>
-    <button id="cook-next-btn" class="cook-nav-btn primary">Next ›</button>
+    <button id="cook-prev-btn" class="cook-nav-btn">Back</button>
+    <button id="cook-next-btn" class="cook-nav-btn primary">Next</button>
   </div>
 </div>
 
@@ -962,7 +965,7 @@ function renderBox(){
     <button type="button" class="fold-head" data-act="fold" data-id="show"><span>Type</span><em>${esc(state.activeFilter==='all'?'All':state.activeFilter==='fav'?'Favourites':(TAG_LABELS[state.activeFilter]||state.activeFilter))}</em><b>${state.openFilters&&state.openFilters.show?'▾':'▸'}</b></button>
     <div class="chip-row" ${state.openFilters&&state.openFilters.show?'':'hidden'}>
       <button class="chip ${state.activeFilter==='all'?'active':''}" data-act="filter" data-id="all">All (${tagCount('all')})</button>
-      <button class="chip ${state.activeFilter==='fav'?'active':''}" data-act="filter" data-id="fav">★ Favourites (${tagCount('fav')})</button>
+      <button class="chip ${state.activeFilter==='fav'?'active':''}" data-act="filter" data-id="fav">Favourites (${tagCount('fav')})</button>
       ${tags.map(t=>`<button class="chip ${state.activeFilter===t?'active':''}" data-act="filter" data-id="${esc(t)}">${esc(TAG_LABELS[t]||t)} (${tagCount(t)})</button>`).join('')}
     </div>
     <button type="button" class="fold-head" data-act="fold" data-id="cuisine"><span>Cuisine</span><em>${esc(state.activeCuisine==='all'?'Any':((CUISINES.find(c=>c.key===state.activeCuisine)||{label:state.activeCuisine}).label))}</em><b>${state.openFilters&&state.openFilters.cuisine?'▾':'▸'}</b></button>
@@ -989,21 +992,18 @@ function renderBox(){
           ${r.subtitle ? `<div class="recipe-sub">${esc(r.subtitle)}</div>` : ''}
           <div class="recipe-meta">${esc(r.time)} min · serves ${esc(r.servings)}</div>
           <div class="recipe-ing-preview">${esc(ingPreview)}</div>
-          <button type="button" class="card-next ${draftIds().includes(r.id)?'on':''}" data-act="draft-toggle" data-id="${esc(r.id)}">${draftIds().includes(r.id) ? '✓ In next plan' : '+ Add to next plan'}</button>
+          <button type="button" class="card-next ${draftIds().includes(r.id)?'on':''}" data-act="draft-toggle" data-id="${esc(r.id)}">${draftIds().includes(r.id) ? 'In next plan' : '+ Add to next plan'}</button>
         </div>`;
     });
     html += `</div>`;
   }
 
   html += `<div style="margin-top:28px;">`;
-  if(deferredInstall) html += `<button class="secondary-btn" data-act="install-app">⬇ Install app on this device</button>`;
+  if(deferredInstall) html += `<button class="secondary-btn" data-act="install-app">Install app on this device</button>`;
   html += `
-    <button class="secondary-btn" data-act="report-bug">🐞 Report a bug or request a feature</button>
-    <button class="secondary-btn" data-act="view-bugs">View reported bugs and requests</button>
-    <button class="secondary-btn" data-act="import-data">⇩ Import data</button>
-    <button class="secondary-btn" data-act="export-data">⇪ Export all data</button>
-    <button class="secondary-btn" data-act="change-db">⚙ Change shared database</button>
-    <button class="secondary-btn" data-act="sign-out">Sign out</button>
+    <div class="btn-row"><button class="secondary-btn" data-act="report-bug">Report a bug or idea</button><button class="secondary-btn" data-act="view-bugs">View reports</button></div>
+    <div class="btn-row"><button class="secondary-btn" data-act="import-data">Import data</button><button class="secondary-btn" data-act="export-data">Export data</button></div>
+    <div class="btn-row"><button class="secondary-btn" data-act="change-db">Change database</button><button class="secondary-btn" data-act="sign-out">Sign out</button></div>
   </div>`;
   return html;
 }
@@ -1016,7 +1016,7 @@ function renderRecipeDetail(id){
   const sf = scaleFactorFor(r);
   const rtab = currentView().rtab === 'steps' ? 'steps' : 'ingredients';
   return `
-    <button class="detail-back" data-act="back">‹ Back</button>
+    <button class="detail-back" data-act="back">Back</button>
     ${r.photo ? `<img src="${r.photo}" alt="" style="width:100%;height:290px;object-fit:cover;border-radius:4px;margin-bottom:12px;display:block;">` : placeholderHtml(r, 180, '4px', 'margin-bottom:12px;')}
     <span class="card-tag" style="position:static;display:inline-block;background:${TAG_COLORS[r.tag]||'var(--brown)'}">${esc(TAG_LABELS[r.tag]||r.tag)}</span>
     <h2 class="detail-title" style="margin-top:8px;">${esc(r.title)}</h2>
@@ -1024,7 +1024,7 @@ function renderRecipeDetail(id){
     <div class="fav-line">${favBtnHtml(r, true)}</div>
     <div class="recipe-meta">${esc(r.time)} min · serves ${esc(r.servings)}${Math.abs(sf - 1) > 1e-9 ? ` · <strong>scaled for ${planServings(plan, r)}</strong>` : ''}</div>
 
-    <button class="primary-btn" data-act="cook" data-id="${esc(r.id)}" style="background:var(--tomato);margin:14px 0 4px;">▶ Start cooking</button>
+    <button class="primary-btn" data-act="cook" data-id="${esc(r.id)}" style="margin:14px 0 4px;">Start cooking</button>
 
     <div class="rtabs">
       <button class="rtab ${rtab==='ingredients'?'active':''}" data-act="rtab" data-id="ingredients">Ingredients</button>
@@ -1045,10 +1045,9 @@ function renderRecipeDetail(id){
     </div>`}
 
     <div class="detail-section">
-      ${plan && plan.locked ? `<div class="locked-note">🔒 Your meal plan is locked. Tap "Edit plan" in Menu to change it.</div>` : `<button class="secondary-btn" data-act="plan-toggle" data-id="${esc(r.id)}">${inPlan ? '✓ In meal plan — tap to remove' : '+ Add to meal plan'}${plan ? ` (${esc(planLabel(plan))})` : ''}</button>`}
-      <button class="secondary-btn" data-act="draft-toggle" data-id="${esc(r.id)}">${draftIds().includes(r.id) ? '✓ In your next plan, tap to remove' : '+ Add to next plan'}</button>
-      <button class="secondary-btn" data-act="edit-recipe" data-id="${esc(r.id)}">Edit recipe</button>
-      <button class="danger-btn" data-act="delete-recipe" data-id="${esc(r.id)}">Delete recipe</button>
+      ${plan && plan.locked ? `<div class="locked-note">Your meal plan is locked. Tap "Edit plan" in Menu to change it.</div>` : ''}
+      <div class="btn-row">${plan && plan.locked ? '' : `<button class="secondary-btn" data-act="plan-toggle" data-id="${esc(r.id)}">${inPlan ? 'In meal plan' : '+ Add to meal plan'}</button>`}<button class="secondary-btn" data-act="draft-toggle" data-id="${esc(r.id)}">${draftIds().includes(r.id) ? 'In next plan' : '+ Add to next plan'}</button></div>
+      <div class="btn-row"><button class="secondary-btn" data-act="edit-recipe" data-id="${esc(r.id)}">Edit recipe</button><button class="danger-btn" data-act="delete-recipe" data-id="${esc(r.id)}">Delete recipe</button></div>
     </div>
   `;
 }
@@ -1106,7 +1105,7 @@ function renderPlan(){
   }
 
   if(plan.locked){
-    html += `<button class="secondary-btn" data-act="go-list" style="margin-top:12px;">See grocery list →</button>`;
+    html += `<button class="secondary-btn" data-act="go-list" style="margin-top:12px;">See grocery list</button>`;
   } else {
     if(items.length){
       html += `<button class="add-btn" data-act="${plan.built ? 'plan-lock' : 'plan-build'}" style="margin-top:12px;background:var(--tomato);">${plan.built ? 'Save changes and lock plan' : 'Build plan and make grocery list'}</button>`;
@@ -1185,7 +1184,7 @@ function openNewPlanSheet(){
   function body(){
     let h = `<div class="sheet-handle"></div><h2>Start a new meal plan</h2>
       <p style="font-size:13px;color:var(--brown);line-height:1.5;margin:0 0 6px;">The current plan moves down into "Previous plans". The grocery list follows the new plan.</p>`;
-    h += `<div class="idea-btns"><button type="button" class="secondary-btn" id="np-fridge">🥬 What's in my fridge?</button><button type="button" class="secondary-btn" id="np-again">↻ Cook again</button></div>`;
+    h += `<div class="btn-row"><button type="button" class="secondary-btn" id="np-fridge">What's in my fridge?</button><button type="button" class="secondary-btn" id="np-again">Cook again</button></div>`;
     if(sel.size){
       h += `<div class="np-sec"><h3>Chosen for the new plan (${sel.size})</h3>${Array.from(sel).filter(id=>state.recipes[id]).map(id=>`<span class="np-chip">${esc(state.recipes[id].title)}<button type="button" data-np-pick="${esc(id)}" aria-label="Remove">×</button></span>`).join('')}${drafts.length?`<div style="font-size:12px;color:var(--brown)">Meals you marked "add to next plan" are already here.</div>`:''}</div>`;
     }
@@ -1216,7 +1215,7 @@ function openNewPlanSheet(){
       });
       h += `</div>`;
     }
-    h += `<button class="primary-btn" id="np-create" style="margin-top:12px;">Start plan</button><button class="secondary-btn" id="np-cancel">Cancel</button>`;
+    h += `<div class="btn-row" style="margin-top:12px;"><button class="primary-btn" id="np-create">Start plan</button><button class="secondary-btn" id="np-cancel">Cancel</button></div>`;
     return h;
   }
   function draw(){
@@ -1280,8 +1279,8 @@ function renderPlanner(){
   const drafts = draftIds();
   let h = `<h2 class="planner-title">Planner</h2>
     <p class="planner-lead">Line up meals for your next menu, then start it. Your current menu stays on the Menu tab until you do.</p>
-    <button class="plan-start-btn" style="margin-top:6px" data-act="new-plan">📅 Start a new meal plan</button>
-    <div class="idea-btns"><button type="button" class="secondary-btn" data-act="ideas-planner" data-id="fridge">🥬 What's in my fridge?</button><button type="button" class="secondary-btn" data-act="ideas-planner" data-id="again">↻ Cook again</button></div>
+    <button class="primary-btn" data-act="new-plan">📅 Start a new meal plan</button>
+    <div class="btn-row"><button type="button" class="secondary-btn" data-act="ideas-planner" data-id="fridge">What's in my fridge?</button><button type="button" class="secondary-btn" data-act="ideas-planner" data-id="again">Cook again</button></div>
     <div class="planner-sec"><h3>Waiting for your next plan${drafts.length ? ` (${drafts.length})` : ''}</h3>`;
   if(!drafts.length) h += `<p class="planner-lead">Nothing waiting. Tap "+ Add to next plan" on a recipe in the Recipes tab, or use the fridge and cook again tools above.</p>`;
   else h += drafts.map(id=>{ const r = state.recipes[id]; return `<div class="where-row planner-row" data-act="open-recipe" data-id="${esc(id)}">${thumbHtml(r, true).replace(/ data-act="open-recipe" data-id="[^"]*"/, '')}<span><strong>${esc(r.title)}</strong>${r.subtitle ? `<small>${esc(r.subtitle)}</small>` : ''}</span><button type="button" class="small-btn" data-act="draft-toggle" data-id="${esc(id)}">Remove</button></div>`; }).join('');
@@ -1318,7 +1317,7 @@ function ideaTarget(){ if(ideasState.forNew) return 'draft'; const p = activePla
 function ideaAdded(id){ return ideaTarget()==='plan' ? activePlan().recipeIds.includes(id) : draftIds().includes(id); }
 function ideaRow(r, sub){
   const on = ideaAdded(r.id);
-  return `<div class="where-row idea-row" data-idea-open="${esc(r.id)}">${thumbHtml(r, true).replace(/ data-act="open-recipe" data-id="[^"]*"/, '')}<span><strong>${esc(r.title)}</strong><small>${sub}</small></span><button type="button" class="small-btn ${on?'on':''}" data-idea-add="${esc(r.id)}">${on?'Added ✓':(ideaTarget()==='plan'?'+ Plan':'+ Next plan')}</button></div>`;
+  return `<div class="where-row idea-row" data-idea-open="${esc(r.id)}">${thumbHtml(r, true).replace(/ data-act="open-recipe" data-id="[^"]*"/, '')}<span><strong>${esc(r.title)}</strong><small>${sub}</small></span><button type="button" class="small-btn ${on?'on':''}" data-idea-add="${esc(r.id)}">${on?'Added':(ideaTarget()==='plan'?'+ Plan':'+ Next plan')}</button></div>`;
 }
 function ideasBody(){
   let h = '';
@@ -1385,11 +1384,11 @@ function openMealPicker(){
     html += `<div class="empty-state"><p>Add a recipe first, then come back to build your plan.</p></div>`;
   } else {
     html += `<div class="field" style="margin-bottom:8px;"><input id="picker-search" type="text" placeholder="Search recipes…"></div>
-      <div class="chip-row picker-chips" id="picker-chips"><button type="button" class="chip active" data-pcuisine="all">All</button><button type="button" class="chip" data-pcuisine="fav">★ Favourites</button>${present.map(c=>`<button type="button" class="chip" data-pcuisine="${c.key}">${esc(c.label)}</button>`).join('')}</div>
+      <div class="chip-row picker-chips" id="picker-chips"><button type="button" class="chip active" data-pcuisine="all">All</button><button type="button" class="chip" data-pcuisine="fav">Favourites</button>${present.map(c=>`<button type="button" class="chip" data-pcuisine="${c.key}">${esc(c.label)}</button>`).join('')}</div>
       <div id="picker-list">`;
     recipes.forEach(r=>{
       const on = plan.recipeIds.includes(r.id);
-      html += `<div class="picker-item" data-title="${esc(fullTitle(r).toLowerCase())}" data-cuisine="${esc(recipeCuisines(r).join(' '))}" data-fav="${r.fav?'1':'0'}" data-rid="${esc(r.id)}">${thumbHtml(r, true).replace(/ data-act="open-recipe" data-id="[^"]*"/, '')}<span>${esc(r.title)}${r.subtitle ? `<em class="pick-sub">${esc(r.subtitle)}</em>` : ''}<small>${esc(cuisineLabels(r))} · ${esc(TAG_LABELS[r.tag]||r.tag)}</small></span><button type="button" class="fav-btn ${r.fav?'on':''}" data-fav-id="${esc(r.id)}" aria-label="Favourite">${starSvg(r.fav)}</button><button type="button" data-picker-id="${esc(r.id)}" class="${on?'on':''}">${on?'Added ✓':'Add'}</button></div>`;
+      html += `<div class="picker-item" data-title="${esc(fullTitle(r).toLowerCase())}" data-cuisine="${esc(recipeCuisines(r).join(' '))}" data-fav="${r.fav?'1':'0'}" data-rid="${esc(r.id)}">${thumbHtml(r, true).replace(/ data-act="open-recipe" data-id="[^"]*"/, '')}<span>${esc(r.title)}${r.subtitle ? `<em class="pick-sub">${esc(r.subtitle)}</em>` : ''}<small>${esc(cuisineLabels(r))} · ${esc(TAG_LABELS[r.tag]||r.tag)}</small></span><button type="button" class="fav-btn ${r.fav?'on':''}" data-fav-id="${esc(r.id)}" aria-label="Favourite">${starSvg(r.fav)}</button><button type="button" data-picker-id="${esc(r.id)}" class="${on?'on':''}">${on?'Added':'Add'}</button></div>`;
     });
     html += `</div>`;
   }
@@ -1423,7 +1422,7 @@ function openMealPicker(){
       if(i >= 0){ plan.recipeIds.splice(i, 1); if(plan.servings) delete plan.servings[rid]; } else plan.recipeIds.push(rid);
       const on = plan.recipeIds.includes(rid);
       btn.classList.toggle('on', on);
-      btn.textContent = on ? 'Added ✓' : 'Add';
+      btn.textContent = on ? 'Added' : 'Add';
       await savePlan(plan);
     });
     document.getElementById('picker-search').addEventListener('input', apply);
@@ -1622,7 +1621,7 @@ function renderGrocery(){
           <input type="checkbox" data-check-key="${esc(it.key)}" ${checked?'checked':''}>
           <span class="gi-name"><span class="gi-link" data-act="where-used" data-id="${esc(it.key)}">${esc(it.name)}</span>${it.note ? `<span class="gi-note">${esc(it.note)}</span>` : ''}${it.uses && it.uses.length ? `<span class="gi-where" data-act="where-used" data-id="${esc(it.key)}">where used (${it.uses.length}) ›</span>` : ''}</span>
           <span class="gi-qty">${esc(it.qtyText)}</span>
-          <button type="button" class="store-tag ${actualStore(it)}" data-act="store-swap" data-id="${esc(it.key)}" aria-label="Move to ${actualStore(it)==='aldi'?'Coles':'Aldi'}">${actualStore(it)==='aldi'?'Aldi':'Coles'} ⇄</button>
+          <button type="button" class="store-tag ${actualStore(it)}" data-act="store-swap" data-id="${esc(it.key)}" aria-label="Move to ${actualStore(it)==='aldi'?'Coles':'Aldi'}">${actualStore(it)==='aldi'?'Aldi':'Coles'}</button>
           ${it.extra ? `<button type="button" class="gi-del" data-act="extra-del" data-id="${esc(it.id)}" aria-label="Remove item">×</button>` : ''}
         </label>`;
     });
@@ -1664,8 +1663,7 @@ function openAllDoneSheet(){
     <div class="sheet-handle"></div>
     <h2>Finished?</h2>
     <p style="font-size:13px;color:var(--brown);line-height:1.5;margin:0 0 14px;">Everything on your list is ticked. Clearing the list removes the groceries and any items you added yourself. Your menu stays as it is.</p>
-    <button class="primary-btn" id="ad-wipe">Yes</button>
-    <button class="secondary-btn" id="ad-no">No</button>
+    <div class="btn-row"><button class="primary-btn" id="ad-wipe">Yes</button><button class="secondary-btn" id="ad-no">No</button></div>
   `);
   document.getElementById('ad-no').onclick = closeSheet;
   document.getElementById('ad-wipe').onclick = async ()=>{
@@ -1688,8 +1686,7 @@ function openImportDataSheet(){
     <input type="file" id="import-data-file" accept=".json,application/json" style="margin-bottom:10px;width:100%;">
     <textarea id="import-data-textarea" placeholder="Paste exported JSON here…" style="width:100%;min-height:160px;font-size:12px;font-family:monospace;padding:10px;border:1px solid var(--line-strong);border-radius:2px;background:var(--card);color:var(--ink);"></textarea>
     <div id="import-data-status" style="font-size:13px;color:var(--brown);margin:8px 0;min-height:16px;"></div>
-    <button class="primary-btn" id="import-data-submit-btn">Import</button>
-    <button class="secondary-btn" id="import-data-cancel-btn">Cancel</button>
+    <div class="btn-row"><button class="primary-btn" id="import-data-submit-btn">Import</button><button class="secondary-btn" id="import-data-cancel-btn">Cancel</button></div>
   `);
   document.getElementById('import-data-cancel-btn').addEventListener('click', closeSheet);
   document.getElementById('import-data-file').addEventListener('change', async (e)=>{
@@ -1769,7 +1766,7 @@ async function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '9.0';
+const APP_VERSION = '9.1';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
@@ -1783,14 +1780,13 @@ function openBugSheet(){
   openSheet(`
     <div class="sheet-handle"></div>
     <h2>Bug or idea</h2>
-    <div class="seg-row"><button type="button" class="chip active" data-rtype="bug">🐞 Report a bug</button><button type="button" class="chip" data-rtype="feature">💡 Request a feature</button></div>
+    <div class="seg-row"><button type="button" class="chip active" data-rtype="bug">Report a bug</button><button type="button" class="chip" data-rtype="feature">Request a feature</button></div>
     <p class="sheet-note" id="bug-help">Say what went wrong and what you were doing. It's saved to the shared list, which only the approved signed-in users can see.</p>
     <div class="field"><label id="bug-label">What happened?</label><textarea id="bug-text" placeholder="e.g. When I tap Add on a recipe the count doesn't change…" style="min-height:110px;"></textarea></div>
     <div class="sheet-note">Screen: ${esc(where)}</div>
     <div id="bug-status" class="sheet-status"></div>
-    <button class="primary-btn" id="bug-send">Save report</button>
+    <div class="btn-row"><button class="primary-btn" id="bug-send">Save report</button><button class="secondary-btn" id="bug-cancel">Close</button></div>
     <button class="secondary-btn" id="bug-list-btn">View reported bugs and requests</button>
-    <button class="secondary-btn" id="bug-cancel">Close</button>
   `);
   let reportType = 'bug';
   document.querySelectorAll('[data-rtype]').forEach(b => b.onclick = ()=>{
@@ -2362,8 +2358,7 @@ function openRecipeForm(existingId, draft){
         <button type="button" class="small-btn" id="add-step-btn">+ Add step</button>
       </div>
 
-      <button type="submit" class="primary-btn">Save recipe</button>
-      <button type="button" class="secondary-btn" id="cancel-form-btn">Cancel</button>
+      <div class="btn-row"><button type="submit" class="primary-btn">Save recipe</button><button type="button" class="secondary-btn" id="cancel-form-btn">Cancel</button></div>
     </form>
   `;
   openSheet(html);
@@ -2791,12 +2786,12 @@ function renderCookStep(){
         ? stepIngredients.map(ing => {
           const ix = r.ingredients.indexOf(ing);
           if(cookState.editIng === ix) return `<div class="cook-ing-row editing"><span>${esc(ing.name)} <small style="opacity:.7">(recipe amount)</small></span><div class="ce"><input id="ce-qty" inputmode="decimal" value="${esc(ing.qty)}" placeholder="Qty" aria-label="Quantity"><input id="ce-unit" list="ce-units" value="${esc(ing.unit)}" placeholder="Unit" aria-label="Unit"><datalist id="ce-units">${['g','kg','ml','l','tsp','tbsp','cup','can','tin','clove','bunch','pinch','piece','packet'].map(u=>`<option value="${u}">`).join('')}</datalist><button type="button" class="ok" data-ce-save="${ix}">Save</button><button type="button" data-ce-cancel="1">✕</button></div></div>`;
-          return `<div class="cook-ing-row" data-ce-edit="${ix}"><span>${esc(ing.name)}</span><span class="cook-ing-qty">${esc([scaleQty(ing.qty, (ing.unit||'').toLowerCase(), scaleFactorFor(r)), ing.unit].filter(Boolean).join(' '))} ✎</span></div>`;
+          return `<div class="cook-ing-row" data-ce-edit="${ix}"><span>${esc(ing.name)}</span><span class="cook-ing-qty">${esc([scaleQty(ing.qty, (ing.unit||'').toLowerCase(), scaleFactorFor(r)), ing.unit].filter(Boolean).join(' '))}</span></div>`;
         }).join('')
         : ''}
     </div>`;
   document.getElementById('cook-step-area').innerHTML = `
-    <div class="cook-edit-bar">${cookState.editStep === i ? '' : `<button type="button" class="cook-edit-link" data-cs-edit="1">✎ Edit this step</button>`}</div>
+    <div class="cook-edit-bar">${cookState.editStep === i ? '' : `<button type="button" class="cook-edit-link" data-cs-edit="1">Edit this step</button>`}</div>
     <div class="cook-step-main">
       <div>
         ${cookState.editStep === i
@@ -2808,7 +2803,7 @@ function renderCookStep(){
   document.getElementById('cook-dots').innerHTML = r.steps.map((_,idx)=>
     `<span class="cook-dot ${idx===i?'active':''}"></span>`).join('');
   document.getElementById('cook-prev-btn').disabled = (i === 0);
-  document.getElementById('cook-next-btn').textContent = (i === total - 1) ? 'Done' : 'Next ›';
+  document.getElementById('cook-next-btn').textContent = (i === total - 1) ? 'Done' : 'Next';
 }
 
 async function requestWakeLock(){
