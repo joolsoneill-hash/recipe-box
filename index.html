@@ -401,18 +401,20 @@
   #cook-overlay .cook-edit-link{margin-top:0;padding:4px 0;font-size:14px;}
   #cook-overlay .cook-step-main{align-items:flex-start;justify-content:flex-start;padding:22px 20px 16px;}
   #cook-overlay .cook-step-main > div{width:100%;}
+  .plan-start-btn{display:block;width:100%;margin-top:20px;padding:12px;border-radius:2px;border:1.5px solid var(--herb);background:transparent;color:var(--herb);font-size:14px;font-weight:700;}
+  .tab{font-size:13px;padding-left:4px;padding-right:4px;}
 </style>
 </head>
 <body>
 <div id="app">
   <header class="app-header">
-    <div class="header-right"><span class="app-version" id="app-version">v7.7</span><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button></div>
+    <div class="header-right"><span class="app-version" id="app-version">v7.9</span><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button></div>
     <div class="brand"><svg viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#2B2620"/><g transform="translate(256 262) scale(.9) translate(-256 -256)"> <!-- steam --> <g fill="none" stroke="#EDE3D0" stroke-width="12" stroke-linecap="round" opacity=".85"> <path d="M196 132c-18-22 18-34 0-58"/> <path d="M256 120c-18-22 18-34 0-58"/> <path d="M316 132c-18-22 18-34 0-58"/> </g> <!-- bowl back rim --> <ellipse cx="256" cy="232" rx="168" ry="44" fill="#FAF6EC"/> <!-- noodle pile --> <g fill="none" stroke="#E9B949" stroke-width="22" stroke-linecap="round"> <path d="M118 226c26-62 54 44 82-12s54 44 82-12 54 44 82-12" /> <path d="M132 206c24-58 50 38 78-8s50 40 78-8 48 36 74-6"/> <path d="M150 188c22-40 44 26 70-4s44 28 70-4 40 24 58 0"/> </g> <g fill="none" stroke="#C8962A" stroke-width="5" stroke-linecap="round" opacity=".55"> <path d="M132 214c26-56 52 40 80-8s52 42 80-8 52 38 80-8"/> </g> <!-- sauce and basil --> <ellipse cx="256" cy="188" rx="62" ry="26" fill="#B94A2F"/> <ellipse cx="238" cy="182" rx="22" ry="8" fill="#D8674A" opacity=".75"/> <path d="M286 170c30-26 62-14 66 6-30 22-58 16-66-6z" fill="#4D7A5A"/> <path d="M292 174c20-8 38-8 54 2" stroke="#2F5A3C" stroke-width="4" fill="none" stroke-linecap="round"/> <!-- bowl body --> <path d="M88 236c0 100 70 170 168 170s168-70 168-170c-40 28-100 42-168 42S128 264 88 236z" fill="#FAF6EC"/> <path d="M88 236c40 28 100 42 168 42s128-14 168-42" fill="none" stroke="#B94A2F" stroke-width="16" stroke-linecap="round"/> <path d="M120 318c34 54 82 76 136 76" fill="none" stroke="#D9CDB4" stroke-width="10" stroke-linecap="round" opacity=".8"/> <!-- bowl foot --> <rect x="196" y="402" width="120" height="22" rx="11" fill="#FAF6EC"/> <!-- eyes and smile for cartoon feel --> <circle cx="214" cy="330" r="11" fill="#2B2620"/> <circle cx="298" cy="330" r="11" fill="#2B2620"/> <circle cx="218" cy="326" r="3.5" fill="#fff"/> <circle cx="302" cy="326" r="3.5" fill="#fff"/> <path d="M232 352c14 16 34 16 48 0" fill="none" stroke="#2B2620" stroke-width="8" stroke-linecap="round"/> <circle cx="190" cy="350" r="12" fill="#D8674A" opacity=".45"/> <circle cx="322" cy="350" r="12" fill="#D8674A" opacity=".45"/> <!-- chopsticks --> <g stroke-linecap="round"> <line x1="366" y1="96" x2="296" y2="206" stroke="#C98A4A" stroke-width="10"/> <line x1="392" y1="112" x2="316" y2="214" stroke="#8A4A2F" stroke-width="10"/> </g> </g></svg><h1>Recipe Box</h1></div>
   </header>
   <main id="main"><div class="loading">Opening the recipe box…</div></main>
   <nav class="tabbar">
-    <button data-tab="plan" class="tab active">Meal Plan</button>
-    <button data-tab="box" class="tab">Recipes</button>
+    <button data-tab="plan" class="tab active">Menu</button>
+    <button data-tab="box" class="tab">Recipes &amp; Planner</button>
     <button data-tab="list" class="tab">Grocery List</button>
   </nav>
 </div>
@@ -964,7 +966,8 @@ function renderBox(){
       ${CUISINES.filter(c => cuiCount(c.key) > 0 || state.activeCuisine === c.key).map(c=>`<button class="chip ${state.activeCuisine===c.key?'active':''}" data-act="cfilter" data-id="${c.key}">${esc(c.label)} (${cuiCount(c.key)})</button>`).join('')}
     </div>
     ${filtersOn ? `<button class="secondary-btn" data-act="clear-filters" style="margin-top:10px;">Clear filters and search</button>` : ''}
-    <button class="add-btn" data-act="add-recipe" style="margin-top:20px;margin-bottom:18px;">+ Add a recipe</button>
+    <button class="plan-start-btn" data-act="new-plan">📅 Start a new meal plan${draftIds().length ? ` (${draftIds().length} waiting)` : ''}</button>
+    <button class="add-btn" data-act="add-recipe" style="margin-top:10px;margin-bottom:18px;">+ Add a recipe</button>
   `;
 
   if(filtered.length===0){
@@ -1038,7 +1041,7 @@ function renderRecipeDetail(id){
     </div>`}
 
     <div class="detail-section">
-      ${plan && plan.locked ? `<div class="locked-note">🔒 Your meal plan is locked. Tap "Edit plan" in Meal Plan to change it.</div>` : `<button class="secondary-btn" data-act="plan-toggle" data-id="${esc(r.id)}">${inPlan ? '✓ In meal plan — tap to remove' : '+ Add to meal plan'}${plan ? ` (${esc(planLabel(plan))})` : ''}</button>`}
+      ${plan && plan.locked ? `<div class="locked-note">🔒 Your meal plan is locked. Tap "Edit plan" in Menu to change it.</div>` : `<button class="secondary-btn" data-act="plan-toggle" data-id="${esc(r.id)}">${inPlan ? '✓ In meal plan — tap to remove' : '+ Add to meal plan'}${plan ? ` (${esc(planLabel(plan))})` : ''}</button>`}
       <button class="secondary-btn" data-act="draft-toggle" data-id="${esc(r.id)}">${draftIds().includes(r.id) ? '✓ In your next plan, tap to remove' : '+ Add to next plan'}</button>
       <button class="secondary-btn" data-act="edit-recipe" data-id="${esc(r.id)}">Edit recipe</button>
       <button class="danger-btn" data-act="delete-recipe" data-id="${esc(r.id)}">Delete recipe</button>
@@ -1071,9 +1074,8 @@ function renderPlan(){
         <h2 class="plan-date">${esc(planLabel(plan))}</h2>
         <button type="button" class="lock-btn ${plan.locked?'locked':''}" data-act="${items.length || plan.locked ? lockAct : 'noop'}" aria-label="${plan.locked ? 'Plan locked. Tap to edit' : 'Plan unlocked'}">${lockIcon}</button>
       </div>
-      <button type="button" class="plan-plus" data-act="new-plan" aria-label="Start a new meal plan">+</button>
     </div>
-    ${draftIds().length ? `<div class="draft-banner">📝 ${draftIds().length} meal${draftIds().length===1?'':'s'} waiting for your next plan. Tap + to start it.</div>` : ''}
+    ${draftIds().length ? `<div class="draft-banner">📝 ${draftIds().length} meal${draftIds().length===1?'':'s'} waiting for your next plan. Start it from Recipes &amp; Planner.</div>` : ''}
     <div class="plan-count" style="margin-top:6px;">${items.length} meal${items.length===1?'':'s'} chosen${plan.locked ? '' : ` · <span class="plan-add-link" data-act="add-meals">+ add</span>`}</div>
   `;
 
@@ -1557,14 +1559,14 @@ function renderGrocery(){
       </div>
     </form>`;
   if(plan && plan.built && plan.groceryDone && items.length === 0){
-    html += `<div class="empty-state"><h3>Shopping done ✓</h3><p>The list was cleared. Your meal plan is untouched, so you can keep cooking from it.</p><button class="secondary-btn" data-act="rebuild-list">Rebuild the list from this plan</button><button class="secondary-btn" data-act="go-plan">Go to Meal Plan</button></div>`;
+    html += `<div class="empty-state"><h3>Shopping done ✓</h3><p>The list was cleared. Your meal plan is untouched, so you can keep cooking from it.</p><button class="secondary-btn" data-act="rebuild-list">Rebuild the list from this plan</button><button class="secondary-btn" data-act="go-plan">Go to Menu</button></div>`;
     return html;
   }
   if(plan && !plan.built){
-    html += `<div class="empty-state"><h3>${plan.recipeIds.length ? 'Plan not built yet' : 'Your list is empty'}</h3><p>${plan.recipeIds.length ? 'Tap "Build plan" in Meal Plan and the groceries for your meals will appear here.' : 'Choose some meals in "Meal Plan" and build the plan, or add your own items above.'}</p><button class="secondary-btn" data-act="go-plan">Go to Meal Plan</button></div>`;
+    html += `<div class="empty-state"><h3>${plan.recipeIds.length ? 'Plan not built yet' : 'Your list is empty'}</h3><p>${plan.recipeIds.length ? 'Tap "Build plan" in Menu and the groceries for your meals will appear here.' : 'Choose some meals in "Meal Plan" and build the plan, or add your own items above.'}</p><button class="secondary-btn" data-act="go-plan">Go to Menu</button></div>`;
     if(items.length === 0) return html;
   } else if(items.length === 0){
-    html += `<div class="empty-state"><h3>Your list is empty</h3><p>Add your own items above, or choose some meals in "Meal Plan".</p></div>`;
+    html += `<div class="empty-state"><h3>Your list is empty</h3><p>Add your own items above, or choose some meals in "Menu".</p></div>`;
     return html;
   }
   const actualStore = it => (state.storePrefs && state.storePrefs[it.key] === 'aldi') ? 'aldi' : 'coles';
@@ -1743,13 +1745,13 @@ async function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '7.7';
+const APP_VERSION = '7.9';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
   const v = currentView();
   if(v.recipeId && state.recipes[v.recipeId]) return 'Recipe: ' + state.recipes[v.recipeId].title;
-  return ({box:'Recipes', plan:'Meal Plan', list:'Grocery List'})[v.tab] || v.tab;
+  return ({box:'Recipes & Planner', plan:'Menu', list:'Grocery List'})[v.tab] || v.tab;
 }
 
 function openBugSheet(){
