@@ -75,6 +75,8 @@
   .star-svg{width:62%;height:62%;display:block;}
   .fav-line .fav-btn .star-svg,.cook-finish .fav-btn .star-svg{width:22px;height:22px;}
   .recipe-meta{font-size:12.5px;color:var(--brown);margin-bottom:8px;}
+  .cook-stat{font-size:12px;color:var(--herb);font-weight:600;margin:-4px 0 8px;}
+  .plan-item .cook-stat{margin:2px 0 0;}
   .recipe-ing-preview{font-size:13px;color:var(--ink);opacity:0.75;line-height:1.4;}
 
   .empty-state{text-align:center;padding:40px 20px;color:var(--brown);}
@@ -176,6 +178,11 @@
 
 
   .header-right{position:absolute;top:50%;transform:translateY(-50%);right:14px;display:flex;align-items:center;gap:10px;}
+  .header-btn#menu-header-btn{font-size:24px;padding-bottom:6px;}
+  .app-menu{position:absolute;top:calc(100% - 4px);right:14px;min-width:210px;background:var(--card);border:1px solid var(--ink);border-radius:2px;box-shadow:0 6px 18px rgba(43,38,32,.35);z-index:60;}
+  .app-menu button{display:block;width:100%;text-align:left;padding:14px 16px;font:inherit;font-size:15px;font-weight:600;color:var(--ink);background:none;border:none;border-top:1px solid var(--line);border-radius:0;}
+  .app-menu button:first-child{border-top:none;}
+  .app-menu button:active{background:var(--paper-dark);}
   .app-version{font-size:12px;font-weight:600;letter-spacing:0.4px;color:rgba(237,227,208,0.6);}
   .header-btn{background:rgba(237,227,208,0.12);color:var(--paper);border:1px solid rgba(237,227,208,0.32);border-radius:50%;width:42px;height:42px;padding:0;font-size:22px;line-height:1;display:flex;align-items:center;justify-content:center;}
   .sheet-note{font-size:13px;color:var(--brown);line-height:1.5;margin:0 0 12px;}
@@ -427,7 +434,8 @@
 <body>
 <div id="app" class="booting">
   <header class="app-header">
-    <div class="header-right"><span class="app-version" id="app-version">v9.3</span><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button></div>
+    <div class="header-right"><span class="app-version" id="app-version">v9.5</span><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button><button type="button" class="header-btn" id="menu-header-btn" aria-label="More options" aria-haspopup="true" aria-expanded="false">⋯</button></div>
+    <div class="app-menu" id="app-menu" hidden></div>
     <div class="brand"><svg viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#2B2620"/><defs><clipPath id="rr"><rect width="512" height="512" rx="112"/></clipPath> <pattern id="gh" width="64" height="64" patternUnits="userSpaceOnUse"><rect width="64" height="64" fill="#F6EEDC"/><rect width="32" height="64" fill="#C8452D" opacity=".5"/><rect width="64" height="32" fill="#C8452D" opacity=".5"/></pattern></defs><g clip-path="url(#rr)"><path d="M0 408 Q256 388 512 408 V512 H0Z" fill="url(#gh)"/><path d="M0 408 Q256 388 512 408" fill="none" stroke="#2B2620" stroke-opacity=".25" stroke-width="3"/></g><g transform="translate(256 262) scale(.9) translate(-256 -256)"> <!-- steam --> <g fill="none" stroke="#EDE3D0" stroke-width="12" stroke-linecap="round" opacity=".85"> <path d="M206 120c-18-22 18-34 0-58"/><path d="M256 108c-18-22 18-34 0-58"/><path d="M306 120c-18-22 18-34 0-58"/> </g> <!-- shallow pasta bowl: underside, rim, well --> <path d="M52 322c4 52 84 86 204 86s200-34 204-86z" fill="#EFE6D0"/> <path d="M52 322c4 52 84 86 204 86s200-34 204-86c-30 20-100 32-204 32S82 342 52 322z" fill="#E4D8BC" opacity=".6"/> <rect x="190" y="402" width="132" height="18" rx="9" fill="#EFE6D0"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="#FAF6EC"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="none" stroke="#D9CDB4" stroke-width="5"/> <!-- painted rim --> <ellipse cx="256" cy="322" rx="186" ry="55" fill="none" stroke="#2F5D8C" stroke-width="7"/> <ellipse cx="256" cy="322" rx="164" ry="46" fill="none" stroke="#2F5D8C" stroke-width="3"/> <circle cx="432" cy="330" r="5" fill="#E9B949"/><circle cx="408" cy="354" r="5" fill="#E9B949"/><circle cx="344" cy="373" r="5" fill="#E9B949"/><circle cx="256" cy="379" r="5" fill="#E9B949"/><circle cx="168" cy="373" r="5" fill="#E9B949"/><circle cx="103" cy="355" r="5" fill="#E9B949"/><circle cx="80" cy="330" r="5" fill="#E9B949"/><circle cx="103" cy="305" r="5" fill="#E9B949"/><circle cx="167" cy="286" r="5" fill="#E9B949"/><circle cx="255" cy="280" r="5" fill="#E9B949"/><circle cx="343" cy="286" r="5" fill="#E9B949"/><circle cx="408" cy="304" r="5" fill="#E9B949"/> <!-- well --> <ellipse cx="256" cy="324" rx="138" ry="36" fill="#F1E8D2"/> <!-- spaghetti nest --> <g fill="none" stroke="#F0CF6E" stroke-width="18" stroke-linecap="round"> <path d="M130 318c26-30 50 18 76-4s50 22 76-4 50 18 76-4"/> <ellipse cx="256" cy="302" rx="104" ry="30"/> <ellipse cx="256" cy="278" rx="80" ry="24"/> <ellipse cx="256" cy="256" rx="56" ry="17"/> <ellipse cx="256" cy="238" rx="32" ry="10"/> <path d="M360 326c20 6 36 14 40 24" /> </g> <g fill="none" stroke="#C8962A" stroke-width="4" stroke-linecap="round" opacity=".5"> <ellipse cx="256" cy="310" rx="104" ry="30"/><ellipse cx="256" cy="286" rx="80" ry="24"/><ellipse cx="256" cy="264" rx="56" ry="17"/> </g> <!-- sauce and basil --> <ellipse cx="256" cy="226" rx="30" ry="12" fill="#B94A2F"/> <ellipse cx="248" cy="222" rx="11" ry="4" fill="#D8674A" opacity=".8"/> <path d="M262 218c8-24 32-26 40-12-10 18-30 22-40 12z" fill="#4D7A5A"/> <path d="M268 216c10-6 20-8 30-4" stroke="#2F5A3C" stroke-width="3.5" fill="none" stroke-linecap="round"/> <!-- fork --> <g stroke-linecap="round" stroke-linejoin="round" fill="none"> <line x1="410" y1="150" x2="306" y2="238" stroke="#9AA3AB" stroke-width="16"/> <line x1="410" y1="150" x2="306" y2="238" stroke="#DDE2E6" stroke-width="9"/> <g stroke="#9AA3AB" stroke-width="14"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> <g stroke="#DDE2E6" stroke-width="7"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> </g> </g> <g><circle cx="74" cy="446" r="28" fill="#D2452E"/><ellipse cx="64" cy="436" rx="9" ry="6" fill="#fff" opacity=".35"/> <path d="M74 418c-4-8-14-10-20-6 6 6 12 8 20 6z M74 418c4-8 14-10 20-6-6 6-12 8-20 6z M74 418l0-10" fill="#4D7A5A" stroke="#2F5A3C" stroke-width="3" stroke-linejoin="round"/></g> <g><path d="M438 452c10-26 40-30 54-14-12 22-40 28-54 14z" fill="#4D7A5A"/><path d="M446 450c14-8 28-10 42-6" stroke="#2F5A3C" stroke-width="4" fill="none" stroke-linecap="round"/></g></svg><h1>Tavola</h1></div>
   </header>
   <div class="boot-splash" id="boot-splash"><svg viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#2B2620"/><defs><clipPath id="rr"><rect width="512" height="512" rx="112"/></clipPath> <pattern id="gh" width="64" height="64" patternUnits="userSpaceOnUse"><rect width="64" height="64" fill="#F6EEDC"/><rect width="32" height="64" fill="#C8452D" opacity=".5"/><rect width="64" height="32" fill="#C8452D" opacity=".5"/></pattern></defs><g clip-path="url(#rr)"><path d="M0 408 Q256 388 512 408 V512 H0Z" fill="url(#gh)"/><path d="M0 408 Q256 388 512 408" fill="none" stroke="#2B2620" stroke-opacity=".25" stroke-width="3"/></g><g transform="translate(256 262) scale(.9) translate(-256 -256)"> <!-- steam --> <g fill="none" stroke="#EDE3D0" stroke-width="12" stroke-linecap="round" opacity=".85"> <path d="M206 120c-18-22 18-34 0-58"/><path d="M256 108c-18-22 18-34 0-58"/><path d="M306 120c-18-22 18-34 0-58"/> </g> <!-- shallow pasta bowl: underside, rim, well --> <path d="M52 322c4 52 84 86 204 86s200-34 204-86z" fill="#EFE6D0"/> <path d="M52 322c4 52 84 86 204 86s200-34 204-86c-30 20-100 32-204 32S82 342 52 322z" fill="#E4D8BC" opacity=".6"/> <rect x="190" y="402" width="132" height="18" rx="9" fill="#EFE6D0"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="#FAF6EC"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="none" stroke="#D9CDB4" stroke-width="5"/> <!-- painted rim --> <ellipse cx="256" cy="322" rx="186" ry="55" fill="none" stroke="#2F5D8C" stroke-width="7"/> <ellipse cx="256" cy="322" rx="164" ry="46" fill="none" stroke="#2F5D8C" stroke-width="3"/> <circle cx="432" cy="330" r="5" fill="#E9B949"/><circle cx="408" cy="354" r="5" fill="#E9B949"/><circle cx="344" cy="373" r="5" fill="#E9B949"/><circle cx="256" cy="379" r="5" fill="#E9B949"/><circle cx="168" cy="373" r="5" fill="#E9B949"/><circle cx="103" cy="355" r="5" fill="#E9B949"/><circle cx="80" cy="330" r="5" fill="#E9B949"/><circle cx="103" cy="305" r="5" fill="#E9B949"/><circle cx="167" cy="286" r="5" fill="#E9B949"/><circle cx="255" cy="280" r="5" fill="#E9B949"/><circle cx="343" cy="286" r="5" fill="#E9B949"/><circle cx="408" cy="304" r="5" fill="#E9B949"/> <!-- well --> <ellipse cx="256" cy="324" rx="138" ry="36" fill="#F1E8D2"/> <!-- spaghetti nest --> <g fill="none" stroke="#F0CF6E" stroke-width="18" stroke-linecap="round"> <path d="M130 318c26-30 50 18 76-4s50 22 76-4 50 18 76-4"/> <ellipse cx="256" cy="302" rx="104" ry="30"/> <ellipse cx="256" cy="278" rx="80" ry="24"/> <ellipse cx="256" cy="256" rx="56" ry="17"/> <ellipse cx="256" cy="238" rx="32" ry="10"/> <path d="M360 326c20 6 36 14 40 24" /> </g> <g fill="none" stroke="#C8962A" stroke-width="4" stroke-linecap="round" opacity=".5"> <ellipse cx="256" cy="310" rx="104" ry="30"/><ellipse cx="256" cy="286" rx="80" ry="24"/><ellipse cx="256" cy="264" rx="56" ry="17"/> </g> <!-- sauce and basil --> <ellipse cx="256" cy="226" rx="30" ry="12" fill="#B94A2F"/> <ellipse cx="248" cy="222" rx="11" ry="4" fill="#D8674A" opacity=".8"/> <path d="M262 218c8-24 32-26 40-12-10 18-30 22-40 12z" fill="#4D7A5A"/> <path d="M268 216c10-6 20-8 30-4" stroke="#2F5A3C" stroke-width="3.5" fill="none" stroke-linecap="round"/> <!-- fork --> <g stroke-linecap="round" stroke-linejoin="round" fill="none"> <line x1="410" y1="150" x2="306" y2="238" stroke="#9AA3AB" stroke-width="16"/> <line x1="410" y1="150" x2="306" y2="238" stroke="#DDE2E6" stroke-width="9"/> <g stroke="#9AA3AB" stroke-width="14"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> <g stroke="#DDE2E6" stroke-width="7"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> </g> </g> <g><circle cx="74" cy="446" r="28" fill="#D2452E"/><ellipse cx="64" cy="436" rx="9" ry="6" fill="#fff" opacity=".35"/> <path d="M74 418c-4-8-14-10-20-6 6 6 12 8 20 6z M74 418c4-8 14-10 20-6-6 6-12 8-20 6z M74 418l0-10" fill="#4D7A5A" stroke="#2F5A3C" stroke-width="3" stroke-linejoin="round"/></g> <g><path d="M438 452c10-26 40-30 54-14-12 22-40 28-54 14z" fill="#4D7A5A"/><path d="M446 450c14-8 28-10 42-6" stroke="#2F5A3C" stroke-width="4" fill="none" stroke-linecap="round"/></g></svg></div>
@@ -697,8 +705,27 @@ function normPlan(p){
   const locked = p.locked === undefined ? built : !!p.locked;
   return {id: p.id, name: p.name || 'Meal plan', created: p.created || 0, recipeIds: ids.filter(Boolean), built, locked, groceryDone: !!p.groceryDone,
           servings: Object.fromEntries(Object.entries(p.servings || {}).map(([k,v]) => [k, Math.min(99, Math.max(1, parseInt(v) || 1))])),
-          done: Object.fromEntries(Object.entries(p.done || {}).filter(([k,v]) => v).map(([k]) => [k, true])),
+          done: Object.fromEntries(Object.entries(p.done || {}).filter(([k,v]) => v).map(([k,v]) => [k, typeof v === 'number' ? v : true])),
           extras: ex.filter(x => x && x.name).map(x => ({id: String(x.id || uid()), name: String(x.name), qty: String(x.qty || ''), category: CAT_KEYS.includes(x.category) ? x.category : guessCategory(x.name)}))};
+}
+// times cooked / last cooked come from the meal plans: a ticked meal stores the time it was ticked
+// (older ticks hold just "true", so the plan's own date stands in for them)
+function cookStats(id){
+  let n = 0, last = 0;
+  Object.values(state.plans).forEach(p => {
+    const v = p.done && p.done[id]; if(!v) return;
+    n++;
+    const t = typeof v === 'number' ? v : (p.created || 0);
+    if(t > last) last = t;
+  });
+  return {n, last};
+}
+function cookStatText(id){
+  const {n, last} = cookStats(id);
+  if(!n) return 'Not cooked yet';
+  const d = last ? new Date(last) : null;
+  const ds = d ? d.toLocaleDateString('en-AU', {day:'numeric', month:'short', ...(d.getFullYear() !== new Date().getFullYear() ? {year:'numeric'} : {})}) : '';
+  return 'Cooked ' + (n === 1 ? 'once' : n + ' times') + (ds ? ' · last ' + ds : '');
 }
 function planLabel(p){
   if(!p) return '';
@@ -1017,6 +1044,7 @@ function renderBox(){
           <h3>${esc(r.title)}</h3>
           ${r.subtitle ? `<div class="recipe-sub">${esc(r.subtitle)}</div>` : ''}
           <div class="recipe-meta">${esc(r.time)} min · serves ${esc(r.servings)}</div>
+          <div class="cook-stat">${esc(cookStatText(r.id))}</div>
           <div class="recipe-ing-preview">${esc(ingPreview)}</div>
           <button type="button" class="card-next ${draftIds().includes(r.id)?'on':''}" data-act="draft-toggle" data-id="${esc(r.id)}">${draftIds().includes(r.id) ? 'In next plan' : '+ Add to next plan'}</button>
         </div>`;
@@ -1024,13 +1052,6 @@ function renderBox(){
     html += `</div>`;
   }
 
-  html += `<div style="margin-top:28px;">`;
-  if(deferredInstall) html += `<button class="secondary-btn" data-act="install-app">Install app on this device</button>`;
-  html += `
-    <div class="btn-row"><button class="secondary-btn" data-act="report-bug">Report a bug or idea</button><button class="secondary-btn" data-act="view-bugs">View reports</button></div>
-    <button class="secondary-btn" data-act="export-data">Export data</button>
-    <div class="btn-row"><button class="secondary-btn" data-act="change-db">Change database</button><button class="secondary-btn" data-act="sign-out">Sign out</button></div>
-  </div>`;
   return html;
 }
 
@@ -1049,6 +1070,7 @@ function renderRecipeDetail(id){
     ${r.subtitle ? `<div class="detail-sub">${esc(r.subtitle)}</div>` : ''}
     <div class="fav-line">${favBtnHtml(r, true)}</div>
     <div class="recipe-meta">${esc(r.time)} min · serves ${esc(r.servings)}${Math.abs(sf - 1) > 1e-9 ? ` · <strong>scaled for ${planServings(plan, r)}</strong>` : ''}</div>
+    <div class="cook-stat">${esc(cookStatText(r.id))}</div>
 
     <button class="primary-btn" data-act="cook" data-id="${esc(r.id)}" style="margin:14px 0 4px;">Start cooking</button>
 
@@ -1119,6 +1141,7 @@ function renderPlan(){
             <div class="plan-item-title">${esc(r.title)}</div>
             ${r.subtitle ? `<div class="plan-item-sub">${esc(r.subtitle)}</div>` : ''}
             <div class="plan-item-meta">${esc(TAG_LABELS[r.tag]||r.tag)} · ${esc(r.time)} min · recipe serves ${esc(r.servings)}</div>
+            <div class="cook-stat">${esc(cookStatText(r.id))}</div>
             ${plan.locked
               ? `<div class="serv-line">Cooking for <strong>${planServings(plan, r)}</strong></div>`
               : `<div class="serv-line">Cooking for
@@ -1862,7 +1885,7 @@ async function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '9.3';
+const APP_VERSION = '9.5';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
@@ -2579,23 +2602,11 @@ mainEl.addEventListener('click', async (e)=>{
     case 'plan-done': {
       const pl = activePlan(); if(!pl) break;
       pl.done = pl.done || {};
-      if(pl.done[id]) delete pl.done[id]; else pl.done[id] = true;
+      if(pl.done[id]) delete pl.done[id]; else pl.done[id] = Date.now();
       render(); await savePlan(pl); break;
     }
     case 'add-recipe': openAddChoiceSheet(); break;
     case 'import-recipe': openImportSheet(); break;
-    case 'report-bug': openBugSheet(); break;
-    case 'view-bugs': openBugListSheet(); break;
-    case 'import-data': openImportDataSheet(); break;
-    case 'export-data': openExportSheet(); break;
-    case 'change-db':
-      document.getElementById('setup-config-input').value = JSON.stringify(FIREBASE_CONFIG, null, 2);
-      showConfigStage();
-      break;
-    case 'sign-out': if(auth) auth.signOut(); break;
-    case 'install-app':
-      if(deferredInstall){ deferredInstall.prompt(); try { await deferredInstall.userChoice; } catch(err){} deferredInstall = null; render(); }
-      break;
     case 'where-used': e.preventDefault(); openWhereUsedSheet(id); break;
     case 'open-recipe': goTo({tab: currentView().tab, recipeId: id}); break;
     case 'back': goBack(); break;
@@ -2776,6 +2787,31 @@ document.querySelectorAll('.tab').forEach(btn=>{
 
 document.getElementById('bug-header-btn').addEventListener('click', ()=>{ if(state.loaded) openBugSheet(); });
 
+/* ---------- ELLIPSIS MENU (top right) ---------- */
+const appMenu = document.getElementById('app-menu'), menuBtn = document.getElementById('menu-header-btn');
+function closeAppMenu(){ appMenu.hidden = true; menuBtn.setAttribute('aria-expanded', 'false'); }
+menuBtn.addEventListener('click', (e)=>{
+  e.stopPropagation();
+  if(!state.loaded) return;
+  if(!appMenu.hidden){ closeAppMenu(); return; }
+  const items = [];
+  if(deferredInstall) items.push(['install-app', 'Install app on this device']);
+  items.push(['view-bugs', 'View reports'], ['export-data', 'Export data'], ['change-db', 'Change database'], ['sign-out', 'Sign out']);
+  appMenu.innerHTML = items.map(([a, l]) => `<button type="button" data-menu="${a}">${l}</button>`).join('');
+  appMenu.hidden = false; menuBtn.setAttribute('aria-expanded', 'true');
+});
+appMenu.addEventListener('click', async (e)=>{
+  const b = e.target.closest('[data-menu]'); if(!b) return;
+  const act = b.dataset.menu; closeAppMenu();
+  if(act === 'view-bugs') openBugListSheet();
+  else if(act === 'export-data') openExportSheet();
+  else if(act === 'change-db'){ document.getElementById('setup-config-input').value = JSON.stringify(FIREBASE_CONFIG, null, 2); showConfigStage(); }
+  else if(act === 'sign-out'){ if(auth) auth.signOut(); }
+  else if(act === 'install-app' && deferredInstall){ deferredInstall.prompt(); try { await deferredInstall.userChoice; } catch(err){} deferredInstall = null; render(); }
+});
+document.addEventListener('click', (e)=>{ if(!appMenu.hidden && !e.target.closest('#app-menu')) closeAppMenu(); });
+document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && !appMenu.hidden) closeAppMenu(); });
+
 document.getElementById('sheet-overlay').addEventListener('click', (e)=>{
   if(e.target.id === 'sheet-overlay') closeSheet();
 });
@@ -2814,7 +2850,7 @@ function openCookMode(recipeId){
   document.getElementById('cook-recipe').innerHTML = thumbHtml(r, true).replace(/ data-act="open-recipe" data-id="[^"]*"/, '') + `<div class="cook-rt"><strong>${esc(r.title)}</strong>${r.subtitle ? `<small>${esc(r.subtitle)}</small>` : ''}</div>`;
   const ap = activePlan();
   if(ap && ap.recipeIds.includes(recipeId) && !(ap.done && ap.done[recipeId])){
-    ap.done = ap.done || {}; ap.done[recipeId] = true;   // starting to cook marks the meal as cooked
+    ap.done = ap.done || {}; ap.done[recipeId] = Date.now();   // starting to cook marks the meal as cooked
     savePlan(ap);
   }
   document.getElementById('cook-overlay').classList.remove('hidden');
