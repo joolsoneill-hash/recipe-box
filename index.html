@@ -122,10 +122,10 @@
   .rtab.active{color:var(--ink);border-bottom-color:var(--tomato);}
   .detail-section h4{font-family:'Work Sans',sans-serif;font-weight:700;font-size:12.5px;color:var(--brown);margin:0 0 10px;letter-spacing:0.6px;text-transform:uppercase;}
   .ing-list{list-style:none;padding:0;margin:0;}
-  .ing-list li{padding:8px 0;border-bottom:1px solid var(--line);font-size:14px;}
+  .ing-list li{padding:9px 0;border-bottom:1px solid var(--line);font-size:17px;}
   .steps-list{padding-left:0;list-style:none;counter-reset:step;margin:0;}
-  .steps-list li{counter-increment:step;padding:10px 0 10px 30px;border-bottom:1px solid var(--line);font-size:14px;line-height:1.5;position:relative;}
-  .steps-list li::before{content:counter(step);position:absolute;left:0;top:10px;font-weight:700;font-size:12px;color:var(--herb);width:20px;}
+  .steps-list li{counter-increment:step;padding:11px 0 11px 32px;border-bottom:1px solid var(--line);font-size:17px;line-height:1.5;position:relative;}
+  .steps-list li::before{content:counter(step);position:absolute;left:0;top:13px;font-weight:700;font-size:14px;color:var(--herb);width:22px;}
 
   /* Meal plan view */
   .plan-select-wrap{margin-bottom:12px;}
@@ -256,7 +256,7 @@
   .toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:20px;font-size:13.5px;z-index:210;box-shadow:0 3px 10px rgba(0,0,0,.3);max-width:86%;text-align:center;}
   .ing-list li{display:flex;justify-content:space-between;gap:14px;align-items:baseline;}
   .ing-list li .ing-nm{font-weight:500;}
-  .ing-list li .ing-q{white-space:nowrap;color:var(--brown);font-weight:600;font-size:13.5px;}
+  .ing-list li .ing-q{white-space:nowrap;color:var(--brown);font-weight:600;font-size:16px;}
   /* meal plan cards */
   .plan-item{position:relative;align-items:stretch;padding:12px 12px 12px 12px;min-height:128px;}
   .plan-item .thumb{width:104px;height:104px;align-self:flex-start;}
@@ -295,6 +295,10 @@
   .extra-row select{flex:1;}
   .grocery-item.extra .gi-name,.grocery-item.extra .gi-qty{font-style:italic;}
   .gi-del{border:none;background:none;color:var(--tomato);font-size:20px;line-height:1;padding:0 2px;flex-shrink:0;}
+  #app.booting .app-header,#app.booting .tabbar,#app.booting #main{display:none;}
+  .boot-splash{display:none;}
+  #app.booting .boot-splash{display:flex;align-items:center;justify-content:center;min-height:100vh;min-height:100dvh;}
+  .boot-splash svg{width:130px;height:130px;}
   .loading{text-align:center;padding:40px;color:var(--brown);font-size:13px;}
 
   /* Cooking mode */
@@ -323,11 +327,16 @@
   .cook-nav-btn:disabled{opacity:0.3;}
   .cook-nav-btn.primary{background:var(--tomato);border-color:var(--tomato);}
 
-  .store-seg{display:flex;gap:0;margin:0 0 12px;border:1.5px solid var(--herb);border-radius:8px;overflow:hidden;}
-  .store-seg button{flex:1;padding:11px 8px;font:inherit;font-weight:700;font-size:15px;background:var(--card);color:var(--herb);border:none;cursor:pointer;}
-  .store-seg button.on{background:var(--herb);color:#fff;}
-  .store-tag.aldi{background:var(--herb);color:#fff;border-color:var(--herb);}
-  .store-tag{font:inherit;font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:10px;border:1px solid var(--line-strong);background:transparent;color:var(--brown);margin-left:6px;white-space:nowrap;}
+  .store-seg{display:flex;gap:0;margin:0 0 12px;border:1px solid var(--ink);border-radius:2px;overflow:hidden;}
+  .store-seg button{flex:1;padding:11px 8px;font:inherit;font-weight:600;font-size:14px;background:var(--card);color:var(--ink);border:none;border-radius:0;cursor:pointer;}
+  .store-seg button + button{border-left:1px solid var(--ink);}
+  .store-seg button.on{background:var(--ink);color:var(--paper);}
+  .store-tag{font:inherit;font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:2px;border:1px solid var(--line-strong);background:transparent;color:var(--brown);margin-left:6px;white-space:nowrap;}
+  .store-tag.aldi{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+  .grocery-item input[type=checkbox]{-webkit-appearance:none;appearance:none;width:20px;height:20px;border:1.5px solid var(--ink);border-radius:2px;background:var(--card);display:inline-grid;place-content:center;cursor:pointer;}
+  .grocery-item input[type=checkbox]::after{content:"";width:10px;height:5px;border-left:2px solid var(--paper);border-bottom:2px solid var(--paper);transform:rotate(-45deg) translate(1px,-1px);opacity:0;}
+  .grocery-item input[type=checkbox]:checked{background:var(--ink);}
+  .grocery-item input[type=checkbox]:checked::after{opacity:1;}
   .gi-name{min-width:0}
   .np-sec{border-top:1px solid var(--line-strong);padding:12px 0 4px;margin-top:10px;}
   .np-sec h3{font-size:14px;margin:0 0 8px;}
@@ -416,12 +425,13 @@
 </style>
 </head>
 <body>
-<div id="app">
+<div id="app" class="booting">
   <header class="app-header">
-    <div class="header-right"><span class="app-version" id="app-version">v9.1</span><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button></div>
+    <div class="header-right"><span class="app-version" id="app-version">v9.2</span><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button></div>
     <div class="brand"><svg viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#2B2620"/><defs><clipPath id="rr"><rect width="512" height="512" rx="112"/></clipPath> <pattern id="gh" width="64" height="64" patternUnits="userSpaceOnUse"><rect width="64" height="64" fill="#F6EEDC"/><rect width="32" height="64" fill="#C8452D" opacity=".5"/><rect width="64" height="32" fill="#C8452D" opacity=".5"/></pattern></defs><g clip-path="url(#rr)"><path d="M0 408 Q256 388 512 408 V512 H0Z" fill="url(#gh)"/><path d="M0 408 Q256 388 512 408" fill="none" stroke="#2B2620" stroke-opacity=".25" stroke-width="3"/></g><g transform="translate(256 262) scale(.9) translate(-256 -256)"> <!-- steam --> <g fill="none" stroke="#EDE3D0" stroke-width="12" stroke-linecap="round" opacity=".85"> <path d="M206 120c-18-22 18-34 0-58"/><path d="M256 108c-18-22 18-34 0-58"/><path d="M306 120c-18-22 18-34 0-58"/> </g> <!-- shallow pasta bowl: underside, rim, well --> <path d="M52 322c4 52 84 86 204 86s200-34 204-86z" fill="#EFE6D0"/> <path d="M52 322c4 52 84 86 204 86s200-34 204-86c-30 20-100 32-204 32S82 342 52 322z" fill="#E4D8BC" opacity=".6"/> <rect x="190" y="402" width="132" height="18" rx="9" fill="#EFE6D0"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="#FAF6EC"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="none" stroke="#D9CDB4" stroke-width="5"/> <!-- painted rim --> <ellipse cx="256" cy="322" rx="186" ry="55" fill="none" stroke="#2F5D8C" stroke-width="7"/> <ellipse cx="256" cy="322" rx="164" ry="46" fill="none" stroke="#2F5D8C" stroke-width="3"/> <circle cx="432" cy="330" r="5" fill="#E9B949"/><circle cx="408" cy="354" r="5" fill="#E9B949"/><circle cx="344" cy="373" r="5" fill="#E9B949"/><circle cx="256" cy="379" r="5" fill="#E9B949"/><circle cx="168" cy="373" r="5" fill="#E9B949"/><circle cx="103" cy="355" r="5" fill="#E9B949"/><circle cx="80" cy="330" r="5" fill="#E9B949"/><circle cx="103" cy="305" r="5" fill="#E9B949"/><circle cx="167" cy="286" r="5" fill="#E9B949"/><circle cx="255" cy="280" r="5" fill="#E9B949"/><circle cx="343" cy="286" r="5" fill="#E9B949"/><circle cx="408" cy="304" r="5" fill="#E9B949"/> <!-- well --> <ellipse cx="256" cy="324" rx="138" ry="36" fill="#F1E8D2"/> <!-- spaghetti nest --> <g fill="none" stroke="#F0CF6E" stroke-width="18" stroke-linecap="round"> <path d="M130 318c26-30 50 18 76-4s50 22 76-4 50 18 76-4"/> <ellipse cx="256" cy="302" rx="104" ry="30"/> <ellipse cx="256" cy="278" rx="80" ry="24"/> <ellipse cx="256" cy="256" rx="56" ry="17"/> <ellipse cx="256" cy="238" rx="32" ry="10"/> <path d="M360 326c20 6 36 14 40 24" /> </g> <g fill="none" stroke="#C8962A" stroke-width="4" stroke-linecap="round" opacity=".5"> <ellipse cx="256" cy="310" rx="104" ry="30"/><ellipse cx="256" cy="286" rx="80" ry="24"/><ellipse cx="256" cy="264" rx="56" ry="17"/> </g> <!-- sauce and basil --> <ellipse cx="256" cy="226" rx="30" ry="12" fill="#B94A2F"/> <ellipse cx="248" cy="222" rx="11" ry="4" fill="#D8674A" opacity=".8"/> <path d="M262 218c8-24 32-26 40-12-10 18-30 22-40 12z" fill="#4D7A5A"/> <path d="M268 216c10-6 20-8 30-4" stroke="#2F5A3C" stroke-width="3.5" fill="none" stroke-linecap="round"/> <!-- fork --> <g stroke-linecap="round" stroke-linejoin="round" fill="none"> <line x1="410" y1="150" x2="306" y2="238" stroke="#9AA3AB" stroke-width="16"/> <line x1="410" y1="150" x2="306" y2="238" stroke="#DDE2E6" stroke-width="9"/> <g stroke="#9AA3AB" stroke-width="14"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> <g stroke="#DDE2E6" stroke-width="7"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> </g> </g> <g><circle cx="74" cy="446" r="28" fill="#D2452E"/><ellipse cx="64" cy="436" rx="9" ry="6" fill="#fff" opacity=".35"/> <path d="M74 418c-4-8-14-10-20-6 6 6 12 8 20 6z M74 418c4-8 14-10 20-6-6 6-12 8-20 6z M74 418l0-10" fill="#4D7A5A" stroke="#2F5A3C" stroke-width="3" stroke-linejoin="round"/></g> <g><path d="M438 452c10-26 40-30 54-14-12 22-40 28-54 14z" fill="#4D7A5A"/><path d="M446 450c14-8 28-10 42-6" stroke="#2F5A3C" stroke-width="4" fill="none" stroke-linecap="round"/></g></svg><h1>Tavola</h1></div>
   </header>
-  <main id="main"><div class="loading">Opening Tavola…</div></main>
+  <div class="boot-splash" id="boot-splash"><svg viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#2B2620"/><defs><clipPath id="rr"><rect width="512" height="512" rx="112"/></clipPath> <pattern id="gh" width="64" height="64" patternUnits="userSpaceOnUse"><rect width="64" height="64" fill="#F6EEDC"/><rect width="32" height="64" fill="#C8452D" opacity=".5"/><rect width="64" height="32" fill="#C8452D" opacity=".5"/></pattern></defs><g clip-path="url(#rr)"><path d="M0 408 Q256 388 512 408 V512 H0Z" fill="url(#gh)"/><path d="M0 408 Q256 388 512 408" fill="none" stroke="#2B2620" stroke-opacity=".25" stroke-width="3"/></g><g transform="translate(256 262) scale(.9) translate(-256 -256)"> <!-- steam --> <g fill="none" stroke="#EDE3D0" stroke-width="12" stroke-linecap="round" opacity=".85"> <path d="M206 120c-18-22 18-34 0-58"/><path d="M256 108c-18-22 18-34 0-58"/><path d="M306 120c-18-22 18-34 0-58"/> </g> <!-- shallow pasta bowl: underside, rim, well --> <path d="M52 322c4 52 84 86 204 86s200-34 204-86z" fill="#EFE6D0"/> <path d="M52 322c4 52 84 86 204 86s200-34 204-86c-30 20-100 32-204 32S82 342 52 322z" fill="#E4D8BC" opacity=".6"/> <rect x="190" y="402" width="132" height="18" rx="9" fill="#EFE6D0"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="#FAF6EC"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="none" stroke="#D9CDB4" stroke-width="5"/> <!-- painted rim --> <ellipse cx="256" cy="322" rx="186" ry="55" fill="none" stroke="#2F5D8C" stroke-width="7"/> <ellipse cx="256" cy="322" rx="164" ry="46" fill="none" stroke="#2F5D8C" stroke-width="3"/> <circle cx="432" cy="330" r="5" fill="#E9B949"/><circle cx="408" cy="354" r="5" fill="#E9B949"/><circle cx="344" cy="373" r="5" fill="#E9B949"/><circle cx="256" cy="379" r="5" fill="#E9B949"/><circle cx="168" cy="373" r="5" fill="#E9B949"/><circle cx="103" cy="355" r="5" fill="#E9B949"/><circle cx="80" cy="330" r="5" fill="#E9B949"/><circle cx="103" cy="305" r="5" fill="#E9B949"/><circle cx="167" cy="286" r="5" fill="#E9B949"/><circle cx="255" cy="280" r="5" fill="#E9B949"/><circle cx="343" cy="286" r="5" fill="#E9B949"/><circle cx="408" cy="304" r="5" fill="#E9B949"/> <!-- well --> <ellipse cx="256" cy="324" rx="138" ry="36" fill="#F1E8D2"/> <!-- spaghetti nest --> <g fill="none" stroke="#F0CF6E" stroke-width="18" stroke-linecap="round"> <path d="M130 318c26-30 50 18 76-4s50 22 76-4 50 18 76-4"/> <ellipse cx="256" cy="302" rx="104" ry="30"/> <ellipse cx="256" cy="278" rx="80" ry="24"/> <ellipse cx="256" cy="256" rx="56" ry="17"/> <ellipse cx="256" cy="238" rx="32" ry="10"/> <path d="M360 326c20 6 36 14 40 24" /> </g> <g fill="none" stroke="#C8962A" stroke-width="4" stroke-linecap="round" opacity=".5"> <ellipse cx="256" cy="310" rx="104" ry="30"/><ellipse cx="256" cy="286" rx="80" ry="24"/><ellipse cx="256" cy="264" rx="56" ry="17"/> </g> <!-- sauce and basil --> <ellipse cx="256" cy="226" rx="30" ry="12" fill="#B94A2F"/> <ellipse cx="248" cy="222" rx="11" ry="4" fill="#D8674A" opacity=".8"/> <path d="M262 218c8-24 32-26 40-12-10 18-30 22-40 12z" fill="#4D7A5A"/> <path d="M268 216c10-6 20-8 30-4" stroke="#2F5A3C" stroke-width="3.5" fill="none" stroke-linecap="round"/> <!-- fork --> <g stroke-linecap="round" stroke-linejoin="round" fill="none"> <line x1="410" y1="150" x2="306" y2="238" stroke="#9AA3AB" stroke-width="16"/> <line x1="410" y1="150" x2="306" y2="238" stroke="#DDE2E6" stroke-width="9"/> <g stroke="#9AA3AB" stroke-width="14"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> <g stroke="#DDE2E6" stroke-width="7"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> </g> </g> <g><circle cx="74" cy="446" r="28" fill="#D2452E"/><ellipse cx="64" cy="436" rx="9" ry="6" fill="#fff" opacity=".35"/> <path d="M74 418c-4-8-14-10-20-6 6 6 12 8 20 6z M74 418c4-8 14-10 20-6-6 6-12 8-20 6z M74 418l0-10" fill="#4D7A5A" stroke="#2F5A3C" stroke-width="3" stroke-linejoin="round"/></g> <g><path d="M438 452c10-26 40-30 54-14-12 22-40 28-54 14z" fill="#4D7A5A"/><path d="M446 450c14-8 28-10 42-6" stroke="#2F5A3C" stroke-width="4" fill="none" stroke-linecap="round"/></g></svg></div>
+  <main id="main"></main>
   <nav class="tabbar">
     <button data-tab="plan" class="tab active">Menu</button>
     <button data-tab="planner" class="tab">Planner</button>
@@ -600,6 +610,19 @@ function migrateCategories(){
 }
 
 
+function migrateIngredients(){
+  const writes = [];
+  Object.values(state.recipes).forEach(r=>{
+    if(!Array.isArray(r.ingredients)) return;
+    const next = r.ingredients.map(normalizeIngredient);
+    if(JSON.stringify(next) !== JSON.stringify(r.ingredients)){
+      r.ingredients = next;
+      writes.push(dbSet('recipes/' + r.id + '/ingredients', next));
+    }
+  });
+  return writes;
+}
+
 /* ---------- CUISINES / DISH STYLES (for finding meals in the plan builder) ---------- */
 const CUISINES = [
   {key:'italian', label:'Italian'}, {key:'mexican', label:'Mexican'}, {key:'asian', label:'Asian'},
@@ -727,7 +750,7 @@ async function loadState(){
     applyCustomCuisines();
 
     // fix data in memory now; save the small changes in the background without holding up start-up
-    Promise.allSettled([...migrateSubtitles(), ...migrateCategories()]).then(r => { const bad = r.filter(x => x.status === 'rejected').length; if(bad) console.error('migration saves failed', bad); });
+    Promise.allSettled([...migrateSubtitles(), ...migrateCategories(), ...migrateIngredients()]).then(r => { const bad = r.filter(x => x.status === 'rejected').length; if(bad) console.error('migration saves failed', bad); });
 
     const plans = plansData || {};
     state.plans = {};
@@ -759,6 +782,7 @@ async function loadState(){
     state.photosPromise = loadPhotos();
   } finally {
     loadingState = false;
+    if(!state.loaded) document.getElementById('app').classList.remove('booting');   // never leave the splash stuck if loading failed
   }
 }
 
@@ -825,6 +849,7 @@ async function ensurePhotoStored(r){
 }
 async function saveRecipe(recipe){
   try {
+    if(Array.isArray(recipe.ingredients)) recipe.ingredients = recipe.ingredients.map(normalizeIngredient);
     await ensurePhotoStored(recipe);
     const copy = {...recipe}; delete copy.photo; delete copy._photoDirty; if(!copy.photoRev) delete copy.photoRev;
     await dbSet('recipes/' + recipe.id, copy);
@@ -871,6 +896,7 @@ function setActiveTabButton(tab){
 
 function render(){
   if(!state.loaded) return;
+  document.getElementById('app').classList.remove('booting');
   const v = currentView();
   const main = document.getElementById('main');
   if(v.recipeId){
@@ -1034,7 +1060,7 @@ function renderRecipeDetail(id){
     ${rtab === 'ingredients' ? `
     <div class="detail-section" style="margin-top:12px;">
       <ul class="ing-list">
-        ${r.ingredients.map(i=>`<li><span class="ing-nm">${esc(i.name)}</span><span class="ing-q">${[esc(scaleQty(i.qty, (i.unit||'').toLowerCase(), sf)), esc(i.unit)].filter(Boolean).join(' ')}</span></li>`).join('')}
+        ${r.ingredients.map(i=>`<li><span class="ing-nm">${esc(i.name)}</span><span class="ing-q">${esc(ingQtyText(i.qty, i.unit, sf))}</span></li>`).join('')}
       </ul>
       ${Math.abs(sf - 1) > 1e-9 ? `<p class="plan-hint">Quantities are scaled for ${planServings(plan, r)} people. Amounts written inside the steps are not changed.</p>` : ''}
     </div>` : `
@@ -1440,7 +1466,7 @@ function openMealPicker(){
    One line per ingredient. Matching ignores plurals and descriptions ("extra virgin olive oil" and
    "olive oil" are the same item), and quantities are added up across the whole plan, converting
    between compatible units (kg/g, l/ml, and tsp/tbsp/cup into ml). */
-const VOL_ML = {ml:1, l:1000, tsp:5, tbsp:15, cup:250};
+const VOL_ML = {ml:1, l:1000, tsp:5, tbsp:20, cup:250};
 const MASS_G = {g:1, kg:1000};
 const NAME_DROP = new Set(['extra','virgin','large','medium','small','fresh','ripe','raw','plain','unsalted','salted',
   'softened','cubed','chopped','diced','minced','sliced','grated','coarsely','finely','pkg','package','clove','cloves',
@@ -1500,12 +1526,81 @@ function formatVolume(ml, metric){
     if(ml >= 1000) return fmtNum(roundMl(ml) / 1000) + ' l';
     return roundMl(ml) + ' ml';
   }
-  if(ml >= 62.4) return fmtFrac(ml / 250) + ' cup';
-  const tsp = ml / 5;
-  if(tsp < 6) return fmtFrac(tsp) + ' tsp';
-  const tbsp = Math.floor(tsp / 3 + 1e-9);
-  const rem = tsp - tbsp * 3;
-  return tbsp + ' tbsp' + (rem > 0.03 ? ' + ' + fmtFrac(rem) + ' tsp' : '');
+  if(ml < 20) return fmtFrac(ml / 5) + ' tsp';
+  if(ml <= 60.5) return fmtFrac(ml / 20) + ' tbsp';
+  return fmtFrac(ml / 250) + ' cup';
+}
+
+/* ---------- AUSTRALIAN NAMES, SIZE-LAST NAMES, LIQUIDS IN ML ---------- */
+const AU_NAMES = [
+  [/\bveggie ground\b/i, 'veggie mince'], [/\bbell peppers?\b/i, m => 'capsicum' + (/s$/i.test(m) ? 's' : '')],
+  [/\barugula\b/i, 'rocket'], [/\byellow onions?\b/i, m => 'brown onion' + (/s$/i.test(m) ? 's' : '')],
+  [/\bcilantro\b/i, 'coriander'], [/\b(?:scallions?|green onions?)\b/i, m => 'spring onion' + (/s$/i.test(m) ? 's' : '')],
+  [/\bground (beef|turkey|pork|chicken|lamb)\b/i, (m, a) => a.toLowerCase() + ' mince'],
+  [/\bshrimps?\b/i, 'prawns'], [/\ball[- ]purpose flour\b/i, 'plain flour'], [/\bself[- ]rising flour\b/i, 'self-raising flour'],
+  [/\bcorn ?starch\b/i, 'cornflour'], [/\bbaking soda\b/i, 'bicarbonate of soda'],
+  [/\b(?:powdered|confectioners'?) sugar\b/i, 'icing sugar'], [/\bgranulated sugar\b/i, 'white sugar'],
+  [/\bheavy (?:whipping )?cream\b/i, 'thickened cream'], [/\bbroth\b/i, 'stock'], [/\bketchup\b/i, 'tomato sauce'],
+  [/\bcanned\b/i, 'tinned'], [/\bchilies\b/i, 'chillies'], [/\bchil(?:i|e)(s?)\b/i, (m, s) => 'chilli' + s],
+  [/\bred pepper flakes\b/i, 'chilli flakes'], [/\bnapa cabbage\b/i, 'wombok'], [/\bromaine(?: lettuce)?\b/i, 'cos lettuce'],
+  [/\bgarbanzo beans?\b/i, 'chickpeas'], [/\bwhole[- ]wheat\b/i, 'wholemeal'], [/\bcookies\b/i, 'biscuits'],
+  [/\bswiss chard\b/i, 'silverbeet'], [/\brutabaga\b/i, 'swede']
+];
+function auName(name){
+  let out = String(name || '');
+  AU_NAMES.forEach(([re, to]) => {
+    out = out.replace(new RegExp(re.source, 'gi'), (...a) => {
+      const m = a[0];
+      let r = typeof to === 'function' ? to(...a) : to;
+      if(/^[A-Z]/.test(m)) r = /\s[A-Z]/.test(m) ? r.replace(/\b([a-z])/g, c => c.toUpperCase()) : r.charAt(0).toUpperCase() + r.slice(1);
+      return r;
+    });
+  });
+  // "spring onions (scallions)" would now read "spring onions (spring onions)": drop the repeat
+  out = out.replace(/([a-z][a-z ]*?)\s*\(\1\)/ig, '$1');
+  return out;
+}
+function sizeLast(name){
+  const str = String(name || '');
+  const m = str.match(/^(extra[- ]large|large|medium|small|big)\s+(?!\()(.+)$/i);
+  if(!m) return name;
+  const size = m[1].toLowerCase().replace('-', ' ');
+  let rest = m[2].trim(), label = size;
+  const pk = rest.match(/^(heads?|bunch(?:es)?|pkg|package|cans?|jars?)\s+(.+)$/i);   // "small bunch cilantro" -> "Cilantro (small bunch)"
+  if(pk){ label = size + ' ' + pk[1].toLowerCase(); rest = pk[2].trim(); }
+  // keep any ", chopped" style note after the size: "Onion, diced" -> "Onion (large), diced"
+  const masked = rest.replace(/\([^)]*\)/g, x => x.replace(/,/g, '\u0001'));
+  const ci = masked.indexOf(',');
+  const item = (ci < 0 ? rest : rest.slice(0, ci)).trim(), tail = ci < 0 ? '' : rest.slice(ci);
+  const out = item + ' (' + label + ')' + tail;
+  return out.charAt(0).toUpperCase() + out.slice(1);
+}
+function isLiquidName(name){ const l = String(name || '').toLowerCase(); return LIQUID_RE.test(l) && !/\b(cheese|powder|flakes|paste|zest|butter)\b/.test(l); }
+function normalizeIngredient(ing){
+  const out = {...ing};
+  out.name = sizeLast(auName(ing.name));
+  const u = String(ing.unit || '').trim().toLowerCase();
+  const per = {ml:1, l:1000, tsp:5, tbsp:20, cup:250}[u];
+  const q = String(ing.qty === undefined || ing.qty === null ? '' : ing.qty).trim();
+  if(per && q && !/[-–]|\bto\b/i.test(q) && (u === 'ml' || u === 'l' || isLiquidName(out.name))){
+    const n = parseQty(q);
+    if(!isNaN(n) && n > 0){ out.qty = String(Math.round(n * per * 10) / 10); out.unit = 'ml'; }
+  }
+  return out;
+}
+// shown quantity + unit: stored millilitres read as tsp under 20 ml, tbsp up to 60 ml, plain ml above that
+function ingQtyText(qty, unit, f){
+  const u = String(unit || '').trim().toLowerCase();
+  if(u === 'ml'){
+    const n = parseQty(qty);
+    if(!isNaN(n)){
+      const ml = n * (f || 1);
+      if(ml < 20) return fmtFrac(ml / 5) + ' tsp';
+      if(ml <= 60.5) return fmtFrac(ml / 20) + ' tbsp';
+      return roundMl(ml) + ' ml';
+    }
+  }
+  return [scaleQty(qty, u, f), unit].filter(Boolean).join(' ');
 }
 
 function groceryKey(norm){ return norm.replace(/[.$#\[\]\/]/g, '_'); }
@@ -1529,7 +1624,7 @@ function buildGroceryList(planArg){
       const unit = (ing.unit || '').trim().toLowerCase();
       const rawQ = String(ing.qty === undefined || ing.qty === null ? '' : ing.qty).trim();
       const qty = parseQty(rawQ) * factor;
-      if(!g.uses.some(u => u.id === recipe.id)) g.uses.push({id: recipe.id, title: recipe.title, text: [rawQ ? scaleQty(rawQ, unit, factor) : '', unit, raw].filter(Boolean).join(' ')});
+      if(!g.uses.some(u => u.id === recipe.id)) g.uses.push({id: recipe.id, title: recipe.title, text: [rawQ ? ingQtyText(rawQ, unit, factor) : '', raw].filter(Boolean).join(' ')});
       if(isNaN(qty)){ if(rawQ && !g.notes.includes(rawQ)) g.notes.push(rawQ); return; }
       if(MASS_G[unit]){ g.g += qty * MASS_G[unit]; g.hasG = true; }
       else if(VOL_ML[unit]){
@@ -1766,7 +1861,7 @@ async function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '9.1';
+const APP_VERSION = '9.2';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
@@ -2786,7 +2881,7 @@ function renderCookStep(){
         ? stepIngredients.map(ing => {
           const ix = r.ingredients.indexOf(ing);
           if(cookState.editIng === ix) return `<div class="cook-ing-row editing"><span>${esc(ing.name)} <small style="opacity:.7">(recipe amount)</small></span><div class="ce"><input id="ce-qty" inputmode="decimal" value="${esc(ing.qty)}" placeholder="Qty" aria-label="Quantity"><input id="ce-unit" list="ce-units" value="${esc(ing.unit)}" placeholder="Unit" aria-label="Unit"><datalist id="ce-units">${['g','kg','ml','l','tsp','tbsp','cup','can','tin','clove','bunch','pinch','piece','packet'].map(u=>`<option value="${u}">`).join('')}</datalist><button type="button" class="ok" data-ce-save="${ix}">Save</button><button type="button" data-ce-cancel="1">✕</button></div></div>`;
-          return `<div class="cook-ing-row" data-ce-edit="${ix}"><span>${esc(ing.name)}</span><span class="cook-ing-qty">${esc([scaleQty(ing.qty, (ing.unit||'').toLowerCase(), scaleFactorFor(r)), ing.unit].filter(Boolean).join(' '))}</span></div>`;
+          return `<div class="cook-ing-row" data-ce-edit="${ix}"><span>${esc(ing.name)}</span><span class="cook-ing-qty">${esc(ingQtyText(ing.qty, ing.unit, scaleFactorFor(r)))}</span></div>`;
         }).join('')
         : ''}
     </div>`;
