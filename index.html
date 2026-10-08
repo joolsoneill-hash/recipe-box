@@ -402,20 +402,28 @@
   #cook-overlay .cook-step-main{align-items:flex-start;justify-content:flex-start;padding:22px 20px 16px;}
   #cook-overlay .cook-step-main > div{width:100%;}
   .plan-start-btn{display:block;width:100%;margin-top:20px;padding:12px;border-radius:2px;border:1.5px solid var(--herb);background:transparent;color:var(--herb);font-size:14px;font-weight:700;}
-  .tab{font-size:13px;padding-left:4px;padding-right:4px;}
+  .tab{font-size:13px;padding-left:2px;padding-right:2px;white-space:nowrap;}
+  @media (max-width:380px){.tab{font-size:11.5px;}}
+  .planner-title{font-size:22px;margin:0 0 6px;}
+  .planner-lead{font-size:13.5px;color:var(--brown);line-height:1.5;margin:0 0 12px;}
+  .planner-sec{margin-top:22px;border-top:1px solid var(--line-strong);padding-top:14px;}
+  .planner-sec h3{font-size:14px;margin:0 0 10px;}
+  .planner-row{cursor:pointer}
+  .planner-row .small-btn{flex-shrink:0;margin-left:8px}
 </style>
 </head>
 <body>
 <div id="app">
   <header class="app-header">
-    <div class="header-right"><span class="app-version" id="app-version">v8.5</span><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button></div>
+    <div class="header-right"><span class="app-version" id="app-version">v8.8</span><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button></div>
     <div class="brand"><svg viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#2B2620"/><defs><clipPath id="rr"><rect width="512" height="512" rx="112"/></clipPath> <pattern id="gh" width="64" height="64" patternUnits="userSpaceOnUse"><rect width="64" height="64" fill="#F6EEDC"/><rect width="32" height="64" fill="#C8452D" opacity=".5"/><rect width="64" height="32" fill="#C8452D" opacity=".5"/></pattern></defs><g clip-path="url(#rr)"><path d="M0 408 Q256 388 512 408 V512 H0Z" fill="url(#gh)"/><path d="M0 408 Q256 388 512 408" fill="none" stroke="#2B2620" stroke-opacity=".25" stroke-width="3"/></g><g transform="translate(256 262) scale(.9) translate(-256 -256)"> <!-- steam --> <g fill="none" stroke="#EDE3D0" stroke-width="12" stroke-linecap="round" opacity=".85"> <path d="M206 120c-18-22 18-34 0-58"/><path d="M256 108c-18-22 18-34 0-58"/><path d="M306 120c-18-22 18-34 0-58"/> </g> <!-- shallow pasta bowl: underside, rim, well --> <path d="M52 322c4 52 84 86 204 86s200-34 204-86z" fill="#EFE6D0"/> <path d="M52 322c4 52 84 86 204 86s200-34 204-86c-30 20-100 32-204 32S82 342 52 322z" fill="#E4D8BC" opacity=".6"/> <rect x="190" y="402" width="132" height="18" rx="9" fill="#EFE6D0"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="#FAF6EC"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="none" stroke="#D9CDB4" stroke-width="5"/> <!-- painted rim --> <ellipse cx="256" cy="322" rx="186" ry="55" fill="none" stroke="#2F5D8C" stroke-width="7"/> <ellipse cx="256" cy="322" rx="164" ry="46" fill="none" stroke="#2F5D8C" stroke-width="3"/> <circle cx="432" cy="330" r="5" fill="#E9B949"/><circle cx="408" cy="354" r="5" fill="#E9B949"/><circle cx="344" cy="373" r="5" fill="#E9B949"/><circle cx="256" cy="379" r="5" fill="#E9B949"/><circle cx="168" cy="373" r="5" fill="#E9B949"/><circle cx="103" cy="355" r="5" fill="#E9B949"/><circle cx="80" cy="330" r="5" fill="#E9B949"/><circle cx="103" cy="305" r="5" fill="#E9B949"/><circle cx="167" cy="286" r="5" fill="#E9B949"/><circle cx="255" cy="280" r="5" fill="#E9B949"/><circle cx="343" cy="286" r="5" fill="#E9B949"/><circle cx="408" cy="304" r="5" fill="#E9B949"/> <!-- well --> <ellipse cx="256" cy="324" rx="138" ry="36" fill="#F1E8D2"/> <!-- spaghetti nest --> <g fill="none" stroke="#F0CF6E" stroke-width="18" stroke-linecap="round"> <path d="M130 318c26-30 50 18 76-4s50 22 76-4 50 18 76-4"/> <ellipse cx="256" cy="302" rx="104" ry="30"/> <ellipse cx="256" cy="278" rx="80" ry="24"/> <ellipse cx="256" cy="256" rx="56" ry="17"/> <ellipse cx="256" cy="238" rx="32" ry="10"/> <path d="M360 326c20 6 36 14 40 24" /> </g> <g fill="none" stroke="#C8962A" stroke-width="4" stroke-linecap="round" opacity=".5"> <ellipse cx="256" cy="310" rx="104" ry="30"/><ellipse cx="256" cy="286" rx="80" ry="24"/><ellipse cx="256" cy="264" rx="56" ry="17"/> </g> <!-- sauce and basil --> <ellipse cx="256" cy="226" rx="30" ry="12" fill="#B94A2F"/> <ellipse cx="248" cy="222" rx="11" ry="4" fill="#D8674A" opacity=".8"/> <path d="M262 218c8-24 32-26 40-12-10 18-30 22-40 12z" fill="#4D7A5A"/> <path d="M268 216c10-6 20-8 30-4" stroke="#2F5A3C" stroke-width="3.5" fill="none" stroke-linecap="round"/> <!-- fork --> <g stroke-linecap="round" stroke-linejoin="round" fill="none"> <line x1="410" y1="150" x2="306" y2="238" stroke="#9AA3AB" stroke-width="16"/> <line x1="410" y1="150" x2="306" y2="238" stroke="#DDE2E6" stroke-width="9"/> <g stroke="#9AA3AB" stroke-width="14"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> <g stroke="#DDE2E6" stroke-width="7"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> </g> </g> <g><circle cx="74" cy="446" r="28" fill="#D2452E"/><ellipse cx="64" cy="436" rx="9" ry="6" fill="#fff" opacity=".35"/> <path d="M74 418c-4-8-14-10-20-6 6 6 12 8 20 6z M74 418c4-8 14-10 20-6-6 6-12 8-20 6z M74 418l0-10" fill="#4D7A5A" stroke="#2F5A3C" stroke-width="3" stroke-linejoin="round"/></g> <g><path d="M438 452c10-26 40-30 54-14-12 22-40 28-54 14z" fill="#4D7A5A"/><path d="M446 450c14-8 28-10 42-6" stroke="#2F5A3C" stroke-width="4" fill="none" stroke-linecap="round"/></g></svg><h1>Tavola</h1></div>
   </header>
   <main id="main"><div class="loading">Opening Tavola…</div></main>
   <nav class="tabbar">
     <button data-tab="plan" class="tab active">Menu</button>
-    <button data-tab="box" class="tab">Recipes &amp; Planner</button>
-    <button data-tab="list" class="tab">Grocery List</button>
+    <button data-tab="planner" class="tab">Planner</button>
+    <button data-tab="box" class="tab">Recipes</button>
+    <button data-tab="list" class="tab">Groceries</button>
   </nav>
 </div>
 <div id="dlg-overlay" class="dlg-overlay hidden"><div class="dlg" role="dialog" aria-modal="true"><div class="dlg-title">Tavola</div><div class="dlg-msg" id="dlg-msg"></div><div class="dlg-actions" id="dlg-actions"></div></div></div>
@@ -873,15 +881,12 @@ function render(){
   }
   else if(v.tab === 'box') main.innerHTML = renderBox();
   else if(v.tab === 'plan') main.innerHTML = renderPlan();
+  else if(v.tab === 'planner') main.innerHTML = renderPlanner();
   else main.innerHTML = renderGrocery();
   setActiveTabButton(v.tab);
   updateGroceryBadge();
 }
-function updateGroceryBadge(){
-  const b = document.querySelector('.tab[data-tab=list]'); if(!b) return;
-  let n = 0; try{ n = allGroceryItems().filter(it => !state.checks[it.key]).length; }catch(e){}
-  b.textContent = 'Grocery List' + (n ? ' (' + n + ')' : '');
-}
+function updateGroceryBadge(){ /* the tab just says Groceries */ }
 
 function goTo(view){ viewStack.push(view); render(); window.scrollTo(0, 0); }
 function goBack(){
@@ -966,9 +971,7 @@ function renderBox(){
       ${CUISINES.filter(c => cuiCount(c.key) > 0 || state.activeCuisine === c.key).map(c=>`<button class="chip ${state.activeCuisine===c.key?'active':''}" data-act="cfilter" data-id="${c.key}">${esc(c.label)} (${cuiCount(c.key)})</button>`).join('')}
     </div>
     ${filtersOn ? `<button class="secondary-btn" data-act="clear-filters" style="margin-top:10px;">Clear filters and search</button>` : ''}
-    ${draftIds().length ? `<div class="draft-banner" style="margin-top:20px;">📝 ${draftIds().length} meal${draftIds().length===1?'':'s'} waiting for your next plan</div>` : ''}
-    <button class="plan-start-btn" data-act="new-plan" ${draftIds().length ? 'style="margin-top:0"' : ''}>📅 Start a new meal plan</button>
-    <button class="add-btn" data-act="add-recipe" style="margin-top:10px;margin-bottom:18px;">+ Add a recipe</button>
+    <button class="add-btn" data-act="add-recipe" style="margin-top:20px;margin-bottom:18px;">+ Add a recipe</button>
   `;
 
   if(filtered.length===0){
@@ -1221,8 +1224,8 @@ function openNewPlanSheet(){
     openSheet(body());
     const sc2 = document.querySelector('.sheet'); if(sc2) sc2.scrollTop = top;
     document.getElementById('np-cancel').onclick = closeSheet;
-    document.getElementById('np-fridge').onclick = ()=>openIdeasSheet('fridge', true);
-    document.getElementById('np-again').onclick = ()=>openIdeasSheet('again', true);
+    document.getElementById('np-fridge').onclick = ()=>{ ideasState.fromPlanner = false; openIdeasSheet('fridge', true); };
+    document.getElementById('np-again').onclick = ()=>{ ideasState.fromPlanner = false; openIdeasSheet('again', true); };
     const c = document.getElementById('np-carry');
     if(c) c.onchange = ()=>{ carryOn = c.checked; draw(); };
     document.querySelectorAll('input[name=np-cm]').forEach(r => r.onchange = ()=>{ carryMode = r.value; draw(); });
@@ -1270,6 +1273,21 @@ function openNewPlanSheet(){
   draw();
 }
 
+
+
+/* ---------- PLANNER SCREEN ---------- */
+function renderPlanner(){
+  const drafts = draftIds();
+  let h = `<h2 class="planner-title">Planner</h2>
+    <p class="planner-lead">Line up meals for your next menu, then start it. Your current menu stays on the Menu tab until you do.</p>
+    <button class="plan-start-btn" style="margin-top:6px" data-act="new-plan">📅 Start a new meal plan</button>
+    <div class="idea-btns"><button type="button" class="secondary-btn" data-act="ideas-planner" data-id="fridge">🥬 What's in my fridge?</button><button type="button" class="secondary-btn" data-act="ideas-planner" data-id="again">↻ Cook again</button></div>
+    <div class="planner-sec"><h3>Waiting for your next plan${drafts.length ? ` (${drafts.length})` : ''}</h3>`;
+  if(!drafts.length) h += `<p class="planner-lead">Nothing waiting. Tap "+ Add to next plan" on a recipe in the Recipes tab, or use the fridge and cook again tools above.</p>`;
+  else h += drafts.map(id=>{ const r = state.recipes[id]; return `<div class="where-row planner-row" data-act="open-recipe" data-id="${esc(id)}">${thumbHtml(r, true).replace(/ data-act="open-recipe" data-id="[^"]*"/, '')}<span><strong>${esc(r.title)}</strong>${r.subtitle ? `<small>${esc(r.subtitle)}</small>` : ''}</span><button type="button" class="small-btn" data-act="draft-toggle" data-id="${esc(id)}">Remove</button></div>`; }).join('');
+  h += `</div>`;
+  return h;
+}
 
 /* ---------- MEAL IDEAS: from the fridge / cook again ---------- */
 let ideasState = {tab:'fridge', terms:[]};
@@ -1324,7 +1342,7 @@ function openIdeasSheet(tab, forNew){
     <p style="font-size:12px;color:var(--brown);margin:0 0 8px;">${ideasState.forNew ? 'Meals you add go into the new plan you are starting.' : (tgt==='plan'?'Meals you add go into the current plan.':'The current plan is locked, so meals you add go into your next plan.')} Tap a meal to see the recipe.</p>
     <div id="ideas-body">${ideasBody()}</div><button class="secondary-btn" id="ideas-close">Close</button>`);
   const sh = document.querySelector('.sheet');
-  document.getElementById('ideas-close').onclick = ()=>{ if(ideasState.forNew){ ideasState.forNew = false; openNewPlanSheet(); } else closeSheet(); };
+  document.getElementById('ideas-close').onclick = ()=>{ if(ideasState.forNew && !ideasState.fromPlanner){ ideasState.forNew = false; openNewPlanSheet(); } else { ideasState.forNew = false; ideasState.fromPlanner = false; closeSheet(); render(); } };
   const redraw = ()=>{ const keep = (document.getElementById('fr-input')||{}).value; document.getElementById('ideas-body').innerHTML = ideasBody(); const i = document.getElementById('fr-input'); if(i){ i.value = keep||''; } bindIdeas(); };
   const save = ()=>{ try{ localStorage.setItem('rb_fridge', JSON.stringify(ideasState.terms)); }catch(e){} };
   function bindIdeas(){
@@ -1744,13 +1762,13 @@ async function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '8.5';
+const APP_VERSION = '8.8';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
   const v = currentView();
   if(v.recipeId && state.recipes[v.recipeId]) return 'Recipe: ' + state.recipes[v.recipeId].title;
-  return ({box:'Recipes & Planner', plan:'Menu', list:'Grocery List'})[v.tab] || v.tab;
+  return ({box:'Recipes', planner:'Planner', plan:'Menu', list:'Grocery List'})[v.tab] || v.tab;
 }
 
 function openBugSheet(){
@@ -2500,6 +2518,7 @@ mainEl.addEventListener('click', async (e)=>{
       break;
     }
     case 'noop': break;
+    case 'ideas-planner': ideasState.fromPlanner = true; openIdeasSheet(id, true); break;
     case 'extra-store': document.querySelectorAll('#extra-store button').forEach(b=>b.classList.toggle('on', b.dataset.id===id)); break;
     case 'ideas': openIdeasSheet(id); break;
     case 'draft-toggle': e.stopPropagation(); await toggleDraft(id); break;
