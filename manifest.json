@@ -1,7 +1,7 @@
 {
   "id": "./",
-  "name": "Recipe Box",
-  "short_name": "Recipe Box",
+  "name": "Tavola",
+  "short_name": "Tavola",
   "description": "Shared recipes, meal plans and grocery lists.",
   "start_url": "./",
   "scope": "./",
