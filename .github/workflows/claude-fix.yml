@@ -43,6 +43,7 @@ jobs:
           node-version: 20
 
       - name: Claude makes the change
+        id: claude
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -66,14 +67,48 @@ jobs:
             - After editing, run: python3 build.py and then node tools/check.js. Fix anything that fails.
             - If you cannot find or safely fix the problem, change nothing and explain why in your final message.
 
+      - name: Work out what the run cost
+        id: cost
+        env:
+          EXEC_FILE: ${{ steps.claude.outputs.execution_file }}
+        run: |
+          python3 - <<'PY'
+          import json, os, glob
+          path = os.environ.get('EXEC_FILE') or ''
+          if not path or not os.path.exists(path):
+              c = glob.glob(os.path.join(os.environ.get('RUNNER_TEMP', '/tmp'), '*execution*.json'))
+              path = c[0] if c else ''
+          best = None
+          def walk(x):
+              global best
+              if isinstance(x, dict):
+                  for k, v in x.items():
+                      if k in ('total_cost_usd', 'cost_usd') and isinstance(v, (int, float)):
+                          best = v
+                      else:
+                          walk(v)
+              elif isinstance(x, list):
+                  for i in x: walk(i)
+          try:
+              if path: walk(json.load(open(path)))
+          except Exception as e:
+              print('could not read cost:', e)
+          out = f"{best:.2f}" if best is not None else ''
+          print('cost =', out or 'unknown')
+          open(os.environ['GITHUB_OUTPUT'], 'a').write(f"cost={out}\n")
+          PY
+
       - name: Check the change, bump the version, build
         id: build
+        env:
+          COST: ${{ steps.cost.outputs.cost }}
+          BODY: ${{ github.event.issue.body }}
         run: |
           set -e
           # only the app source may have been touched
           changed_files=$(git status --porcelain | awk '{print $2}')
           for f in $changed_files; do
-            case "$f" in index.template.html|index.html|version.txt|CHANGELOG.txt) ;; *) echo "Unexpected change to $f"; exit 1;; esac
+            case "$f" in index.template.html|index.html|version.txt|CHANGELOG.txt|fix-log.json) ;; *) echo "Unexpected change to $f"; exit 1;; esac
           done
           if git diff --quiet -- index.template.html; then
             echo "changed=false" >> "$GITHUB_OUTPUT"; exit 0
@@ -83,9 +118,17 @@ jobs:
           major, minor = v.split('.')
           nv = f"{major}.{int(minor)+1:02d}"
           open('version.txt', 'w').write(nv + '\n')
-          import os
+          import os, json, datetime
           title = os.environ['TITLE'].replace('\n', ' ')[:90]
           open('CHANGELOG.txt', 'a').write(f"\n{nv}\n- Auto: issue #{os.environ['ISSUE']}, {title}\n")
+          # a small public log the app reads to tell you a fix is live and what it cost
+          try: log = json.load(open('fix-log.json'))
+          except Exception: log = []
+          cost = os.environ.get('COST', '')
+          log.append({'issue': int(os.environ['ISSUE']), 'kind': 'bug' if os.environ.get('IS_BUG') == 'true' else 'feature',
+                      'version': nv, 'reports': max(1, os.environ.get('BODY', '').count('## Report ')),
+                      'cost': float(cost) if cost else None, 'time': int(datetime.datetime.utcnow().timestamp() * 1000)})
+          json.dump(log[-50:], open('fix-log.json', 'w'))
           PY
           python3 build.py
           node tools/check.js
@@ -94,31 +137,37 @@ jobs:
 
       - name: Bug - push the fix to the live site
         if: steps.build.outputs.changed == 'true' && env.IS_BUG == 'true'
+        env:
+          COSTTXT: ${{ steps.cost.outputs.cost && format('US${0}', steps.cost.outputs.cost) || 'not available' }}
         run: |
           git config user.name "tavola-bot"
           git config user.email "tavola-bot@users.noreply.github.com"
-          git add index.template.html index.html version.txt CHANGELOG.txt
+          git add index.template.html index.html version.txt CHANGELOG.txt fix-log.json
           git commit -m "Fix #${ISSUE}: ${TITLE}"
           git pull --rebase origin "$BRANCH"
           git push origin "HEAD:$BRANCH"
           gh api -X POST repos/$REPO/pages/builds || true
-          gh issue comment "$ISSUE" --body "Fixed and published as v${{ steps.build.outputs.version }}. Reload the app (pull down, or close and reopen it) to get it."
+          gh issue comment "$ISSUE" --body "Fixed and published as v${{ steps.build.outputs.version }}. Run cost: ${COSTTXT}. Close and reopen the app to get it."
           gh issue close "$ISSUE"
 
       - name: Feature - open a pull request
         if: steps.build.outputs.changed == 'true' && env.IS_BUG != 'true'
+        env:
+          COSTTXT: ${{ steps.cost.outputs.cost && format('US${0}', steps.cost.outputs.cost) || 'not available' }}
         run: |
           git config user.name "tavola-bot"
           git config user.email "tavola-bot@users.noreply.github.com"
           git checkout -b "feature/issue-${ISSUE}"
-          git add index.template.html index.html version.txt CHANGELOG.txt
+          git add index.template.html index.html version.txt CHANGELOG.txt fix-log.json
           git commit -m "Feature #${ISSUE}: ${TITLE}"
           git push --force origin "feature/issue-${ISSUE}"
           gh pr create --base "$BRANCH" --head "feature/issue-${ISSUE}" \
             --title "Feature #${ISSUE}: ${TITLE}" \
-            --body "Built for issue #${ISSUE} (v${{ steps.build.outputs.version }}). Merge it to publish. Closes #${ISSUE}."
+            --body "Built for issue #${ISSUE} (v${{ steps.build.outputs.version }}). Run cost: ${COSTTXT}. Merge it to publish. Closes #${ISSUE}."
 
       - name: Nothing changed
         if: steps.build.outputs.changed == 'false'
+        env:
+          COSTTXT: ${{ steps.cost.outputs.cost && format('US${0}', steps.cost.outputs.cost) || 'not available' }}
         run: |
-          gh issue comment "$ISSUE" --body "I could not make a safe change for this one. It needs a closer look in a chat session."
+          gh issue comment "$ISSUE" --body "I could not make a safe change for this one. It needs a closer look in a chat session. Run cost: ${COSTTXT}."
