@@ -225,7 +225,16 @@
   .done-col input{-webkit-appearance:none;appearance:none;width:24px;height:24px;margin:0;border-radius:50%;border:2px solid var(--line-strong);background:transparent;cursor:pointer;position:relative;transition:background .15s,border-color .15s;}
   .done-col input:checked{background:var(--herb);border-color:var(--herb);}
   .done-col input:checked::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:700;}
-  .np-total{font-size:14px;color:var(--ink);margin:0 0 8px;}
+  .np-total{font-size:14px;color:var(--ink);margin:14px 0 6px;}
+  .np-chosen{box-sizing:border-box;height:128px;overflow-y:auto;border:1px solid var(--line-strong);border-radius:2px;background:var(--card);}
+  .np-ch{display:flex;align-items:center;gap:8px;height:42px;box-sizing:border-box;padding:0 8px 0 10px;border-top:1px solid var(--line);}
+  .np-ch:first-child{border-top:none;}
+  .np-ch-t{flex:1;min-width:0;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;}
+  .np-x{border:none;background:none;font-size:20px;line-height:1;color:var(--brown);padding:2px 6px;cursor:pointer;}
+  .np-empty{height:100%;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--brown);}
+  .is-off{opacity:.45;}
+  .np-add{flex-shrink:0;width:34px;height:34px;border:1px solid var(--herb);background:transparent;color:var(--herb);font-size:18px;font-weight:700;border-radius:2px;margin-left:auto;cursor:pointer;}
+  .np-add.on{background:var(--herb);color:#fff;}
   .plan-add-link{color:var(--herb);font-weight:700;cursor:pointer;}
   .plan-item.done{opacity:.5;}
   .plan-item.done .plan-item-title{text-decoration:line-through;}
@@ -384,7 +393,6 @@
   .np-rt strong{display:block;font-size:14px;color:var(--ink);}
   .np-rt .pick-sub,.np-rt small{display:block;font-style:normal;font-size:11.5px;color:var(--brown);margin-top:1px;}
   .np-recipe{justify-content:flex-start;}
-  .np-recipe b{margin-left:auto;color:var(--herb);font-size:16px;flex-shrink:0;}
   .extra-seg{margin:0;flex:1;}
   .extra-seg button{padding:9px 10px;font-size:14px;}
   .fold-head{display:flex;align-items:center;gap:8px;width:100%;margin:8px 0 0;padding:10px 12px;background:var(--card);border:1px solid var(--line-strong);border-radius:4px;font:inherit;font-size:14px;color:var(--ink);text-align:left;}
@@ -442,7 +450,7 @@
 <body>
 <div id="app" class="booting">
   <header class="app-header">
-    <div class="header-right"><button type="button" class="header-btn" id="menu-header-btn" aria-label="More options" aria-haspopup="true" aria-expanded="false">⋯</button><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button><span class="app-version" id="app-version">v0.12</span></div>
+    <div class="header-right"><button type="button" class="header-btn" id="menu-header-btn" aria-label="More options" aria-haspopup="true" aria-expanded="false">⋯</button><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button><span class="app-version" id="app-version">v0.13</span></div>
     <div class="app-menu" id="app-menu" hidden></div>
     <div class="brand"><svg viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#2B2620"/><defs><clipPath id="rr"><rect width="512" height="512" rx="112"/></clipPath> <pattern id="gh" width="64" height="64" patternUnits="userSpaceOnUse"><rect width="64" height="64" fill="#F6EEDC"/><rect width="32" height="64" fill="#C8452D" opacity=".5"/><rect width="64" height="32" fill="#C8452D" opacity=".5"/></pattern></defs><g clip-path="url(#rr)"><path d="M0 408 Q256 388 512 408 V512 H0Z" fill="url(#gh)"/><path d="M0 408 Q256 388 512 408" fill="none" stroke="#2B2620" stroke-opacity=".25" stroke-width="3"/></g><g transform="translate(256 262) scale(.9) translate(-256 -256)"> <!-- steam --> <g fill="none" stroke="#EDE3D0" stroke-width="12" stroke-linecap="round" opacity=".85"> <path d="M206 120c-18-22 18-34 0-58"/><path d="M256 108c-18-22 18-34 0-58"/><path d="M306 120c-18-22 18-34 0-58"/> </g> <!-- shallow pasta bowl: underside, rim, well --> <path d="M52 322c4 52 84 86 204 86s200-34 204-86z" fill="#EFE6D0"/> <path d="M52 322c4 52 84 86 204 86s200-34 204-86c-30 20-100 32-204 32S82 342 52 322z" fill="#E4D8BC" opacity=".6"/> <rect x="190" y="402" width="132" height="18" rx="9" fill="#EFE6D0"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="#FAF6EC"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="none" stroke="#D9CDB4" stroke-width="5"/> <!-- painted rim --> <ellipse cx="256" cy="322" rx="186" ry="55" fill="none" stroke="#2F5D8C" stroke-width="7"/> <ellipse cx="256" cy="322" rx="164" ry="46" fill="none" stroke="#2F5D8C" stroke-width="3"/> <circle cx="432" cy="330" r="5" fill="#E9B949"/><circle cx="408" cy="354" r="5" fill="#E9B949"/><circle cx="344" cy="373" r="5" fill="#E9B949"/><circle cx="256" cy="379" r="5" fill="#E9B949"/><circle cx="168" cy="373" r="5" fill="#E9B949"/><circle cx="103" cy="355" r="5" fill="#E9B949"/><circle cx="80" cy="330" r="5" fill="#E9B949"/><circle cx="103" cy="305" r="5" fill="#E9B949"/><circle cx="167" cy="286" r="5" fill="#E9B949"/><circle cx="255" cy="280" r="5" fill="#E9B949"/><circle cx="343" cy="286" r="5" fill="#E9B949"/><circle cx="408" cy="304" r="5" fill="#E9B949"/> <!-- well --> <ellipse cx="256" cy="324" rx="138" ry="36" fill="#F1E8D2"/> <!-- spaghetti nest --> <g fill="none" stroke="#F0CF6E" stroke-width="18" stroke-linecap="round"> <path d="M130 318c26-30 50 18 76-4s50 22 76-4 50 18 76-4"/> <ellipse cx="256" cy="302" rx="104" ry="30"/> <ellipse cx="256" cy="278" rx="80" ry="24"/> <ellipse cx="256" cy="256" rx="56" ry="17"/> <ellipse cx="256" cy="238" rx="32" ry="10"/> <path d="M360 326c20 6 36 14 40 24" /> </g> <g fill="none" stroke="#C8962A" stroke-width="4" stroke-linecap="round" opacity=".5"> <ellipse cx="256" cy="310" rx="104" ry="30"/><ellipse cx="256" cy="286" rx="80" ry="24"/><ellipse cx="256" cy="264" rx="56" ry="17"/> </g> <!-- sauce and basil --> <ellipse cx="256" cy="226" rx="30" ry="12" fill="#B94A2F"/> <ellipse cx="248" cy="222" rx="11" ry="4" fill="#D8674A" opacity=".8"/> <path d="M262 218c8-24 32-26 40-12-10 18-30 22-40 12z" fill="#4D7A5A"/> <path d="M268 216c10-6 20-8 30-4" stroke="#2F5A3C" stroke-width="3.5" fill="none" stroke-linecap="round"/> <!-- fork --> <g stroke-linecap="round" stroke-linejoin="round" fill="none"> <line x1="410" y1="150" x2="306" y2="238" stroke="#9AA3AB" stroke-width="16"/> <line x1="410" y1="150" x2="306" y2="238" stroke="#DDE2E6" stroke-width="9"/> <g stroke="#9AA3AB" stroke-width="14"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> <g stroke="#DDE2E6" stroke-width="7"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> </g> </g> <g><circle cx="74" cy="446" r="28" fill="#D2452E"/><ellipse cx="64" cy="436" rx="9" ry="6" fill="#fff" opacity=".35"/> <path d="M74 418c-4-8-14-10-20-6 6 6 12 8 20 6z M74 418c4-8 14-10 20-6-6 6-12 8-20 6z M74 418l0-10" fill="#4D7A5A" stroke="#2F5A3C" stroke-width="3" stroke-linejoin="round"/></g> <g><path d="M438 452c10-26 40-30 54-14-12 22-40 28-54 14z" fill="#4D7A5A"/><path d="M446 450c14-8 28-10 42-6" stroke="#2F5A3C" stroke-width="4" fill="none" stroke-linecap="round"/></g></svg><h1>Tavola</h1></div>
   </header>
@@ -516,6 +524,9 @@ let state = {
   recipes: {},
   plans: {},
   activePlanId: null,
+  editPlanId: null,      // a built menu being edited on the Planner screen
+  npOpen: {},            // cuisines opened on the Planner
+  npSugg: {},            // random suggestions made on the Planner, by cuisine
   checks: {},
   searchTerm: '',
   openPlans: {},
@@ -719,6 +730,7 @@ function normPlan(p){
   return {id: p.id, name: p.name || 'Meal plan', created: p.created || 0, recipeIds: ids.filter(Boolean), built, locked, groceryDone: !!p.groceryDone,
           servings: Object.fromEntries(Object.entries(p.servings || {}).map(([k,v]) => [k, Math.min(99, Math.max(1, parseInt(v) || 1))])),
           done: Object.fromEntries(Object.entries(p.done || {}).filter(([k,v]) => v).map(([k,v]) => [k, typeof v === 'number' ? v : true])),
+          carried: p.carried ? Object.values(p.carried).filter(Boolean) : undefined, carryMode: p.carryMode || undefined, skipIng: p.skipIng ? Object.values(p.skipIng).filter(Boolean) : undefined,
           extras: ex.filter(x => x && x.name).map(x => ({id: String(x.id || uid()), name: String(x.name), qty: String(x.qty || ''), category: CAT_KEYS.includes(x.category) ? x.category : guessCategory(x.name)}))};
 }
 // times cooked / last cooked come from the meal plans: a ticked meal stores the time it was ticked
@@ -776,7 +788,8 @@ function planLabel(p){
 }
 function activePlan(){ const p = state.plans[state.activePlanId]; return (p && p.built) ? p : null; }   // the built menu shown on the Menu tab
 function curDraft(){ return Object.values(state.plans).filter(p => !p.built).sort((a,b)=>(b.created||0)-(a.created||0))[0] || null; }   // the unbuilt draft shown on the Planner tab
-function viewPlan(){ return currentView().tab === 'planner' ? curDraft() : activePlan(); }
+function plannerPlan(){ const e = state.editPlanId && state.plans[state.editPlanId]; return (e && e.built && !e.locked) ? e : curDraft(); }   // what the Planner screen is editing
+function viewPlan(){ return currentView().tab === 'planner' ? plannerPlan() : activePlan(); }
 function newDraft(){ const d = {id: uid(), name: '', created: Date.now(), recipeIds: [], extras: [], built: false, locked: false}; d.name = planLabel({...d, id: d.id}); state.plans[d.id] = d; return d; }
 // How many people a meal is planned for, and how much to scale its quantities.
 function planServings(plan, recipe){
@@ -992,7 +1005,7 @@ function render(){
   }
   else if(v.tab === 'box') main.innerHTML = renderBox();
   else if(v.tab === 'plan') main.innerHTML = renderPlan();
-  else if(v.tab === 'planner') main.innerHTML = renderPlanner();
+  else if(v.tab === 'planner'){ const oldBox = document.getElementById('np-chosen'); const keepTop = oldBox ? oldBox.scrollTop : 0; main.innerHTML = renderPlanner(); const nb = document.getElementById('np-chosen'); if(nb) nb.scrollTop = keepTop; }
   else main.innerHTML = renderGrocery();
   setActiveTabButton(v.tab);
   updateGroceryBadge();
@@ -1004,7 +1017,8 @@ function goBack(){
   if(viewStack.length > 1){ viewStack.pop(); render(); window.scrollTo(0, 0); return true; }
   return false;
 }
-function goTab(tab){
+function goTab(tab, keepEdit){
+  if(!(tab === 'planner' && keepEdit)) state.editPlanId = null;
   viewStack = (tab === HOME_VIEW.tab) ? [HOME_VIEW] : [HOME_VIEW, {tab, recipeId:null}];
   render();
   window.scrollTo(0, 0);
@@ -1204,11 +1218,11 @@ function renderPlan(){
         <button type="button" class="lock-btn ${plan.locked?'locked':''}" data-act="${items.length || plan.locked ? lockAct : 'noop'}" aria-label="${plan.locked ? 'Plan locked. Tap to edit' : 'Plan unlocked'}">${lockIcon}</button>
       </div>
     </div>
-    <div class="plan-count" style="margin-top:6px;">${items.length} meal${items.length===1?'':'s'} chosen${plan.locked ? '' : ` · <span class="plan-add-link" data-act="add-meals">edit</span>`}</div>
+    <div class="plan-count" style="margin-top:6px;">${items.length} meal${items.length===1?'':'s'} chosen${plan.locked ? '' : ` · <span class="plan-add-link" data-act="edit-plan">edit</span>`}</div>
   `;
 
   if(items.length === 0){
-    html += `<div class="empty-state"><h3>No meals chosen yet</h3><p>Tap "edit" above to choose meals for this plan. Your grocery list is built from the current plan.</p></div>`;
+    html += `<div class="empty-state"><h3>No meals chosen yet</h3><p>Tap "edit" above to change the meals in this plan. Your grocery list is built from the current plan.</p></div>`;
   } else {
     items.forEach(r=>{ html += planItemHtml(plan, r); });
   }
@@ -1257,7 +1271,7 @@ async function togglePlanRecipe(rid, planArg){
   const plan = planArg || viewPlan();
   if(!plan || plan.locked) return;
   const i = plan.recipeIds.indexOf(rid);
-  if(i >= 0){ plan.recipeIds.splice(i, 1); if(plan.servings) delete plan.servings[rid]; } else plan.recipeIds.push(rid);
+  if(i >= 0){ plan.recipeIds.splice(i, 1); if(plan.servings) delete plan.servings[rid]; if(plan.carried) plan.carried = plan.carried.filter(x => x !== rid); } else plan.recipeIds.push(rid);
   render();
   await savePlan(plan);
 }
@@ -1271,149 +1285,68 @@ async function toggleDraft(id){
   await savePlan(d);
 }
 
-function openNewPlanSheet(editPlan){
-  const edit = editPlan || null;           // editing an existing plan uses the same screen as starting one
-  const old = edit ? null : activePlan();
-  const drafts = edit ? edit.recipeIds.filter(id => state.recipes[id]) : draftIds();
-  const uncooked = old ? old.recipeIds.filter(id => state.recipes[id] && !(old.done && old.done[id])) : [];
+/* ---------- PLANNER SCREEN ----------
+   The Planner is where a menu is put together: a draft that stays here until it is built, or a built menu being edited. */
+const uncookedOf = cur => cur ? cur.recipeIds.filter(id => state.recipes[id] && !(cur.done && cur.done[id])) : [];
+function renderPlanner(){
+  const editing = !!(state.editPlanId && plannerPlan() && plannerPlan().id === state.editPlanId);
+  const pl = plannerPlan();
+  const items = planRecipes(pl);
+  const ids = new Set(items.map(r => r.id));
+  Object.keys(state.npSugg).forEach(k => { state.npSugg[k] = state.npSugg[k].filter(id => ids.has(id)); });
   const recipes = Object.values(state.recipes);
-  const tags = CUISINES.map(c=>c.key).filter(t => recipes.some(r => recipeCuisines(r).includes(t)));
   const cuiLabel = t => (CUISINES.find(c=>c.key===t)||{label:t}).label;
-  const sel = new Set(drafts);          // meals chosen for the new plan (starts with the "add to next plan" ones)
-  const sugg = {};                      // cuisine -> recipe ids picked by the random suggester
-  const openCu = new Set();
-  let carryOn = false, carryMode = 'none';
-  const skip = new Set();
-  let carriedItems = [];
-  if(uncooked.length){
-    carriedItems = buildGroceryList({recipeIds: uncooked, servings: old.servings || {}, carried: [], built: true});
-    carriedItems.forEach(it => skip.add(it.key));   // every grocery starts unticked; tick the ones you need
+  const tags = CUISINES.map(c=>c.key).filter(t => recipes.some(r => recipeCuisines(r).includes(t)));
+  const has = items.length > 0;
+  const off = ' is-off';
+  let h = `<h2 class="planner-title">${editing ? 'Edit menu' : 'Planner'}</h2>
+    <p class="planner-lead">${editing ? 'Change the meals in your menu. Your grocery list updates as you go.' : 'Line up meals for your next menu. It stays here as a draft until you build it. Then it moves to the Menu tab and your grocery list is made.'}</p>
+    <div class="np-total">Meals planned: <strong>${items.length}</strong></div>
+    <div class="np-chosen" id="np-chosen">${has ? items.map(r => `<div class="np-ch"><span class="np-ch-t" data-act="open-recipe" data-id="${esc(r.id)}">${esc(r.title)}</span><span class="stepper"><button type="button" data-act="serv-dec" data-id="${esc(r.id)}" aria-label="Fewer servings">−</button><strong>${planServings(pl, r)}</strong><button type="button" data-act="serv-inc" data-id="${esc(r.id)}" aria-label="More servings">+</button></span><button type="button" class="np-x" data-act="plan-remove" data-id="${esc(r.id)}" aria-label="Remove">×</button></div>`).join('') : `<div class="np-empty">Nothing chosen yet. Pick meals below.</div>`}</div>`;
+  if(editing){
+    h += `<button class="add-btn" data-act="edit-done" style="margin-top:12px;background:var(--tomato);">Done editing</button>
+      <div class="btn-row"><button class="secondary-btn${has?'':off}" data-act="${has?'share-plan':'noop'}">Share as image</button><button class="secondary-btn${has?'':off}" data-act="${has?'plan-clear':'noop'}">Clear all meals</button></div>`;
+  } else {
+    h += `<button class="add-btn${has?'':off}" data-act="${has?'plan-build':'noop'}" style="margin-top:12px;background:var(--tomato);">Build menu and make grocery list</button>
+      <div class="btn-row"><button class="secondary-btn${has?'':off}" data-act="${has?'share-plan':'noop'}">Share as image</button><button class="secondary-btn${pl?'':off}" data-act="${pl?'draft-discard':'noop'}">Discard draft</button></div>`;
   }
-  function body(){
-    const total = new Set([...sel, ...(carryOn ? uncooked : [])]).size;
-    let h = `<div class="sheet-handle"></div><h2>${edit ? 'Edit meal plan' : 'Start a new meal plan'}</h2>
-      <div class="np-total">Meals planned: <strong>${total}</strong></div>`;
-    if(!edit){
-      h += `<p style="font-size:13px;color:var(--brown);line-height:1.5;margin:0 0 6px;">This starts a draft menu in the Planner. Your current menu and grocery list stay as they are until you build the draft.</p>`;
-      h += `<div class="btn-row"><button type="button" class="secondary-btn" id="np-fridge">What's in my fridge?</button><button type="button" class="secondary-btn" id="np-again">Cook again</button></div>`;
+  h += `<div class="btn-row"><button type="button" class="secondary-btn" data-act="ideas-planner" data-id="fridge">What's in my fridge?</button><button type="button" class="secondary-btn" data-act="ideas-planner" data-id="again">Cook again</button></div>`;
+
+  // meals not cooked yet from the current menu can roll into the new one
+  const cur = activePlan(), unc = editing ? [] : uncookedOf(cur);
+  if(unc.length){
+    const on = !!(pl && pl.carried && pl.carried.length);
+    h += `<div class="np-sec"><label class="np-opt"><input type="checkbox" data-act="np-carry" ${on?'checked':''}><span>Include the ${unc.length} meal${unc.length===1?'':'s'} not cooked yet from the current menu<br><small style="color:var(--brown)">${unc.map(id=>esc(state.recipes[id].title)).join(', ')}</small></span></label>`;
+    if(on){
+      const mode = pl.carryMode === 'choose' ? 'choose' : 'none';
+      h += `<label class="np-opt"><input type="radio" name="np-cm" data-act="np-cm" data-id="none" ${mode==='none'?'checked':''}><span>No groceries needed, I already have them</span></label>
+            <label class="np-opt"><input type="radio" name="np-cm" data-act="np-cm" data-id="choose" ${mode==='choose'?'checked':''}><span>Choose which groceries to add</span></label>`;
+      if(mode === 'choose'){
+        const skip = new Set(pl.skipIng || []);
+        const citems = buildGroceryList({recipeIds: unc, servings: cur.servings || {}, carried: [], built: true});
+        h += `<div class="np-ings">${citems.map(it=>`<label class="np-opt"><input type="checkbox" data-act="np-ing" data-id="${esc(it.key)}" ${skip.has(it.key)?'':'checked'}><span>${esc(it.name)} <small style="color:var(--brown)">${esc(it.qtyText)}</small></span></label>`).join('')}</div><div style="font-size:12px;color:var(--brown)">Ticked items go on the grocery list.</div>`;
+      }
     }
-    if(sel.size){
-      h += `<div class="np-sec"><h3>Chosen (${sel.size})</h3>${Array.from(sel).filter(id=>state.recipes[id]).map(id=>`<span class="np-chip">${esc(state.recipes[id].title)}<button type="button" data-np-pick="${esc(id)}" aria-label="Remove">×</button></span>`).join('')}</div>`;
-    }
-    if(uncooked.length && !edit){
-      h += `<div class="np-sec"><label class="np-opt"><input type="checkbox" id="np-carry" ${carryOn?'checked':''}><span>Include the ${uncooked.length} meal${uncooked.length===1?'':'s'} not cooked yet from the current plan<br><small style="color:var(--brown)">${uncooked.map(id=>esc(state.recipes[id].title)).join(', ')}</small></span></label>`;
-      if(carryOn){
-        h += `<label class="np-opt"><input type="radio" name="np-cm" value="none" ${carryMode==='none'?'checked':''}><span>No groceries needed, I already have them</span></label>
-              <label class="np-opt"><input type="radio" name="np-cm" value="choose" ${carryMode==='choose'?'checked':''}><span>Choose which groceries to add</span></label>`;
-        if(carryMode === 'choose'){
-          h += `<div class="np-ings">${carriedItems.map(it=>`<label class="np-opt"><input type="checkbox" data-np-ing="${esc(it.key)}" ${skip.has(it.key)?'':'checked'}><span>${esc(it.name)} <small style="color:var(--brown)">${esc(it.qtyText)}</small></span></label>`).join('')}</div><div style="font-size:12px;color:var(--brown)">Ticked items go on the grocery list.</div>`;
-        }
+    h += `</div>`;
+  }
+
+  if(tags.length){
+    h += `<div class="np-sec"><h3>Choose meals by cuisine</h3><div style="font-size:12px;color:var(--brown);margin-bottom:4px;">Tap a cuisine to open it. Tap a meal to see its recipe, and + to add it. Use the + beside a cuisine for a random one. The number is how many meals you have from that cuisine.</div>`;
+    tags.forEach(t => {
+      const list = recipes.filter(r => recipeCuisines(r).includes(t));
+      const nSel = list.filter(r => ids.has(r.id)).length;
+      const isOpen = !!state.npOpen[t];
+      const sugg = state.npSugg[t] || [];
+      h += `<div class="np-cu"><div class="np-row"><span class="np-cu-head" data-act="np-tog" data-id="${esc(t)}">${isOpen?'▾':'▸'} ${esc(cuiLabel(t))} <small style="color:var(--brown)">(${list.length} recipes)</small></span><span class="stepper"><button type="button" data-act="np-dec" data-id="${esc(t)}" aria-label="Remove a meal">−</button><strong>${nSel}</strong><button type="button" data-act="np-inc" data-id="${esc(t)}" aria-label="Suggest one more">+</button></span></div>`;
+      if(isOpen){
+        const rank = r => sugg.includes(r.id) ? 0 : (ids.has(r.id) ? 1 : 2);
+        const sorted = list.slice().sort((a,b)=> rank(a)-rank(b) || a.title.localeCompare(b.title));
+        h += `<div class="np-list">${sorted.map(r => { const on = ids.has(r.id); return `<div class="np-recipe ${on?'on':''}">${thumbHtml(r, true)}<span class="np-rt" data-act="open-recipe" data-id="${esc(r.id)}"><strong>${sugg.includes(r.id)?'🎲 ':''}${esc(r.title)}</strong>${r.subtitle?`<em class="pick-sub">${esc(r.subtitle)}</em>`:''}<small>${esc(TAG_LABELS[r.tag]||r.tag)}${r.time?' · '+esc(r.time)+' min':''}</small></span><button type="button" class="np-add ${on?'on':''}" data-act="np-pick" data-id="${esc(r.id)}" aria-label="${on?'Remove from':'Add to'} the plan">${on?'✓':'+'}</button></div>`; }).join('')}</div>`;
       }
       h += `</div>`;
-    }
-    if(tags.length){
-      h += `<div class="np-sec"><h3>Choose meals by cuisine</h3><div style="font-size:12px;color:var(--brown);margin-bottom:4px;">Tap a cuisine to open it and pick meals, or use + to have a random one suggested. The number is how many meals you have from that cuisine.</div>`;
-      tags.forEach(t=>{
-        const list = recipes.filter(r => recipeCuisines(r).includes(t));
-        const nSel = list.filter(r => sel.has(r.id)).length;
-        const isOpen = openCu.has(t);
-        h += `<div class="np-cu"><div class="np-row"><span class="np-cu-head" data-np-tog="${t}">${isOpen?'▾':'▸'} ${esc(cuiLabel(t))} <small style="color:var(--brown)">(${list.length} recipes)</small></span><span class="stepper"><button type="button" data-np-dec="${t}" aria-label="Remove a meal">−</button><strong>${nSel}</strong><button type="button" data-np-inc="${t}" aria-label="Suggest one more">+</button></span></div>`;
-        if(isOpen){
-          const rank = r => (sugg[t]||[]).includes(r.id) ? 0 : (sel.has(r.id) ? 1 : 2);
-          const sorted = list.slice().sort((a,b)=> rank(a)-rank(b) || a.title.localeCompare(b.title));
-          h += `<div class="np-list">${sorted.map(r=>`<div class="np-recipe ${sel.has(r.id)?'on':''}" data-np-pick="${esc(r.id)}">${thumbHtml(r, true).replace(/ data-act="open-recipe" data-id="[^"]*"/, '')}<span class="np-rt"><strong>${(sugg[t]||[]).includes(r.id)?'🎲 ':''}${esc(r.title)}</strong>${r.subtitle?`<em class="pick-sub">${esc(r.subtitle)}</em>`:''}<small>${esc(TAG_LABELS[r.tag]||r.tag)}${r.time?' · '+esc(r.time)+' min':''}</small></span><b>${sel.has(r.id)?'✓':'+'}</b></div>`).join('')}</div>`;
-        }
-        h += `</div>`;
-      });
-      h += `</div>`;
-    }
-    h += `<div class="btn-row" style="margin-top:12px;"><button class="primary-btn" id="np-create">${edit ? 'Save' : 'Start draft'}</button><button class="secondary-btn" id="np-cancel">Cancel</button></div>`;
-    return h;
-  }
-  function draw(){
-    const sc = document.querySelector('.sheet'); const top = sc ? sc.scrollTop : 0;
-    openSheet(body());
-    const sc2 = document.querySelector('.sheet'); if(sc2) sc2.scrollTop = top;
-    document.getElementById('np-cancel').onclick = closeSheet;
-    if(!edit){
-      document.getElementById('np-fridge').onclick = ()=>{ ideasState.fromPlanner = false; openIdeasSheet('fridge', true); };
-  document.getElementById('np-again').onclick = ()=>{ ideasState.fromPlanner = false; openIdeasSheet('again', true); };
-    }
-    const c = document.getElementById('np-carry');
-    if(c) c.onchange = ()=>{ carryOn = c.checked; draw(); };
-    document.querySelectorAll('input[name=np-cm]').forEach(r => r.onchange = ()=>{ carryMode = r.value; draw(); });
-    document.querySelectorAll('[data-np-ing]').forEach(x => x.onchange = ()=>{ if(x.checked) skip.delete(x.dataset.npIng); else skip.add(x.dataset.npIng); });
-    document.querySelectorAll('[data-np-tog]').forEach(b => b.onclick = ()=>{ const t=b.dataset.npTog; if(openCu.has(t)) openCu.delete(t); else openCu.add(t); draw(); });
-    document.querySelectorAll('[data-np-pick]').forEach(b => b.onclick = ()=>{ const id=b.dataset.npPick; if(sel.has(id)){ sel.delete(id); Object.keys(sugg).forEach(k=>{ sugg[k] = sugg[k].filter(x=>x!==id); }); } else sel.add(id); draw(); });
-    document.querySelectorAll('[data-np-inc]').forEach(b => b.onclick = ()=>{
-      const t=b.dataset.npInc;
-      const pool = recipes.filter(r => recipeCuisines(r).includes(t) && !sel.has(r.id));
-      if(!pool.length){ showToast('No more ' + cuiLabel(t) + ' recipes to suggest'); return; }
-      const pick = pool[Math.floor(Math.random()*pool.length)];
-      sel.add(pick.id); (sugg[t] = sugg[t] || []).unshift(pick.id); openCu.add(t); draw();
     });
-    document.querySelectorAll('[data-np-dec]').forEach(b => b.onclick = ()=>{ const t=b.dataset.npDec; const l = sugg[t]||[]; let id = l.shift();
-      if(!id){ const mine = Array.from(sel).filter(x => state.recipes[x] && recipeCuisines(state.recipes[x]).includes(t)); id = mine[mine.length-1]; }
-      if(!id) return; sel.delete(id); Object.keys(sugg).forEach(k=>{ sugg[k] = sugg[k].filter(x=>x!==id); }); draw(); });
-    document.getElementById('np-create').onclick = create;
+    h += `</div>`;
   }
-  async function create(){
-    if(edit){
-      const keep = edit.recipeIds.filter(id => sel.has(id));
-      sel.forEach(id => { if(state.recipes[id] && !keep.includes(id)) keep.push(id); });
-      if(edit.servings) Object.keys(edit.servings).forEach(id => { if(!keep.includes(id)) delete edit.servings[id]; });
-      if(edit.carried) edit.carried = edit.carried.filter(id => keep.includes(id));
-      edit.recipeIds = keep;
-      closeSheet(); render();
-      await savePlan(edit);
-      return;
-    }
-    const plan = {id: uid(), name: '', created: Date.now(), recipeIds: [], extras: [], built: false, locked: false};
-    plan.name = planLabel({...plan});
-    if(carryOn && uncooked.length){
-      plan.recipeIds.push(...uncooked);
-      plan.carried = uncooked.slice();
-      plan.carryMode = carryMode;
-      if(carryMode === 'choose') plan.skipIng = Array.from(skip);
-      plan.servings = {};
-      uncooked.forEach(id => { if(old.servings && old.servings[id]) plan.servings[id] = old.servings[id]; });
-      if(!Object.keys(plan.servings).length) delete plan.servings;
-    }
-    sel.forEach(id => { if(state.recipes[id] && !plan.recipeIds.includes(id)) plan.recipeIds.push(id); });
-    const prevDraft = curDraft();
-    if(prevDraft){
-      // the new draft replaces the old one; keep any serving counts already set
-      prevDraft.recipeIds.forEach(id => { if(plan.recipeIds.includes(id) && prevDraft.servings && prevDraft.servings[id]){ plan.servings = plan.servings || {}; if(!plan.servings[id]) plan.servings[id] = prevDraft.servings[id]; } });
-      delete state.plans[prevDraft.id];
-    }
-    state.plans[plan.id] = plan;
-    closeSheet();
-    goTab('planner');
-    showToast(plan.recipeIds.length + ' meal' + (plan.recipeIds.length===1?'':'s') + ' in your draft menu.');
-    await savePlan(plan);
-    if(prevDraft) await deletePlanStorage(prevDraft.id);
-  }
-  draw();
-}
-
-
-
-/* ---------- PLANNER SCREEN ---------- */
-function renderPlanner(){
-  const d = curDraft();
-  const items = planRecipes(d);
-  let h = `<h2 class="planner-title">Planner</h2>
-    <p class="planner-lead">Line up meals for your next menu. It stays here as a draft until you build it. Then it moves to the Menu tab and your grocery list is made.</p>
-    <button class="primary-btn" data-act="new-plan">📅 Start a new meal plan</button>
-    <div class="btn-row"><button type="button" class="secondary-btn" data-act="ideas-planner" data-id="fridge">What's in my fridge?</button><button type="button" class="secondary-btn" data-act="ideas-planner" data-id="again">Cook again</button></div>
-    <div class="planner-sec"><h3>Draft menu${items.length ? ` (${items.length})` : ''}${d ? ` · <span class="plan-add-link" data-act="add-meals">edit</span>` : ''}</h3>`;
-  if(!items.length) h += `<p class="planner-lead">Nothing in your draft yet. Tap "+ Add to draft menu" on a recipe in the Recipes tab, or use the tools above.</p>`;
-  else {
-    h += items.map(r => planItemHtml(d, r)).join('');
-    h += `<button class="add-btn" data-act="plan-build" style="margin-top:12px;background:var(--tomato);">Build menu and make grocery list</button>
-      <div class="btn-row"><button class="secondary-btn" data-act="share-plan">Share as image</button><button class="secondary-btn" data-act="draft-discard">Discard draft</button></div>`;
-  }
-  h += `</div>`;
   return h;
 }
 
@@ -1442,7 +1375,7 @@ function lastWeekItems(){
   const items = buildGroceryList({recipeIds: plan.recipeIds, servings: plan.servings || {}, carried: [], built: true}).filter(it => it.cat !== 'pantry' && it.cat !== 'spices');
   return {plan, items};
 }
-function ideaTarget(){ if(ideasState.forNew || ideasState.fromPlanner) return 'draft'; const p = activePlan(); return (p && !p.locked) ? 'plan' : 'draft'; }
+function ideaTarget(){ if(ideasState.forNew) return 'draft'; if(ideasState.fromPlanner && state.editPlanId) return 'plan'; const p = activePlan(); return (p && !p.locked) ? 'plan' : 'draft'; }
 function ideaAdded(id){ return ideaTarget()==='plan' ? activePlan().recipeIds.includes(id) : draftIds().includes(id); }
 function ideaRow(r, sub){
   const on = ideaAdded(r.id);
@@ -1482,7 +1415,7 @@ function openIdeasSheet(tab, forNew){
     <p style="font-size:12px;color:var(--brown);margin:0 0 8px;">${ideasState.forNew ? 'Meals you add go into the new plan you are starting.' : (tgt==='plan'?'Meals you add go into the current plan.':'The current plan is locked, so meals you add go into your next plan.')} Tap a meal to see the recipe.</p>
     <div id="ideas-body">${ideasBody()}</div><button class="secondary-btn" id="ideas-close">Close</button>`);
   const sh = document.querySelector('.sheet');
-  document.getElementById('ideas-close').onclick = ()=>{ if(ideasState.forNew && !ideasState.fromPlanner){ ideasState.forNew = false; openNewPlanSheet(); } else { ideasState.forNew = false; ideasState.fromPlanner = false; closeSheet(); render(); } };
+  document.getElementById('ideas-close').onclick = ()=>{ ideasState.forNew = false; ideasState.fromPlanner = false; closeSheet(); render(); };
   const redraw = ()=>{ const keep = (document.getElementById('fr-input')||{}).value; document.getElementById('ideas-body').innerHTML = ideasBody(); const i = document.getElementById('fr-input'); if(i){ i.value = keep||''; } bindIdeas(); };
   const save = ()=>{ try{ localStorage.setItem('rb_fridge', JSON.stringify(ideasState.terms)); }catch(e){} };
   function bindIdeas(){
@@ -1902,7 +1835,7 @@ async function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '0.12';
+const APP_VERSION = '0.13';
 
 function describeView(){
   if(cookIsOpen()) return 'Cooking mode';
@@ -2649,7 +2582,7 @@ mainEl.addEventListener('click', async (e)=>{
       break;
     }
     case 'noop': break;
-    case 'ideas-planner': ideasState.fromPlanner = true; openIdeasSheet(id, true); break;
+    case 'ideas-planner': ideasState.fromPlanner = true; openIdeasSheet(id, !state.editPlanId); break;
     case 'extra-store': document.querySelectorAll('#extra-store button').forEach(b=>b.classList.toggle('on', b.dataset.id===id)); break;
     case 'ideas': openIdeasSheet(id); break;
     case 'draft-toggle': e.stopPropagation(); await toggleDraft(id); break;
@@ -2667,8 +2600,55 @@ mainEl.addEventListener('click', async (e)=>{
       try{ if(Object.keys(state.storePrefs).length) await dbSet('storePrefs', state.storePrefs); else await dbDelete('storePrefs'); }catch(err){ console.error(err); }
       break;
     }
-    case 'new-plan': openNewPlanSheet(); break;
-    case 'add-meals': { const vp = viewPlan(); if(vp && !vp.locked) openNewPlanSheet(vp); break; }
+    case 'edit-plan': { const ap = activePlan(); if(ap && !ap.locked){ state.editPlanId = ap.id; goTab('planner', true); } break; }
+    case 'edit-done': {
+      const ap = activePlan();
+      state.editPlanId = null;
+      if(ap){ ap.locked = true; goTab('plan'); await savePlan(ap); } else goTab('plan');
+      break;
+    }
+    case 'np-tog': state.npOpen[id] = !state.npOpen[id]; render(); break;
+    case 'np-pick': { const pl = plannerPlan() || newDraft(); await togglePlanRecipe(id, pl); break; }
+    case 'np-inc': {
+      const pl = plannerPlan() || newDraft();
+      const pool = Object.values(state.recipes).filter(r => recipeCuisines(r).includes(id) && !pl.recipeIds.includes(r.id));
+      if(!pool.length){ showToast('No more recipes to suggest here'); break; }
+      const pick = pool[Math.floor(Math.random() * pool.length)];
+      (state.npSugg[id] = state.npSugg[id] || []).unshift(pick.id); state.npOpen[id] = true;
+      pl.recipeIds.push(pick.id); render(); await savePlan(pl); break;
+    }
+    case 'np-dec': {
+      const pl = plannerPlan(); if(!pl) break;
+      const l = state.npSugg[id] || [];
+      let rid = l.find(x => pl.recipeIds.includes(x));
+      if(!rid){ const mine = pl.recipeIds.filter(x => state.recipes[x] && recipeCuisines(state.recipes[x]).includes(id)); rid = mine[mine.length - 1]; }
+      if(rid) await togglePlanRecipe(rid, pl);
+      break;
+    }
+    case 'np-carry': {
+      const cur = activePlan(); if(!cur) break;
+      const d = curDraft() || newDraft(), unc = uncookedOf(cur);
+      if(d.carried && d.carried.length){
+        d.recipeIds = d.recipeIds.filter(x => !d.carried.includes(x));
+        if(d.servings) d.carried.forEach(x => { delete d.servings[x]; });
+        delete d.carried; delete d.carryMode; delete d.skipIng;
+      } else {
+        unc.forEach(x => { if(!d.recipeIds.includes(x)) d.recipeIds.push(x); if(cur.servings && cur.servings[x]){ d.servings = d.servings || {}; d.servings[x] = cur.servings[x]; } });
+        d.carried = unc.slice(); d.carryMode = 'none';
+      }
+      render(); await savePlan(d); break;
+    }
+    case 'np-cm': {
+      const d = curDraft(); if(!d) break;
+      d.carryMode = id;
+      if(id === 'choose' && !d.skipIng){ const cur = activePlan(); d.skipIng = buildGroceryList({recipeIds: uncookedOf(cur), servings: (cur && cur.servings) || {}, carried: [], built: true}).map(it => it.key); }
+      render(); await savePlan(d); break;
+    }
+    case 'np-ing': {
+      const d = curDraft(); if(!d) break;
+      const sk = new Set(d.skipIng || []); if(sk.has(id)) sk.delete(id); else sk.add(id);
+      d.skipIng = Array.from(sk); render(); await savePlan(d); break;
+    }
     case 'go-planner': goTab('planner'); break;
     case 'draft-discard': {
       const dr = curDraft();
