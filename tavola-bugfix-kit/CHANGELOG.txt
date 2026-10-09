@@ -1,0 +1,136 @@
+4.4 - Starter recipes removed from the app file (they now live in the database); Import data accepts a file and never overwrites existing recipes.
+4.5 - Recipes without a photo now show a cuisine-themed picture tile (emoji on a coloured background) on cards, recipe pages and the meal plan.
+4.6 - Import fills in missing photos on recipes already in the app; the 72 Drive recipes now carry cover photos from their screenshots.
+4.7 - Grocery list: tap an ingredient (or 'where used') to see which meals in the plan use it, with links to the recipes.
+4.8 - Recipes: show/cuisine filters with counts, favourites (star on cards, recipe page, meal plan, meal picker, end of cooking), meal plan 'Cooked' tick that is set when you start cooking, cooked meals ghosted and struck through.
+4.9 - Wiping the grocery list no longer unlocks the meal plan; new-plan button moved below the plan; add-meals button only in edit mode and no longer green.
+5.0 - Recipe filter counts now reflect the other active filter (e.g. Favourites), zero-result cuisines are hidden, plus a Clear filters button.
+5.1 - Removed the add-meals button (small '+ add' link in edit mode), bigger favourite stars, round tick for Cooked.
+5.2 - Locked note and See grocery list moved to the bottom of the meal plan, above Edit plan.
+5.3 - Recipes have a main title and a smaller subtitle (existing recipes are split automatically), bigger photos and titles, smaller Cooked/favourite controls and a redrawn star.
+5.4 - Fix slow start-up: data migrations now run in the background and save only small fields (no photo re-uploads).
+5.5 - Single green Add a recipe button with import/manual choice; import cost; padlock and + button on meal plan; bug or feature request; new logo; styled dialogs; ml rounded to 10; name-first ingredient lists; bigger plan cards; wording fixes.
+
+v6.0 - Photos stored separately (faster start), multiple/custom categories, add to next plan drafts, new-plan sheet (suggest meals, carry over uncooked meals), Coles/Aldi toggle, edit ingredients and steps in cooking mode.
+
+v6.1 - Suggest meals now uses cuisines (Italian, Mexican...) instead of meal types.
+
+v6.2 - Meal ideas: what's in my fridge, cook again.
+
+v6.3 - Fix photos missing after refresh (photoRev not saved); fav star top right on plan cards.
+
+v6.4 - Grocery list opens on All; moving an item between shops pauses 2s before it moves.
+
+v6.5 - Fridge and Cook again moved into the new meal plan sheet.
+
+v6.6 - Align fav star and cooked tick on plan cards.
+
+v6.7 - New plan sheet: collapsible cuisines with suggestions first and manual picking.
+
+v6.7 - New plan sheet: cuisines collapsed/expandable, suggestions on top, drafts pre-selected.
+
+v6.8 - Carried-over groceries start unticked.
+
+v6.9 - Coles/Aldi toggle on add-your-own item; unbought count on Grocery List tab.
+
+v7.0 - Header redesign: bigger logo with title below, no zigzag edge, bug icon beside version top right.
+
+v7.1 - Removed tagline.
+
+v7.2 - Bigger header logo beside title, tighter banner.
+
+v7.3 - Name changed to Recipe Box.
+
+v7.4 - Recipes: type and cuisine filters collapsed; favourites first.
+
+v7.5 - Space above Add a recipe.
+
+v7.6 - Cooking mode: light style, fixed title+thumbnail, tap left/right to go back/forward.
+
+v7.7 - Cooking mode: dark banner like the app, edit-step pinned under it, left-aligned step text at top.
+
+v7.8 - New plan button moved to Recipes (renamed Recipes & Planner).
+
+v7.9 - Meal Plan tab renamed Menu.
+
+v8.0 - App renamed Kondate.
+
+v8.1 - App renamed Tavola (replacing Kondate).
+
+v8.2 - Menu of the Week heading; waiting-meals note moved to Recipes & Planner; smaller star.
+
+v8.3 - Pasta logo and icons; app title 1.5x.
+
+v8.4 - Marcellus title font; Italian trattoria logo.
+
+v8.5 - Shallow pasta bowl logo, no face.
+
+v8.6 - Planner is now its own tab.
+
+v8.7 - Tab renamed Groceries.
+
+v8.8 - Removed count from Groceries tab.
+
+v8.9 - Finished? Yes/No on clearing the grocery list.
+
+v9.0 - Fridge tool: pick from last week's groceries (no pantry or spices).
+
+v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
+
+9.2
+- Loading screen shows only the logo.
+- Ingredients use Australian names (capsicum, rocket, brown onion, veggie mince, etc.); existing recipes are converted once.
+- Size-first ingredients now read "Carrots (medium)".
+- Liquids are stored in ml; shown as tsp under 20 ml, tbsp up to 60 ml, otherwise ml. A tablespoon is 20 ml.
+- Groceries screen now square and in the same ink colour as the other screens.
+- Larger text for ingredients and steps on recipe pages.
+
+9.3
+- Import from JSON moved into the Add a recipe menu (paste text or choose a .json file).
+
+9.4
+- Ellipsis menu at top right holds View reports, Export data, Change database, Sign out (and Install app when offered). Bug button stays in the header. Bottom-of-screen buttons removed.
+
+9.5
+- Times cooked and last cooked shown on Menu cards, Recipes cards and the recipe page. Ticking a meal as cooked now records the date.
+
+9.6
+- New "Recipe Tin" cuisine.
+
+9.7
+- Banner buttons stacked (menu, bug, version); title 15% larger.
+
+9.8
+- "Cooked" button at the bottom of a recipe marks it cooked without cooking mode (plan tick if in the plan, otherwise logged as a cook).
+
+9.9
+- Share a recipe as a PDF and the meal plan as an image (phone share sheet, or download).
+
+10.0
+- Draft menu: a menu you are putting together now lives on the Planner tab. The Menu tab only shows a built menu.
+- Build menu and make grocery list moves the draft to the Menu tab and makes the grocery list.
+- Share as image works on a draft too, and the share includes a link that opens that menu in Tavola.
+
+0.10
+- Version numbers now count 0.10, 0.11, 0.12 and so on.
+- Editing a meal plan uses the same screen as starting one (cuisine lists, random suggestions).
+- The plan screen shows the total number of meals planned. A cuisine's counter now counts every meal chosen from it, picked by hand or suggested.
+
+0.11
+- Plan editing screen: opened cuisines now show each meal's thumbnail, bold title, subtitle and type/time.
+
+0.12
+- Removed the Lunch type. Every recipe that was Lunch is now Dinner (saved to the database on first open).
+
+0.13
+- The meal planner is now the Planner screen itself, not a pop-up. Tap a meal to see its recipe; only the + button adds it.
+- "Chosen" is a fixed three-row box that scrolls, so the buttons below it stay put. Servings and remove are on each row.
+- Editing the Menu opens the same Planner screen ("Edit menu" / "Done editing").
+- Fixed: meals carried over from the previous menu lost their "no groceries needed" setting after reloading the app.
+
+0.14
+- Planner: new "Suggest meals" counter above the chosen box. Each + adds a meal: two favourites first, then one from a different cuisine each time (no repeats until every cuisine has had a turn). Snacks and desserts are left out. − removes the last suggestion.
+- The chosen box is five rows high and has "Meal" and "Serves" headings.
+
+0.15
+- Bug and idea reports can also be sent to a relay that opens a GitHub issue for automatic fixing (switched off until the relay address is added).
