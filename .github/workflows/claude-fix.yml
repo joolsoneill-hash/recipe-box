@@ -126,6 +126,7 @@ jobs:
           except Exception: log = []
           cost = os.environ.get('COST', '')
           log.append({'issue': int(os.environ['ISSUE']), 'kind': 'bug' if os.environ.get('IS_BUG') == 'true' else 'feature',
+                      'result': 'fixed' if os.environ.get('IS_BUG') == 'true' else 'pr',
                       'version': nv, 'reports': max(1, os.environ.get('BODY', '').count('## Report ')),
                       'cost': float(cost) if cost else None, 'time': int(datetime.datetime.utcnow().timestamp() * 1000)})
           json.dump(log[-50:], open('fix-log.json', 'w'))
@@ -171,3 +172,30 @@ jobs:
           COSTTXT: ${{ steps.cost.outputs.cost && format('US${0}', steps.cost.outputs.cost) || 'not available' }}
         run: |
           gh issue comment "$ISSUE" --body "I could not make a safe change for this one. It needs a closer look in a chat session. Run cost: ${COSTTXT}."
+
+      # Tell the app how a bug run ended when nothing was published, so it can unlock and say so.
+      - name: Record the outcome (bug, nothing published)
+        if: always() && env.IS_BUG == 'true' && steps.build.outputs.changed != 'true'
+        env:
+          COST: ${{ steps.cost.outputs.cost }}
+          BODY: ${{ github.event.issue.body }}
+          BUILD_OUTCOME: ${{ steps.build.outcome }}
+        run: |
+          git checkout -- . || true
+          git config user.name "tavola-bot"
+          git config user.email "tavola-bot@users.noreply.github.com"
+          git pull --rebase origin "$BRANCH" || true
+          python3 - <<'PY'
+          import os, json, datetime
+          try: log = json.load(open('fix-log.json'))
+          except Exception: log = []
+          cost = os.environ.get('COST', '')
+          result = 'nochange' if os.environ.get('BUILD_OUTCOME') == 'success' else 'failed'
+          log.append({'issue': int(os.environ['ISSUE']), 'kind': 'bug', 'result': result, 'version': None,
+                      'reports': max(1, os.environ.get('BODY', '').count('## Report ')),
+                      'cost': float(cost) if cost else None, 'time': int(datetime.datetime.utcnow().timestamp() * 1000)})
+          json.dump(log[-50:], open('fix-log.json', 'w'))
+          PY
+          git add fix-log.json
+          git commit -m "Log outcome for #${ISSUE}"
+          git push origin "HEAD:$BRANCH"
