@@ -1684,6 +1684,7 @@ function allGroceryItems(){
   return items;
 }
 
+const hideTimers = {};
 function renderGrocery(){
   const plan = activePlan();
   let items = allGroceryItems();
@@ -1723,10 +1724,12 @@ function renderGrocery(){
   if(state.storeView !== 'all') items = items.filter(it => storeOf(it) === state.storeView);
   if(!items.length){ html += `<div class="empty-state"><p>Nothing to buy at ${storeName}. Tap the small shop tag on an item to move it between shops.</p></div>`; return html; }
   const ticked = items.filter(it => state.checks[it.key]).length;
+  const hiddenCount = items.filter(it => state.checks[it.key] === 'hidden').length;   // ticked items tuck themselves away after 2 seconds
   html += `<div class="gro-total"><div><strong>${items.length}</strong> item${items.length===1?'':'s'}${storeName ? ' at ' + storeName : ' in total'}</div><span>${ticked} of ${items.length} ticked</span></div>`;
   html += `<div class="check-actions"><button class="secondary-btn" data-act="check-all">Check all</button><button class="secondary-btn" data-act="clear-checks">Uncheck all</button></div>`;
+  if(hiddenCount) html += `<div class="check-actions"><button class="secondary-btn" data-act="unhide-checked">Unhide checked items (${hiddenCount})</button></div>`;
   CATEGORIES.forEach(c=>{
-    const list = items.filter(it => it.cat === c.key).sort((a,b)=>a.name.localeCompare(b.name));
+    const list = items.filter(it => it.cat === c.key && state.checks[it.key] !== 'hidden').sort((a,b)=>a.name.localeCompare(b.name));
     if(!list.length) return;
     html += `<div class="gcat-head">${esc(c.label)}</div><div class="grocery-group">`;
     list.forEach(it=>{
@@ -2978,6 +2981,11 @@ mainEl.addEventListener('click', async (e)=>{
       render();
       await saveChecks();
       break;
+    case 'unhide-checked':
+      Object.keys(state.checks).forEach(k => { if(state.checks[k] === 'hidden') state.checks[k] = true; });
+      render();
+      await saveChecks();
+      break;
   }
 });
 
@@ -2990,7 +2998,15 @@ mainEl.addEventListener('change', async (e)=>{
     await saveActivePlanId();
     await saveChecks();
   } else if(t.dataset && t.dataset.checkKey !== undefined){
-    state.checks[t.dataset.checkKey] = t.checked;
+    const key = t.dataset.checkKey;
+    state.checks[key] = t.checked;
+    clearTimeout(hideTimers[key]);
+    if(t.checked) hideTimers[key] = setTimeout(async ()=>{   // still ticked after 2 seconds: tuck it away
+      if(state.checks[key] !== true) return;
+      state.checks[key] = 'hidden';
+      render();
+      await saveChecks();
+    }, 2000);
     render();
     await saveChecks();
     if(t.checked && groceryAllChecked()) openAllDoneSheet();

@@ -165,3 +165,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.24
 - Auto: issue #8, Bug: When reopening the app after a bug report, the app seems to open a cac
+
+0.25
+- Grocery list: an item you tick tucks itself away after 2 seconds. "Unhide checked items" brings them back.
