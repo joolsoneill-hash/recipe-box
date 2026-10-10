@@ -1957,7 +1957,7 @@ function openBugSheet(){
 }
 
 async function openBugListSheet(){
-  bugTab = 'open';
+  bugTab = 'open'; bugEditId = null;
   openSheet(`<div class="sheet-handle"></div><h2>Reported bugs</h2><div class="loading">Loading…</div>`);
   let bugs;
   try { bugs = (await dbGet('bugs')) || {}; }
@@ -2042,7 +2042,7 @@ async function checkFixLock(){
   fixLockTimer = setTimeout(checkFixLock, 20000);
 }
 
-let bugTab = 'open';
+let bugTab = 'open', bugEditId = null;
 function paintBugList(bugs, picked){
   picked = picked || new Set();
   const list = Object.values(bugs).sort((a,b)=>{
@@ -2064,12 +2064,15 @@ function paintBugList(bugs, picked){
     const isOpen = b.status === 'open', isRev = b.status === 'review';
     html += `
       <div class="bug-item ${isRev ? 'review' : isOpen ? '' : 'done'}">
-        <div class="bug-text">${canSend && isOpen ? `<input type="checkbox" class="bug-pick" data-bug-pick="${esc(b.id)}" ${picked.has(b.id) ? 'checked' : ''} aria-label="Send this one"> ` : ''}${b.type === 'feature' ? '<strong>💡 Feature request: </strong>' : ''}${esc(b.text)}</div>
+        ${isOpen && bugEditId === b.id
+          ? `<div class="field"><textarea id="bl-edit-text" style="min-height:90px;">${esc(b.text)}</textarea></div>`
+          : `<div class="bug-text">${canSend && isOpen ? `<input type="checkbox" class="bug-pick" data-bug-pick="${esc(b.id)}" ${picked.has(b.id) ? 'checked' : ''} aria-label="Send this one"> ` : ''}${b.type === 'feature' ? '<strong>💡 Feature request: </strong>' : ''}${esc(b.text)}</div>`}
         <div class="bug-meta">${esc(bugDate(b.created))} · ${esc(b.reporter || '')} · ${esc(b.screen || '')}${b.sentAt ? ' · <strong>Sent ' + esc(bugDate(b.sentAt)) + '</strong>' : ''}</div>
         ${isRev ? `<div class="bug-result">${esc(fixResultText(b))}</div>` : ''}
         <div class="bug-actions">
-          ${isRev ? `<button data-bug-ok="${esc(b.id)}">Looks good</button><button data-bug-no="${esc(b.id)}">Not fixed</button>` : `<button data-bug-toggle="${esc(b.id)}">${isOpen ? 'Mark fixed' : 'Reopen'}</button>`}
-          <button data-bug-del="${esc(b.id)}" class="del">Delete</button>
+          ${isOpen && bugEditId === b.id ? `<button data-bug-save="${esc(b.id)}">Save</button><button data-bug-cancel="${esc(b.id)}">Cancel</button>` : `
+          ${isRev ? `<button data-bug-ok="${esc(b.id)}">Looks good</button><button data-bug-no="${esc(b.id)}">Not fixed</button>` : `${isOpen ? `<button data-bug-edit="${esc(b.id)}">Edit</button>` : ''}<button data-bug-toggle="${esc(b.id)}">${isOpen ? 'Mark fixed' : 'Reopen'}</button>`}
+          <button data-bug-del="${esc(b.id)}" class="del">Delete</button>`}
         </div>
       </div>`;
   });
@@ -2089,7 +2092,20 @@ function paintBugList(bugs, picked){
     const dl = e.target.closest('[data-bug-del]');
     const pk = e.target.closest('[data-bug-pick]');
     const okb = e.target.closest('[data-bug-ok]'), nob = e.target.closest('[data-bug-no]');
+    const ed = e.target.closest('[data-bug-edit]'), sv = e.target.closest('[data-bug-save]'), cn = e.target.closest('[data-bug-cancel]');
     try {
+      if(ed){ bugEditId = ed.dataset.bugEdit; paintBugList(bugs, picked); const t = document.getElementById('bl-edit-text'); if(t) t.focus(); return; }
+      if(cn){ bugEditId = null; paintBugList(bugs, picked); return; }
+      if(sv){
+        const b = bugs[sv.dataset.bugSave];
+        const text = document.getElementById('bl-edit-text').value.trim();
+        if(!b || !text) return;
+        b.text = text;
+        await dbSet('bugs/' + b.id, b);
+        bugEditId = null;
+        paintBugList(bugs, picked);
+        return;
+      }
       if(okb || nob){
         const b = bugs[(okb || nob).dataset.bugOk || (okb || nob).dataset.bugNo];
         if(b){

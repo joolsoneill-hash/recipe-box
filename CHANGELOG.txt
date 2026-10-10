@@ -159,3 +159,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.22
 - Auto: issue #6, Bug: Never put water on the shopping list
+
+0.23
+- Auto: issue #7, Bug: In report a bug. Allow edits in the view reported bugs page
