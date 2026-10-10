@@ -3401,7 +3401,7 @@ function openCookMode(recipeId){
   cookState.recipeId = recipeId;
   cookState.stepIndex = 0;
   cookState.finished = false;
-  cookState.editIng = null; cookState.editStep = null;
+  cookState.editIng = null; cookState.editStep = null; cookState.addIng = false;
   document.getElementById('cook-recipe').innerHTML = thumbHtml(r, true).replace(/ data-act="open-recipe" data-id="[^"]*"/, '') + `<div class="cook-rt"><strong>${esc(r.title)}</strong>${r.subtitle ? `<small>${esc(r.subtitle)}</small>` : ''}</div>`;
   const ap = activePlan();
   if(ap && ap.recipeIds.includes(recipeId) && !(ap.done && ap.done[recipeId])){
@@ -3470,7 +3470,10 @@ function renderCookStep(){
   }
   document.getElementById('cook-progress').textContent = `Step ${i+1} of ${total}`;
   const stepIngredients = getStepIngredients(r, i);
-  const ingredientsHtml = !stepIngredients.length ? '' : `<div class="cook-ings-panel">
+  const addIngHtml = cookState.addIng
+    ? `<div class="cook-ing-row editing"><span>Add an ingredient</span><div class="ce"><input id="ca-name" placeholder="Ingredient" aria-label="Ingredient" style="flex:2"></div><div class="ce"><input id="ca-qty" inputmode="decimal" placeholder="Qty" aria-label="Quantity"><input id="ca-unit" list="ca-units" placeholder="Unit" aria-label="Unit"><datalist id="ca-units">${['g','kg','ml','l','tsp','tbsp','cup','can','tin','clove','bunch','pinch','piece','packet'].map(u=>`<option value="${u}">`).join('')}</datalist><button type="button" class="ok" data-ca-save="1">Add</button><button type="button" data-ca-cancel="1">✕</button></div></div>`
+    : `<button type="button" class="cook-edit-link" data-ca-open="1">Add an ingredient</button>`;
+  const ingredientsHtml = `<div class="cook-ings-panel">
       ${stepIngredients.length
         ? stepIngredients.map(ing => {
           const ix = r.ingredients.indexOf(ing);
@@ -3478,6 +3481,7 @@ function renderCookStep(){
           return `<div class="cook-ing-row" data-ce-edit="${ix}"><span>${esc(ing.name)}</span><span class="cook-ing-qty">${esc(ingQtyText(ing.qty, ing.unit, scaleFactorFor(r)))}</span></div>`;
         }).join('')
         : ''}
+      ${addIngHtml}
     </div>`;
   document.getElementById('cook-step-area').innerHTML = `
     <div class="cook-edit-bar">${cookState.editStep === i ? '' : `<button type="button" class="cook-edit-link" data-cs-edit="1">Edit this step</button>`}</div>
@@ -3516,13 +3520,13 @@ document.addEventListener('visibilitychange', ()=>{
 document.getElementById('cook-exit-btn').addEventListener('click', closeCookMode);
 document.getElementById('cook-prev-btn').addEventListener('click', ()=>{
   if(cookState.finished){ cookState.finished = false; renderCookStep(); return; }
-  cookState.editIng = null; cookState.editStep = null;
+  cookState.editIng = null; cookState.editStep = null; cookState.addIng = false;
   if(cookState.stepIndex > 0){ cookState.stepIndex--; renderCookStep(); }
 });
 document.getElementById('cook-next-btn').addEventListener('click', ()=>{
   const r = state.recipes[cookState.recipeId];
   if(!r) return closeCookMode();
-  cookState.editIng = null; cookState.editStep = null;
+  cookState.editIng = null; cookState.editStep = null; cookState.addIng = false;
   if(cookState.stepIndex < r.steps.length - 1){ cookState.stepIndex++; renderCookStep(); }
   else if(!cookState.finished){ cookState.finished = true; renderCookStep(); }
   else { closeCookMode(); }
@@ -3541,6 +3545,26 @@ cookStepArea.addEventListener('click', async (e)=>{
     ing.unit = document.getElementById('ce-unit').value.trim();
     cookState.editIng = null; renderCookStep(); await saveRecipe(r); showToast('Ingredient saved to the recipe');
   } else if(q('[data-ce-cancel]')){ cookState.editIng = null; renderCookStep(); }
+  else if(q('[data-ca-open]')){ cookState.addIng = true; cookState.editIng = null; renderCookStep(); const nm = document.getElementById('ca-name'); if(nm) nm.focus(); }
+  else if(q('[data-ca-cancel]')){ cookState.addIng = false; renderCookStep(); }
+  else if(q('[data-ca-save]')){
+    const name = document.getElementById('ca-name').value.trim();
+    if(!name) return;
+    const category = guessCategory(name);
+    const qty = document.getElementById('ca-qty').value.trim(), unit = document.getElementById('ca-unit').value.trim();
+    r.ingredients = (r.ingredients || []).concat([{name, qty, unit, category}]);
+    cookState.addIng = false; renderCookStep(); await saveRecipe(r);
+    // make sure it is on the shopping list: a built menu with this recipe picks it up already, otherwise add it as an extra
+    const plan = activePlan();
+    if(!plan){ showToast('Ingredient added to the recipe'); return; }
+    const norm = normIngName(name);
+    const onList = PLAIN_WATER_RE.test(norm) || allGroceryItems().some(it => it.extra ? normIngName(it.name) === norm : it.key === groceryKey(norm));
+    if(onList){ showToast('Added to the recipe. Already on the shopping list'); return; }
+    plan.extras = (plan.extras || []).concat([{id: uid(), name, qty: [qty, unit].filter(Boolean).join(' '), category}]);
+    render();
+    await savePlan(plan);
+    showToast('Added to the recipe and the shopping list');
+  }
   else if((el = q('[data-ce-edit]')) && !q('.editing')){ cookState.editIng = +el.dataset.ceEdit; renderCookStep(); }
   else if(q('[data-cs-edit]')){ cookState.editStep = cookState.stepIndex; renderCookStep(); const ta = document.getElementById('cs-text'); if(ta) ta.focus(); }
   else if(q('[data-cs-cancel]')){ cookState.editStep = null; renderCookStep(); }

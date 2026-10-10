@@ -187,3 +187,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.30
 - Planner: the "include meals not cooked yet" option, "What is in my fridge?" and "Cook again" now sit above "Suggest meals".
+
+0.31
+- Auto: issue #9, Bug: In cooking mode, create a function that allows adding ingredients to t
