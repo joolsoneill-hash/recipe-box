@@ -244,6 +244,7 @@
   .np-add{flex-shrink:0;width:34px;height:34px;border:1px solid var(--herb);background:transparent;color:var(--herb);font-size:18px;font-weight:700;border-radius:2px;margin-left:auto;cursor:pointer;}
   .np-add.on{background:var(--herb);color:#fff;}
   .plan-add-link{color:var(--herb);font-weight:700;cursor:pointer;}
+  .plan-item.carried{border:2px solid #E07B22;}
   .plan-item.done{opacity:.5;}
   .plan-item.done .plan-item-title{text-decoration:line-through;}
   .plan-item.done .plan-item-meta,.plan-item.done .serv-line{text-decoration:line-through;}
@@ -1193,7 +1194,7 @@ function thumbHtml(r, small){
 function planItemHtml(plan, r){
   const isDone = !!(plan.done && plan.done[r.id]);
   return `
-        <div class="plan-item ${isDone?'done':''} ${plan.locked?'':'editing'}">
+        <div class="plan-item ${isDone?'done':''} ${plan.locked?'':'editing'} ${(plan.carried || []).includes(r.id)?'carried':''}">
           ${favBtnHtml(r)}
           ${thumbHtml(r)}
           <div class="plan-item-main" data-act="open-recipe" data-id="${esc(r.id)}">
@@ -1215,7 +1216,8 @@ function renderPlan(){
   const plans = Object.values(state.plans).sort((a,b)=>(b.created||0)-(a.created||0));
   const plan = activePlan();
   if(!plan) return `<h2 class="plan-date">Menu of the Week</h2><div class="empty-state"><h3>No menu yet</h3><p>Choose your meals in the Planner. When you build the menu it moves here and your grocery list is made.</p><button class="secondary-btn" data-act="go-planner">Go to Planner</button></div>`;
-  const items = planRecipes(plan);
+  const carried = plan.carried || [];
+  const items = planRecipes(plan).sort((a,b) => carried.includes(b.id) - carried.includes(a.id));
 
   const lockIcon = plan.locked
     ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" fill="currentColor" fill-opacity=".15"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>`
