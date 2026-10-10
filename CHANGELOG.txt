@@ -181,3 +181,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 - Lemons and limes now say which part is used (zest, juice, wedges, slices) in the recipe ingredients and on the grocery list.
 - Rice and yoghurt show in cups on the grocery list.
 - The Share as image button is now the standard share icon.
+
+0.29
+- Planner: a meal added to a menu now starts at 4 serves. You can still change it per meal.

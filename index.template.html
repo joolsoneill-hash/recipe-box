@@ -1316,11 +1316,18 @@ function renderPlan(){
   return html;
 }
 
+const DEFAULT_SERVES = 4;
+// a meal added to a plan starts at 4 serves (it can still be changed per meal)
+function addRecipeToPlan(plan, rid){
+  plan.recipeIds.push(rid);
+  plan.servings = plan.servings || {};
+  if(!plan.servings[rid]) plan.servings[rid] = DEFAULT_SERVES;
+}
 async function togglePlanRecipe(rid, planArg){
   const plan = planArg || viewPlan();
   if(!plan || plan.locked) return;
   const i = plan.recipeIds.indexOf(rid);
-  if(i >= 0){ plan.recipeIds.splice(i, 1); if(plan.servings) delete plan.servings[rid]; if(plan.carried) plan.carried = plan.carried.filter(x => x !== rid); } else plan.recipeIds.push(rid);
+  if(i >= 0){ plan.recipeIds.splice(i, 1); if(plan.servings) delete plan.servings[rid]; if(plan.carried) plan.carried = plan.carried.filter(x => x !== rid); } else addRecipeToPlan(plan, rid);
   render();
   await savePlan(plan);
 }
@@ -1329,7 +1336,7 @@ function draftIds(){ const d = curDraft(); return d ? d.recipeIds.filter(id => s
 async function toggleDraft(id){
   const d = curDraft() || newDraft();
   const i = d.recipeIds.indexOf(id);
-  if(i >= 0){ d.recipeIds.splice(i,1); if(d.servings) delete d.servings[id]; showToast('Removed from your draft menu'); } else { d.recipeIds.push(id); showToast('Added to your draft menu'); }
+  if(i >= 0){ d.recipeIds.splice(i,1); if(d.servings) delete d.servings[id]; showToast('Removed from your draft menu'); } else { addRecipeToPlan(d, id); showToast('Added to your draft menu'); }
   render();
   await savePlan(d);
 }
@@ -2879,7 +2886,7 @@ mainEl.addEventListener('click', async (e)=>{
       const n = suggestNext(pl);
       if(!n){ showToast('No more meals to suggest'); break; }
       state.npLog.push(n); if(n.cu && !state.npUsed.includes(n.cu)) state.npUsed.push(n.cu);
-      pl.recipeIds.push(n.id); render(); await savePlan(pl); break;
+      addRecipeToPlan(pl, n.id); render(); await savePlan(pl); break;
     }
     case 'sg-dec': {
       const pl = plannerPlan(); if(!pl || !state.npLog.length) break;
@@ -2895,7 +2902,7 @@ mainEl.addEventListener('click', async (e)=>{
       if(!pool.length){ showToast('No more recipes to suggest here'); break; }
       const pick = pool[Math.floor(Math.random() * pool.length)];
       (state.npSugg[id] = state.npSugg[id] || []).unshift(pick.id); state.npOpen[id] = true;
-      pl.recipeIds.push(pick.id); render(); await savePlan(pl); break;
+      addRecipeToPlan(pl, pick.id); render(); await savePlan(pl); break;
     }
     case 'np-dec': {
       const pl = plannerPlan(); if(!pl) break;
