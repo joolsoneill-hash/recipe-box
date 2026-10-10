@@ -67,6 +67,13 @@ jobs:
             - After editing, run: python3 build.py and then node tools/check.js. Fix anything that fails.
             - If you cannot find or safely fix the problem, change nothing and explain why in your final message.
 
+      # The Claude step leaves its own short-lived git login behind, which later pushes then fail with. Use this repository's token instead.
+      - name: Restore git push access
+        if: always()
+        run: |
+          git config --local --unset-all http.https://github.com/.extraheader || true
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git"
+
       - name: Work out what the run cost
         id: cost
         env:
