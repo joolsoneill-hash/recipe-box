@@ -134,3 +134,50 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.15
 - Bug and idea reports can also be sent to a relay that opens a GitHub issue for automatic fixing (switched off until the relay address is added).
+
+0.16
+- Bug and idea reports are now sent to the relay at tavola-relay.jools-oneill.workers.dev.
+
+0.17
+- If a report can't be sent for fixing, the app now says why.
+
+0.18
+- Bugs and ideas list: each open report has a "Send for fixing" (or "Send to be built") button, so earlier reports can be sent to GitHub. Sent reports show a tick.
+
+0.18
+- Reports are no longer sent for fixing automatically. In the reported list, tick the ones to send and send them together; they are fixed in one batch. Sent reports show the date.
+
+0.19
+- When a sent report has been fixed, the app shows a message with the new version and what the fix cost.
+
+0.20
+- Bug list: fixed reports are now on their own Fixed tab; the Open tab shows what is still to do.
+
+0.21
+- Sending bugs now locks the app (logo and "Bug fixes in progress") until each fix has been tried. The lock lifts by itself on every phone.
+- Tried fixes appear in the Open tab marked for review: "Looks good" moves them to Fixed, "Not fixed" reopens them to send again.
+
+0.22
+- Auto: issue #6, Bug: Never put water on the shopping list
+
+0.23
+- Auto: issue #7, Bug: In report a bug. Allow edits in the view reported bugs page
+
+0.24
+- Auto: issue #8, Bug: When reopening the app after a bug report, the app seems to open a cac
+
+0.25
+- Grocery list: an item you tick tucks itself away after 2 seconds. "Unhide checked items" brings them back.
+
+0.26
+- Grocery list: "Hide all checked items" sits beside "Unhide checked items". Each greys out when it has nothing to do.
+
+0.27
+- Menu: meals carried over from an earlier menu that are not cooked yet go to the top with an orange outline and a small label.
+- If the database cannot be reached (VPN, ad blocker, no connection) the app now says so and offers Retry, instead of showing an empty page.
+
+0.28
+- Grocery list: after an item hides itself, ticking is frozen for half a second so a slipped tap cannot tick the wrong item.
+- Lemons and limes now say which part is used (zest, juice, wedges, slices) in the recipe ingredients and on the grocery list.
+- Rice and yoghurt show in cups on the grocery list.
+- The Share as image button is now the standard share icon.
