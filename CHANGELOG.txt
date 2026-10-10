@@ -168,3 +168,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.25
 - Grocery list: an item you tick tucks itself away after 2 seconds. "Unhide checked items" brings them back.
+
+0.26
+- Grocery list: "Hide all checked items" sits beside "Unhide checked items". Each greys out when it has nothing to do.
