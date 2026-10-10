@@ -893,6 +893,7 @@ async function loadState(){
     await checkFixLock();
     handlePlanLink();
     checkFixLog();
+    checkForUpdate();
     render();
     state.photosPromise = loadPhotos();
   } finally {
@@ -2008,7 +2009,7 @@ function showFixLock(lock){
 function hideFixLock(){
   clearTimeout(fixLockTimer);
   const el = document.getElementById('fix-lock'); if(el) el.remove();
-  if(fixLockShown){ fixLockShown = false; checkFixLog(); }
+  if(fixLockShown){ fixLockShown = false; checkFixLog(); checkForUpdate(); }
 }
 async function settleFixLock(lock, log){
   const groups = lock.groups ? Object.values(lock.groups) : [];
@@ -3230,6 +3231,22 @@ async function checkFixLog(){
     showToast(msg, 9000);
   }catch(e){ /* no log yet, or offline */ }
 }
+/* a resumed app keeps running the old code, and the browser may serve a stale page for a while after a publish:
+   compare the live version.txt with this copy and, if newer, refresh the cached page and reload */
+async function checkForUpdate(){
+  try{
+    const r = await fetch('version.txt?t=' + Date.now(), {cache: 'no-store'});
+    if(!r.ok) return;
+    const live = (await r.text()).trim();
+    if(!/^\d+(\.\d+)*$/.test(live) || live === APP_VERSION) return;
+    let tried = null; try{ tried = sessionStorage.getItem('tavola_update_tried'); }catch(e){}
+    if(tried === live) return;   // already reloaded once for this version (the site may still be publishing): don't loop
+    if(sheetIsOpen() || cookIsOpen()){ showToast('A new version is ready. Close and reopen the app to get it.', 6000); return; }
+    try{ sessionStorage.setItem('tavola_update_tried', live); }catch(e){}
+    await fetch(location.pathname + location.search, {cache: 'reload'});   // replaces the stale copy in the browser and offline caches
+    location.reload();
+  }catch(e){ /* offline */ }
+}
 function handlePlanLink(){
   const m = /^#plan=([^&]+)/.exec(location.hash || ''); if(!m) return;
   let id = ''; try{ id = decodeURIComponent(m[1]); }catch(e){}
@@ -3286,7 +3303,7 @@ async function keepScreenAwake(){
   } catch(e){ appWakeLock = null; }
 }
 document.addEventListener('visibilitychange', keepScreenAwake);
-document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState === 'visible' && state.loaded){ checkFixLog(); checkFixLock(); } });
+document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState === 'visible' && state.loaded){ checkFixLog(); checkFixLock(); checkForUpdate(); } });
 document.addEventListener('pointerdown', keepScreenAwake, {passive:true});
 keepScreenAwake();
 

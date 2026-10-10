@@ -162,3 +162,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.23
 - Auto: issue #7, Bug: In report a bug. Allow edits in the view reported bugs page
+
+0.24
+- Auto: issue #8, Bug: When reopening the app after a bug report, the app seems to open a cac
