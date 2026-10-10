@@ -134,6 +134,3 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.15
 - Bug and idea reports can also be sent to a relay that opens a GitHub issue for automatic fixing (switched off until the relay address is added).
-
-0.16
-- Auto: issue #4, Bug: In the menu, put the meals that were added from last week's menu at th
