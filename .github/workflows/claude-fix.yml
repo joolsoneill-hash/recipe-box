@@ -34,8 +34,10 @@ jobs:
       REPO: ${{ github.repository }}
       IS_BUG: "${{ startsWith(github.event.issue.title, 'Bug: ') }}"
     steps:
+      # Always start from the newest code on the main branch, even for a re-run or a queued run that began earlier.
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.repository.default_branch }}
           fetch-depth: 0
 
       - uses: actions/setup-node@v4
