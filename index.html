@@ -199,16 +199,8 @@
   .file-chip button{border:none;background:none;color:var(--tomato);font-size:18px;}
   .bug-item{background:var(--card);border:1px solid var(--line);border-radius:2px;padding:11px 12px;margin-bottom:8px;}
   .bug-item.done{opacity:0.6;}
-  .bug-item.review{border-left:3px solid var(--gold);}
-  .bug-result{font-size:12px;line-height:1.45;margin-top:6px;color:var(--brown);}
-  #fix-lock{position:fixed;inset:0;z-index:9999;background:var(--paper);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:24px;}
-  #fix-lock svg{width:130px;height:130px;}
-  #fix-lock .fl-msg{font-size:15px;font-weight:600;color:var(--ink);}
-  #fix-lock .fl-sub{font-size:12px;color:var(--brown);max-width:280px;line-height:1.5;}
-  #fix-lock button{border:1px solid var(--line-strong);background:none;border-radius:2px;padding:9px 16px;font-size:13px;font-weight:700;color:var(--herb);}
   .bug-text{font-size:14px;line-height:1.45;white-space:pre-wrap;}
   .bug-meta{font-size:11.5px;color:var(--brown);margin-top:5px;}
-  .bug-pick{margin-right:6px;vertical-align:-1px;width:18px;height:18px;accent-color:var(--herb);}
   .bug-actions{display:flex;gap:14px;margin-top:8px;}
   .bug-actions button{border:none;background:none;color:var(--herb);font-size:12px;font-weight:700;padding:2px 0;}
   .bug-actions button.del{color:var(--tomato);}
@@ -466,7 +458,7 @@
 <body>
 <div id="app" class="booting">
   <header class="app-header">
-    <div class="header-right"><button type="button" class="header-btn" id="menu-header-btn" aria-label="More options" aria-haspopup="true" aria-expanded="false">⋯</button><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button><span class="app-version" id="app-version">v0.21</span></div>
+    <div class="header-right"><button type="button" class="header-btn" id="menu-header-btn" aria-label="More options" aria-haspopup="true" aria-expanded="false">⋯</button><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button><span class="app-version" id="app-version">v0.16</span></div>
     <div class="app-menu" id="app-menu" hidden></div>
     <div class="brand"><svg viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#2B2620"/><defs><clipPath id="rr"><rect width="512" height="512" rx="112"/></clipPath> <pattern id="gh" width="64" height="64" patternUnits="userSpaceOnUse"><rect width="64" height="64" fill="#F6EEDC"/><rect width="32" height="64" fill="#C8452D" opacity=".5"/><rect width="64" height="32" fill="#C8452D" opacity=".5"/></pattern></defs><g clip-path="url(#rr)"><path d="M0 408 Q256 388 512 408 V512 H0Z" fill="url(#gh)"/><path d="M0 408 Q256 388 512 408" fill="none" stroke="#2B2620" stroke-opacity=".25" stroke-width="3"/></g><g transform="translate(256 262) scale(.9) translate(-256 -256)"> <!-- steam --> <g fill="none" stroke="#EDE3D0" stroke-width="12" stroke-linecap="round" opacity=".85"> <path d="M206 120c-18-22 18-34 0-58"/><path d="M256 108c-18-22 18-34 0-58"/><path d="M306 120c-18-22 18-34 0-58"/> </g> <!-- shallow pasta bowl: underside, rim, well --> <path d="M52 322c4 52 84 86 204 86s200-34 204-86z" fill="#EFE6D0"/> <path d="M52 322c4 52 84 86 204 86s200-34 204-86c-30 20-100 32-204 32S82 342 52 322z" fill="#E4D8BC" opacity=".6"/> <rect x="190" y="402" width="132" height="18" rx="9" fill="#EFE6D0"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="#FAF6EC"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="none" stroke="#D9CDB4" stroke-width="5"/> <!-- painted rim --> <ellipse cx="256" cy="322" rx="186" ry="55" fill="none" stroke="#2F5D8C" stroke-width="7"/> <ellipse cx="256" cy="322" rx="164" ry="46" fill="none" stroke="#2F5D8C" stroke-width="3"/> <circle cx="432" cy="330" r="5" fill="#E9B949"/><circle cx="408" cy="354" r="5" fill="#E9B949"/><circle cx="344" cy="373" r="5" fill="#E9B949"/><circle cx="256" cy="379" r="5" fill="#E9B949"/><circle cx="168" cy="373" r="5" fill="#E9B949"/><circle cx="103" cy="355" r="5" fill="#E9B949"/><circle cx="80" cy="330" r="5" fill="#E9B949"/><circle cx="103" cy="305" r="5" fill="#E9B949"/><circle cx="167" cy="286" r="5" fill="#E9B949"/><circle cx="255" cy="280" r="5" fill="#E9B949"/><circle cx="343" cy="286" r="5" fill="#E9B949"/><circle cx="408" cy="304" r="5" fill="#E9B949"/> <!-- well --> <ellipse cx="256" cy="324" rx="138" ry="36" fill="#F1E8D2"/> <!-- spaghetti nest --> <g fill="none" stroke="#F0CF6E" stroke-width="18" stroke-linecap="round"> <path d="M130 318c26-30 50 18 76-4s50 22 76-4 50 18 76-4"/> <ellipse cx="256" cy="302" rx="104" ry="30"/> <ellipse cx="256" cy="278" rx="80" ry="24"/> <ellipse cx="256" cy="256" rx="56" ry="17"/> <ellipse cx="256" cy="238" rx="32" ry="10"/> <path d="M360 326c20 6 36 14 40 24" /> </g> <g fill="none" stroke="#C8962A" stroke-width="4" stroke-linecap="round" opacity=".5"> <ellipse cx="256" cy="310" rx="104" ry="30"/><ellipse cx="256" cy="286" rx="80" ry="24"/><ellipse cx="256" cy="264" rx="56" ry="17"/> </g> <!-- sauce and basil --> <ellipse cx="256" cy="226" rx="30" ry="12" fill="#B94A2F"/> <ellipse cx="248" cy="222" rx="11" ry="4" fill="#D8674A" opacity=".8"/> <path d="M262 218c8-24 32-26 40-12-10 18-30 22-40 12z" fill="#4D7A5A"/> <path d="M268 216c10-6 20-8 30-4" stroke="#2F5A3C" stroke-width="3.5" fill="none" stroke-linecap="round"/> <!-- fork --> <g stroke-linecap="round" stroke-linejoin="round" fill="none"> <line x1="410" y1="150" x2="306" y2="238" stroke="#9AA3AB" stroke-width="16"/> <line x1="410" y1="150" x2="306" y2="238" stroke="#DDE2E6" stroke-width="9"/> <g stroke="#9AA3AB" stroke-width="14"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> <g stroke="#DDE2E6" stroke-width="7"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> </g> </g> <g><circle cx="74" cy="446" r="28" fill="#D2452E"/><ellipse cx="64" cy="436" rx="9" ry="6" fill="#fff" opacity=".35"/> <path d="M74 418c-4-8-14-10-20-6 6 6 12 8 20 6z M74 418c4-8 14-10 20-6-6 6-12 8-20 6z M74 418l0-10" fill="#4D7A5A" stroke="#2F5A3C" stroke-width="3" stroke-linejoin="round"/></g> <g><path d="M438 452c10-26 40-30 54-14-12 22-40 28-54 14z" fill="#4D7A5A"/><path d="M446 450c14-8 28-10 42-6" stroke="#2F5A3C" stroke-width="4" fill="none" stroke-linecap="round"/></g></svg><h1>Tavola</h1></div>
   </header>
@@ -890,9 +882,7 @@ async function loadState(){
       try{ if(b) await saveActivePlanId(); else await dbDelete('activePlanId'); }catch(e){}
     }
     state.loaded = true;
-    await checkFixLock();
     handlePlanLink();
-    checkFixLog();
     render();
     state.photosPromise = loadPhotos();
   } finally {
@@ -1489,6 +1479,7 @@ const NAME_DROP = new Set(['extra','virgin','large','medium','small','fresh','ri
   'boiling','warm','hot','cold','iced']);
 // grams per millilitre, used only to merge a weight and a volume of the same ingredient
 const DENSITY = {water: 1, butter: 0.95};
+const PLAIN_WATER_RE = /^((ice|tap|filtered|lukewarm|room|temperature|of)\s+)*water$/;
 const LIQUID_RE = /\b(oil|vinegar|broth|stock|water|milk|juice|sauce|syrup|wine|cream|extract|molasse|honey|coffee|espresso)/;
 
 function topName(raw){
@@ -1631,7 +1622,9 @@ function buildGroceryList(planArg){
       const raw = (ing.name || '').trim();
       if(!raw) return;
       const norm = normIngName(raw);
-      if(isCarried && (bplan.carryMode === 'none' || (bplan.skipIng || []).includes(groceryKey(norm)))) return;
+      // plain water comes from the tap, never buy it (soda, coconut or sparkling water still count)
+      if(PLAIN_WATER_RE.test(norm)) return;
+      if(isCarried &&(bplan.carryMode === 'none' || (bplan.skipIng || []).includes(groceryKey(norm)))) return;
       const g = groups[norm] || (groups[norm] = {norm, names:{}, g:0, hasG:false, ml:0, hasMl:false, metricVol:false, count:0, hasCount:false, others:{}, notes:[], cats:{}, uses:[]});
       const shown = topName(raw);
       g.names[shown] = (g.names[shown] || 0) + 1;
@@ -1878,22 +1871,16 @@ async function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '0.21';
+const APP_VERSION = '0.16';
 // Reports are also sent here (a small relay that opens a GitHub issue, which Claude then works on). Empty = reports are only saved to the shared list.
-const BUG_RELAY_URL = 'https://tavola-relay.jools-oneill.workers.dev/';
-async function sendToRelay(bugs){   // bugs: an array of reports. Returns {why:'' when all were sent, otherwise the reason, sent:[ids of those that were]}
-  if(!BUG_RELAY_URL) return {why: 'Sending is not set up.', sent: []};
-  if(!auth || !auth.currentUser) return {why: 'You are not signed in.', sent: []};
+const BUG_RELAY_URL = '';
+async function sendToRelay(bug){
+  if(!BUG_RELAY_URL || !auth || !auth.currentUser) return false;
   try{
     const token = await auth.currentUser.getIdToken();
-    const items = bugs.map(b => ({id: b.id, type: b.type, text: b.text, screen: b.screen, version: b.version}));
-    const r = await fetch(BUG_RELAY_URL, {method:'POST', headers:{'Authorization':'Bearer ' + token, 'Content-Type':'application/json'}, body: JSON.stringify({items})});
-    let j = {}; try{ j = await r.json(); }catch(e){}
-    const sent = Array.isArray(j.sent) ? j.sent : (r.ok ? items.map(x => x.id) : []);
-    const issues = Array.isArray(j.issues) ? j.issues : [];
-    if(r.ok && sent.length === items.length) return {why: '', sent, issues};
-    return {why: 'The relay said "' + (j.msg || ('error ' + r.status)) + '" (' + r.status + ').', sent, issues};
-  }catch(e){ console.error('relay failed', e); return {why: 'Could not reach the relay. Check ALLOWED_ORIGIN in Cloudflare is exactly https://joolsoneill-hash.github.io with no slash on the end.', sent: []}; }
+    const r = await fetch(BUG_RELAY_URL, {method:'POST', headers:{'Authorization':'Bearer ' + token, 'Content-Type':'application/json'}, body: JSON.stringify({id: bug.id, type: bug.type, text: bug.text, screen: bug.screen, version: bug.version})});
+    return r.ok;
+  }catch(e){ console.error('relay failed', e); return false; }
 }
 
 function describeView(){
@@ -1909,7 +1896,7 @@ function openBugSheet(){
     <div class="sheet-handle"></div>
     <h2>Bug or idea</h2>
     <div class="seg-row"><button type="button" class="chip active" data-rtype="bug">Report a bug</button><button type="button" class="chip" data-rtype="feature">Request a feature</button></div>
-    <p class="sheet-note" id="bug-help">Say what went wrong and what you were doing. It's saved to the shared list. When you are ready, send the ones you want fixed from the reported list.</p>
+    <p class="sheet-note" id="bug-help">Say what went wrong and what you were doing. It's saved to the shared list, which only the approved signed-in users can see.</p>
     <div class="field"><label id="bug-label">What happened?</label><textarea id="bug-text" placeholder="e.g. When I tap Add on a recipe the count doesn't change…" style="min-height:110px;"></textarea></div>
     <div class="sheet-note">Screen: ${esc(where)}</div>
     <div id="bug-status" class="sheet-status"></div>
@@ -1921,7 +1908,7 @@ function openBugSheet(){
     reportType = b.dataset.rtype;
     document.querySelectorAll('[data-rtype]').forEach(x => x.classList.toggle('active', x === b));
     const feat = reportType === 'feature';
-    document.getElementById('bug-help').textContent = feat ? "Describe the feature you'd like. It's saved to the shared list. Send it from the reported list when you want it built." : "Say what went wrong and what you were doing. It's saved to the shared list. When you are ready, send the ones you want fixed from the reported list.";
+    document.getElementById('bug-help').textContent = feat ? "Describe the feature you'd like. It's saved to the shared list so it can be built later." : "Say what went wrong and what you were doing. It's saved to the shared list, which only the approved signed-in users can see.";
     document.getElementById('bug-label').textContent = feat ? 'What would you like?' : 'What happened?';
     document.getElementById('bug-text').placeholder = feat ? 'e.g. Let me sort recipes by cooking time…' : "e.g. When I tap Add on a recipe the count doesn't change…";
   });
@@ -1943,7 +1930,8 @@ function openBugSheet(){
     try {
       await dbSet('bugs/' + bug.id, bug);
       closeSheet();
-      showToast(reportType === 'feature' ? 'Thanks, your idea is saved.' : 'Thanks, the bug is saved.');
+      const sent = await sendToRelay(bug);
+      showToast(reportType === 'feature' ? (sent ? 'Thanks, your idea is saved and sent to be built.' : 'Thanks, your idea is saved.') : (sent ? 'Thanks, the bug is saved and sent for fixing.' : 'Thanks, the bug is saved.'));
       return;
     } catch(e){
       console.error('bug save failed', e);
@@ -1954,7 +1942,6 @@ function openBugSheet(){
 }
 
 async function openBugListSheet(){
-  bugTab = 'open';
   openSheet(`<div class="sheet-handle"></div><h2>Reported bugs</h2><div class="loading">Loading…</div>`);
   let bugs;
   try { bugs = (await dbGet('bugs')) || {}; }
@@ -1971,186 +1958,54 @@ function bugDate(ts){
   catch(e){ return ''; }
 }
 
-function fixResultText(b){
-  if(b.fixResult === 'fixed') return 'A fix was published' + (b.fixVersion ? ' in v' + b.fixVersion : '') + '. Please check it, then say whether it worked.';
-  if(b.fixResult === 'nochange') return 'Claude looked at it but changed nothing. Choose Not fixed to send it again.';
-  if(b.fixResult === 'failed') return 'The fix attempt failed. Choose Not fixed to try again.';
-  return 'No result came back from the fix. Check GitHub, or choose Not fixed to try again.';
-}
-
-/* ---------- FIX LOCK: while sent bugs are being fixed, the app shows only the logo ----------
-   The lock lives in the shared database (fixLock) so both phones are held. It lifts when the fix log reports an outcome for every sent issue. */
-let fixLockTimer = null, fixLockShown = false;
-function showFixLock(lock){
-  closeSheet();
-  let el = document.getElementById('fix-lock');
-  if(!el){
-    el = document.createElement('div'); el.id = 'fix-lock';
-    el.innerHTML = document.querySelector('#boot-splash').innerHTML + '<div class="fl-msg">Bug fixes in progress</div><div class="fl-sub" id="fl-sub">This usually takes a few minutes. The app opens again by itself.</div><div id="fl-extra"></div>';
-    document.body.appendChild(el);
-  }
-  fixLockShown = true;
-  const extra = document.getElementById('fl-extra');
-  const stale = lock.since && (Date.now() - lock.since > 30 * 60 * 1000);
-  if(stale && !extra.firstChild){
-    document.getElementById('fl-sub').textContent = 'This is taking longer than expected. Check the Actions tab on GitHub.';
-    extra.innerHTML = '<button type="button" id="fl-release">Open the app anyway</button>';
-    document.getElementById('fl-release').onclick = async ()=>{
-      extra.firstChild.disabled = true;
-      await settleFixLock(lock, []);
-      hideFixLock();
-    };
-  }
-}
-function hideFixLock(){
-  clearTimeout(fixLockTimer);
-  const el = document.getElementById('fix-lock'); if(el) el.remove();
-  if(fixLockShown){ fixLockShown = false; checkFixLog(); }
-}
-async function settleFixLock(lock, log){
-  const groups = lock.groups ? Object.values(lock.groups) : [];
-  for(const g of groups){
-    const e = log.find(x => x.kind === 'bug' && (g.number ? x.issue === g.number : (x.time || 0) >= (lock.since || 0)));
-    for(const id of (g.ids ? Object.values(g.ids) : [])){
-      try{
-        const b = await dbGet('bugs/' + id);
-        if(b && b.status === 'open'){
-          b.status = 'review'; b.fixResult = e ? e.result : 'timeout';
-          if(e && e.version) b.fixVersion = e.version;
-          if(e && typeof e.cost === 'number') b.fixCost = e.cost;
-          await dbSet('bugs/' + id, b);
-        }
-      }catch(err){ console.error('settle failed', id, err); }
-    }
-  }
-  try{ await dbDelete('fixLock'); }catch(err){ console.error('unlock failed', err); }
-}
-async function checkFixLock(){
-  clearTimeout(fixLockTimer);
-  let lock = null;
-  try{ lock = await dbGet('fixLock'); }catch(e){ return; }
-  if(!lock || !lock.groups){ hideFixLock(); return; }
-  let log = [];
-  try{ const r = await fetch('fix-log.json?t=' + Date.now(), {cache: 'no-store'}); if(r.ok){ const j = await r.json(); if(Array.isArray(j)) log = j; } }catch(e){}
-  const groups = Object.values(lock.groups);
-  const match = g => log.some(x => x.kind === 'bug' && (g.number ? x.issue === g.number : (x.time || 0) >= (lock.since || 0)));
-  if(groups.every(match)){ await settleFixLock(lock, log); hideFixLock(); return; }
-  showFixLock(lock);
-  fixLockTimer = setTimeout(checkFixLock, 20000);
-}
-
-let bugTab = 'open';
-function paintBugList(bugs, picked){
-  picked = picked || new Set();
+function paintBugList(bugs){
   const list = Object.values(bugs).sort((a,b)=>{
-    const rank = x => x.status === 'review' ? 0 : x.status === 'done' ? 2 : 1;
-    if(rank(a) !== rank(b)) return rank(a) - rank(b);
+    if(a.status !== b.status) return a.status === 'open' ? -1 : 1;
     return (b.created || 0) - (a.created || 0);
   });
-  const openList = list.filter(b => b.status === 'open');
-  const openCount = list.filter(b => b.status !== 'done').length;
-  const canSend = !!BUG_RELAY_URL;
-  const fixedCount = list.filter(b => b.status === 'done').length;
-  const onOpen = bugTab !== 'fixed';
+  const openCount = list.filter(b => b.status === 'open').length;
   let html = `<div class="sheet-handle"></div><h2>Bugs and ideas</h2><div id="bl-root">
-    <div class="seg-row"><button type="button" class="chip ${onOpen ? 'active' : ''}" data-bug-tab="open">Open (${openCount})</button><button type="button" class="chip ${onOpen ? '' : 'active'}" data-bug-tab="fixed">Fixed (${fixedCount})</button></div>
-    ${onOpen && canSend ? '<p class="sheet-note">Tick the ones to send, then send them together. Bugs are fixed and published; ideas come back as a pull request to approve.</p>' : ''}`;
-  const shown = list.filter(b => (b.status !== 'done') === onOpen);
-  if(!shown.length) html += `<div class="empty-state"><p>${onOpen ? 'Nothing open. Report a bug or idea below.' : 'Nothing marked fixed yet.'}</p></div>`;
-  shown.forEach(b=>{
-    const isOpen = b.status === 'open', isRev = b.status === 'review';
+    <p class="sheet-note">${openCount} open · ${list.length - openCount} fixed</p>`;
+  if(!list.length) html += `<div class="empty-state"><p>No bugs reported yet.</p></div>`;
+  list.forEach(b=>{
     html += `
-      <div class="bug-item ${isRev ? 'review' : isOpen ? '' : 'done'}">
-        <div class="bug-text">${canSend && isOpen ? `<input type="checkbox" class="bug-pick" data-bug-pick="${esc(b.id)}" ${picked.has(b.id) ? 'checked' : ''} aria-label="Send this one"> ` : ''}${b.type === 'feature' ? '<strong>💡 Feature request: </strong>' : ''}${esc(b.text)}</div>
-        <div class="bug-meta">${esc(bugDate(b.created))} · ${esc(b.reporter || '')} · ${esc(b.screen || '')}${b.sentAt ? ' · <strong>Sent ' + esc(bugDate(b.sentAt)) + '</strong>' : ''}</div>
-        ${isRev ? `<div class="bug-result">${esc(fixResultText(b))}</div>` : ''}
+      <div class="bug-item ${b.status === 'open' ? '' : 'done'}">
+        <div class="bug-text">${b.type === 'feature' ? '<strong>💡 Feature request: </strong>' : ''}${esc(b.text)}</div>
+        <div class="bug-meta">${esc(bugDate(b.created))} · ${esc(b.reporter || '')} · ${esc(b.screen || '')}</div>
         <div class="bug-actions">
-          ${isRev ? `<button data-bug-ok="${esc(b.id)}">Looks good</button><button data-bug-no="${esc(b.id)}">Not fixed</button>` : `<button data-bug-toggle="${esc(b.id)}">${isOpen ? 'Mark fixed' : 'Reopen'}</button>`}
+          <button data-bug-toggle="${esc(b.id)}">${b.status === 'open' ? 'Mark fixed' : 'Reopen'}</button>
           <button data-bug-del="${esc(b.id)}" class="del">Delete</button>
         </div>
       </div>`;
   });
-  if(onOpen && canSend && openCount){
-    html += `<div class="btn-row"><button class="primary-btn ${picked.size ? '' : 'is-off'}" id="bl-send">Send ${picked.size || ''} for fixing</button><button class="secondary-btn" id="bl-all">${picked.size === openList.filter(b=>!b.sentAt).length && picked.size ? 'Clear ticks' : 'Tick all unsent'}</button></div>`;
-  }
   html += `
-    ${onOpen ? '<button class="secondary-btn" id="bl-copy">Copy open bugs as text</button>' : ''}
+    <button class="secondary-btn" id="bl-copy">Copy open bugs as text</button>
     <button class="secondary-btn" id="bl-back">Report a bug or idea</button>
     <button class="secondary-btn" id="bl-close">Close</button></div>`;
-  const sheetEl = document.getElementById('sheet'); const keepTop = sheetEl.scrollTop;
-  sheetEl.innerHTML = html; sheetEl.scrollTop = keepTop;
+  document.getElementById('sheet').innerHTML = html;
 
   const root = document.getElementById('bl-root');
   root.addEventListener('click', async (e)=>{
     const tg = e.target.closest('[data-bug-toggle]');
     const dl = e.target.closest('[data-bug-del]');
-    const pk = e.target.closest('[data-bug-pick]');
-    const okb = e.target.closest('[data-bug-ok]'), nob = e.target.closest('[data-bug-no]');
     try {
-      if(okb || nob){
-        const b = bugs[(okb || nob).dataset.bugOk || (okb || nob).dataset.bugNo];
-        if(b){
-          if(okb) b.status = 'done';
-          else { b.status = 'open'; delete b.sentAt; delete b.fixResult; delete b.fixVersion; delete b.fixCost; }
-          await dbSet('bugs/' + b.id, b);
-          paintBugList(bugs, picked);
-        }
-        return;
-      }
-      if(e.target.closest('[data-bug-tab]')){
-        bugTab = e.target.closest('[data-bug-tab]').dataset.bugTab;
-        paintBugList(bugs, picked);
-      } else if(pk){
-        if(pk.checked) picked.add(pk.dataset.bugPick); else picked.delete(pk.dataset.bugPick);
-        paintBugList(bugs, picked);
-      } else if(e.target.closest('#bl-all')){
-        const unsent = openList.filter(b => !b.sentAt).map(b => b.id);
-        if(picked.size === unsent.length && picked.size) picked.clear(); else { picked.clear(); unsent.forEach(id => picked.add(id)); }
-        paintBugList(bugs, picked);
-      } else if(e.target.closest('#bl-send')){
-        const chosen = openList.filter(b => picked.has(b.id));
-        if(!chosen.length) return;
-        const again = chosen.filter(b => b.sentAt).length;
-        const msg = 'Send ' + chosen.length + ' report' + (chosen.length === 1 ? '' : 's') + ' to be fixed together?' + (again ? ' ' + again + ' of them ' + (again === 1 ? 'was' : 'were') + ' sent before and will be done again.' : '');
-        if(!(await appConfirm(msg, 'Send'))) return;
-        const btn = document.getElementById('bl-send'); btn.disabled = true; btn.textContent = 'Sending…';
-        const res = await sendToRelay(chosen);
-        for(const id of res.sent){ const b = bugs[id]; if(b){ b.sentAt = Date.now(); await dbSet('bugs/' + b.id, b); picked.delete(id); } }
-        if(res.why) appAlert((res.sent.length ? 'Some were sent, but not all.\n\n' : 'Not sent.\n\n') + res.why);
-        else showToast('Sent. Ideas appear as a pull request on GitHub.');
-        const bugIds = res.sent.filter(id => bugs[id] && bugs[id].type !== 'feature');
-        if(bugIds.length){
-          let groups = (res.issues || []).filter(g => g.type === 'bug').map(g => ({number: g.number || null, ids: (g.ids || []).filter(id => bugIds.includes(id))}));
-          if(!groups.length) groups = [{number: null, ids: bugIds}];
-          try{
-            const old = await dbGet('fixLock');
-            const oldGroups = old && old.groups ? Object.values(old.groups) : [];
-            await dbSet('fixLock', {since: old && old.since ? old.since : Date.now(), groups: oldGroups.concat(groups)});
-          }catch(err){ console.error('lock failed', err); }
-          closeSheet();
-          await checkFixLock();
-          return;
-        }
-        paintBugList(bugs, picked);
-      } else if(tg){
+      if(tg){
         const b = bugs[tg.dataset.bugToggle];
         b.status = b.status === 'open' ? 'done' : 'open';
-        picked.delete(b.id);
         await dbSet('bugs/' + b.id, b);
-        paintBugList(bugs, picked);
+        paintBugList(bugs);
       } else if(dl){
         if(!(await appConfirm('Delete this report?', 'Delete', true))) return;
         const id = dl.dataset.bugDel;
         await dbDelete('bugs/' + id);
-        delete bugs[id]; picked.delete(id);
-        paintBugList(bugs, picked);
+        delete bugs[id];
+        paintBugList(bugs);
       }
     } catch(err){ console.error('bug update failed', err); }
   });
   document.getElementById('bl-close').onclick = closeSheet;
   document.getElementById('bl-back').onclick = openBugSheet;
-  const copyBtn = document.getElementById('bl-copy');
-  if(copyBtn) copyBtn.onclick = async ()=>{
+  document.getElementById('bl-copy').onclick = async ()=>{
     const open = list.filter(b => b.status === 'open');
     const text = `Tavola open bugs and feature requests (${open.length}), app version ${APP_VERSION}\n\n` +
       open.map((b,i)=>`${i+1}. ${b.type === 'feature' ? '[FEATURE REQUEST] ' : ''}${b.text}\n   [${b.screen || ''}; ${b.reporter || ''}; ${bugDate(b.created)}]`).join('\n\n');
@@ -2511,12 +2366,12 @@ function appDialog(message, buttons){
 function appAlert(message){ return appDialog(message, [{label:'OK', value:true, cls:'ok'}]); }
 function appConfirm(message, okLabel, danger){ return appDialog(message, [{label:'Cancel', value:false}, {label: okLabel || 'OK', value:true, cls: danger ? 'danger' : 'ok'}]); }
 let toastTimer = null;
-function showToast(msg, ms){
+function showToast(msg){
   let t = document.getElementById('toast');
   if(!t){ t = document.createElement('div'); t.id = 'toast'; t.className = 'toast'; document.body.appendChild(t); }
   t.textContent = msg; t.style.display = '';
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>{ t.style.display = 'none'; }, ms || 3500);
+  toastTimer = setTimeout(()=>{ t.style.display = 'none'; }, 3500);
 }
 
 /* ---------- SHEET (modal) ---------- */
@@ -3185,32 +3040,6 @@ async function sharePlanImage(){
 }
 
 /* a shared link (#plan=<id>) opens that menu: a draft on the Planner, a built menu on the Menu tab */
-/* ---------- FIX LOG: tells you when a sent report has been fixed, and what the fix cost ----------
-   The GitHub workflow appends to fix-log.json (published with the app) after each fix. */
-async function checkFixLog(){
-  try{
-    const r = await fetch('fix-log.json?t=' + Date.now(), {cache: 'no-store'});
-    if(!r.ok) return;
-    const log = await r.json();
-    if(!Array.isArray(log)) return;
-    const max = log.reduce((m, e) => Math.max(m, e.time || 0), 0);
-    let seen = null;
-    try{ seen = localStorage.getItem('tavola_fixlog_seen'); }catch(e){}
-    if(seen === null){ try{ localStorage.setItem('tavola_fixlog_seen', String(max)); }catch(e){} return; }   // first time on this device: don't announce old fixes
-    const fresh = log.filter(e => (e.time || 0) > Number(seen));
-    if(!fresh.length) return;
-    try{ localStorage.setItem('tavola_fixlog_seen', String(max)); }catch(e){}
-    const cost = fresh.reduce((t, e) => t + (typeof e.cost === 'number' ? e.cost : 0), 0);
-    const known = fresh.every(e => typeof e.cost === 'number');
-    const bugs = fresh.filter(e => e.kind !== 'feature'), feats = fresh.length - bugs.length;
-    const last = bugs[bugs.length - 1];
-    let msg = bugs.length ? (bugs.length === 1 && !feats ? 'Fixed and published as v' + last.version + '.' : 'Fixes published, now v' + last.version + '.') : 'Your idea was built as a pull request. Approve it on GitHub.';
-    if(bugs.length && feats) msg += ' An idea is waiting as a pull request.';
-    msg += known ? ' Cost US$' + cost.toFixed(2) + '.' : ' Cost not available.';
-    if(bugs.length) msg += ' Close and reopen the app to get it, then check it in the bug list.';
-    showToast(msg, 9000);
-  }catch(e){ /* no log yet, or offline */ }
-}
 function handlePlanLink(){
   const m = /^#plan=([^&]+)/.exec(location.hash || ''); if(!m) return;
   let id = ''; try{ id = decodeURIComponent(m[1]); }catch(e){}
@@ -3267,7 +3096,6 @@ async function keepScreenAwake(){
   } catch(e){ appWakeLock = null; }
 }
 document.addEventListener('visibilitychange', keepScreenAwake);
-document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState === 'visible' && state.loaded){ checkFixLog(); checkFixLock(); } });
 document.addEventListener('pointerdown', keepScreenAwake, {passive:true});
 keepScreenAwake();
 
