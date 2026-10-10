@@ -156,3 +156,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 0.21
 - Sending bugs now locks the app (logo and "Bug fixes in progress") until each fix has been tried. The lock lifts by itself on every phone.
 - Tried fixes appear in the Open tab marked for review: "Looks good" moves them to Fixed, "Not fixed" reopens them to send again.
+
+0.22
+- Auto: issue #6, Bug: Never put water on the shopping list

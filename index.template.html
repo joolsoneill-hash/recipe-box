@@ -1489,6 +1489,7 @@ const NAME_DROP = new Set(['extra','virgin','large','medium','small','fresh','ri
   'boiling','warm','hot','cold','iced']);
 // grams per millilitre, used only to merge a weight and a volume of the same ingredient
 const DENSITY = {water: 1, butter: 0.95};
+const PLAIN_WATER_RE = /^((ice|tap|filtered|lukewarm|room|temperature|of)\s+)*water$/;
 const LIQUID_RE = /\b(oil|vinegar|broth|stock|water|milk|juice|sauce|syrup|wine|cream|extract|molasse|honey|coffee|espresso)/;
 
 function topName(raw){
@@ -1631,6 +1632,8 @@ function buildGroceryList(planArg){
       const raw = (ing.name || '').trim();
       if(!raw) return;
       const norm = normIngName(raw);
+      // plain water comes from the tap, never buy it (soda, coconut or sparkling water still count)
+      if(PLAIN_WATER_RE.test(norm)) return;
       if(isCarried && (bplan.carryMode === 'none' || (bplan.skipIng || []).includes(groceryKey(norm)))) return;
       const g = groups[norm] || (groups[norm] = {norm, names:{}, g:0, hasG:false, ml:0, hasMl:false, metricVol:false, count:0, hasCount:false, others:{}, notes:[], cats:{}, uses:[]});
       const shown = topName(raw);
