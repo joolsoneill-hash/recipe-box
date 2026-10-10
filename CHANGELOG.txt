@@ -184,3 +184,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.29
 - Planner: a meal added to a menu now starts at 4 serves. You can still change it per meal.
+
+0.30
+- Planner: the "include meals not cooked yet" option, "What is in my fridge?" and "Cook again" now sit above "Suggest meals".
