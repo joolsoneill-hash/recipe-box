@@ -190,3 +190,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.31
 - Auto: issue #9, Bug: In cooking mode, create a function that allows adding ingredients to t
+
+0.32
+- Auto: issue #10, Bug: 2 reports, starting with: In the steps box in recipe. Add the ingr

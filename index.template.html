@@ -1175,6 +1175,9 @@ function renderRecipeDetail(id){
   const inPlan = !!(plan && plan.recipeIds.includes(id));
   const sf = scaleFactorFor(r);
   const rtab = currentView().rtab === 'steps' ? 'steps' : 'ingredients';
+  const ingListHtml = `<ul class="ing-list">
+        ${r.ingredients.map(i=>`<li><span class="ing-nm">${esc(ingShownName(r, i))}</span><span class="ing-q">${esc(ingQtyText(i.qty, i.unit, sf))}</span></li>`).join('')}
+      </ul>`;
   return `
     <button class="detail-back" data-act="back">Back</button>
     ${r.photo ? `<img src="${r.photo}" alt="" style="width:100%;height:290px;object-fit:cover;border-radius:4px;margin-bottom:12px;display:block;">` : placeholderHtml(r, 180, '4px', 'margin-bottom:12px;')}
@@ -1194,16 +1197,18 @@ function renderRecipeDetail(id){
 
     ${rtab === 'ingredients' ? `
     <div class="detail-section" style="margin-top:12px;">
-      <ul class="ing-list">
-        ${r.ingredients.map(i=>`<li><span class="ing-nm">${esc(ingShownName(r, i))}</span><span class="ing-q">${esc(ingQtyText(i.qty, i.unit, sf))}</span></li>`).join('')}
-      </ul>
+      ${ingListHtml}
       ${Math.abs(sf - 1) > 1e-9 ? `<p class="plan-hint">Quantities are scaled for ${planServings(plan, r)} people. Amounts written inside the steps are not changed.</p>` : ''}
     </div>` : `
     <div class="detail-section" style="margin-top:12px;">
       <ol class="steps-list">
         ${r.steps.map(s=>`<li>${esc(s)}</li>`).join('')}
       </ol>
-    </div>`}
+    </div>
+    ${r.ingredients.length ? `<div class="detail-section" style="margin-top:18px;">
+      <h4>Ingredients</h4>
+      ${ingListHtml}
+    </div>` : ''}`}
 
     <button class="cooked-btn ${cookedNow(r)?'on':''}" data-act="recipe-cooked" data-id="${esc(r.id)}">${cookedNow(r) ? 'Cooked ✓ (tap to undo)' : 'Cooked'}</button>
 
@@ -1252,9 +1257,10 @@ function renderPlan(){
   const plan = activePlan();
   if(!plan) return `<h2 class="plan-date">Menu of the Week</h2><div class="empty-state"><h3>No menu yet</h3><p>Choose your meals in the Planner. When you build the menu it moves here and your grocery list is made.</p><button class="secondary-btn" data-act="go-planner">Go to Planner</button></div>`;
   let items = planRecipes(plan);
-  // meals carried over from an earlier menu that are not cooked yet go first
-  const isCarryOpen = r => !!(plan.carried && plan.carried.includes(r.id) && !(plan.done && plan.done[r.id]));
-  items = [...items.filter(isCarryOpen), ...items.filter(r => !isCarryOpen(r))];
+  // meals carried over from an earlier menu that are not cooked yet go first; cooked meals go last
+  const isDone = r => !!(plan.done && plan.done[r.id]);
+  const isCarryOpen = r => !!(plan.carried && plan.carried.includes(r.id) && !isDone(r));
+  items = [...items.filter(isCarryOpen), ...items.filter(r => !isCarryOpen(r) && !isDone(r)), ...items.filter(isDone)];
 
   const lockIcon = plan.locked
     ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" fill="currentColor" fill-opacity=".15"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>`
