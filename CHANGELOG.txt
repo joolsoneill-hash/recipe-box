@@ -193,3 +193,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.32
 - Auto: issue #10, Bug: 2 reports, starting with: In the steps box in recipe. Add the ingr
+
+0.33
+- Auto: issue #11, Bug: 2 reports, starting with: The ingredients used in each individual 

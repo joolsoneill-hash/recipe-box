@@ -130,6 +130,10 @@
   .steps-list{padding-left:0;list-style:none;counter-reset:step;margin:0;}
   .steps-list li{counter-increment:step;padding:11px 0 11px 32px;border-bottom:1px solid var(--line);font-size:17px;line-height:1.5;position:relative;}
   .steps-list li::before{content:counter(step);position:absolute;left:0;top:13px;font-weight:700;font-size:14px;color:var(--herb);width:22px;}
+  .steps-list .step-ings{list-style:none;padding:0;margin:8px 0 0;}
+  .steps-list .step-ings li{counter-increment:none;display:flex;justify-content:space-between;gap:10px;padding:3px 0;border:none;font-size:14px;color:var(--brown);}
+  .steps-list .step-ings li::before{content:none;}
+  .recipe-sub-head{margin:18px 0 10px;font-size:14px;font-weight:700;color:var(--brown);}
 
   /* Meal plan view */
   .plan-select-wrap{margin-bottom:12px;}
@@ -1146,13 +1150,33 @@ function renderBox(){
   if(filtered.length===0){
     html += `<div class="empty-state"><h3>No recipes here yet</h3><p>${recipes.length===0 ? 'Add your first recipe to start building your box.' : 'Nothing matches that search or filter.' + (state.activeFilter==='fav' ? ' Tap the ☆ on a recipe to make it a favourite.' : '')}</p></div>`;
   } else {
-    html += `<div class="recipe-grid">`;
-    filtered.forEach(r=>{
-      const ingPreview = r.ingredients.slice(0,3).map(i=>i.name).join(', ') + (r.ingredients.length>3?'…':'');
-      html += `
+    // favourites get their own foldable section (open by default), in a random order that holds for the session
+    const favs = filtered.filter(r => r.fav).sort((a,b) => favShuffleKey(a.id) - favShuffleKey(b.id));
+    const rest = filtered.filter(r => !r.fav);
+    const favsClosed = !!(state.openFilters && state.openFilters.favsClosed);
+    if(favs.length){
+      html += `<button type="button" class="fold-head" data-act="fold" data-id="favsClosed" style="margin:0 0 12px;"><span>Favourites</span><em>${favs.length}</em><b>${favsClosed?'▸':'▾'}</b></button>`;
+      if(!favsClosed) html += `<div class="recipe-grid">${favs.map(recipeCardHtml).join('')}</div>`;
+      if(rest.length) html += `<div class="recipe-sub-head">All recipes</div>`;
+    }
+    if(rest.length) html += `<div class="recipe-grid">${rest.map(recipeCardHtml).join('')}</div>`;
+  }
+
+  return html;
+}
+
+const favShuffle = {};
+function favShuffleKey(id){
+  if(!(id in favShuffle)) favShuffle[id] = Math.random();
+  return favShuffle[id];
+}
+
+function recipeCardHtml(r){
+  const ingPreview = r.ingredients.slice(0,3).map(i=>i.name).join(', ') + (r.ingredients.length>3?'…':'');
+  return `
         <div class="recipe-card" data-act="open-recipe" data-id="${esc(r.id)}">
           ${favBtnHtml(r)}
-          ${r.photo ? `<img src="${r.photo}" alt="" style="width:100%;height:200px;object-fit:cover;display:block;border-radius:2px 2px 0 0;margin:-16px -14px 12px;width:calc(100% + 28px);max-width:none;">` : placeholderHtml(r, 140, '2px 2px 0 0', 'margin:-16px -14px 12px;width:calc(100% + 28px);')}
+          ${r.photo ? `<img src="${r.photo}" alt="" style="width:100%;height:133px;object-fit:cover;display:block;border-radius:2px 2px 0 0;margin:-16px -14px 12px;width:calc(100% + 28px);max-width:none;">` : placeholderHtml(r, 93, '2px 2px 0 0', 'margin:-16px -14px 12px;width:calc(100% + 28px);')}
           <span class="card-tag" style="background:${TAG_COLORS[r.tag]||'var(--brown)'};top:8px;">${esc(TAG_LABELS[r.tag]||r.tag)}</span>
           <h3>${esc(r.title)}</h3>
           ${r.subtitle ? `<div class="recipe-sub">${esc(r.subtitle)}</div>` : ''}
@@ -1161,11 +1185,6 @@ function renderBox(){
           <div class="recipe-ing-preview">${esc(ingPreview)}</div>
           <button type="button" class="card-next ${draftIds().includes(r.id)?'on':''}" data-act="draft-toggle" data-id="${esc(r.id)}">${draftIds().includes(r.id) ? 'In draft menu' : '+ Add to draft menu'}</button>
         </div>`;
-    });
-    html += `</div>`;
-  }
-
-  return html;
 }
 
 function renderRecipeDetail(id){
@@ -1202,13 +1221,12 @@ function renderRecipeDetail(id){
     </div>` : `
     <div class="detail-section" style="margin-top:12px;">
       <ol class="steps-list">
-        ${r.steps.map(s=>`<li>${esc(s)}</li>`).join('')}
+        ${r.steps.map((s, si)=>{
+          const used = getStepIngredients(r, si);
+          return `<li>${esc(s)}${used.length ? `<ul class="step-ings">${used.map(i=>`<li><span class="ing-nm">${esc(ingShownName(r, i))}</span><span class="ing-q">${esc(ingQtyText(i.qty, i.unit, sf))}</span></li>`).join('')}</ul>` : ''}</li>`;
+        }).join('')}
       </ol>
-    </div>
-    ${r.ingredients.length ? `<div class="detail-section" style="margin-top:18px;">
-      <h4>Ingredients</h4>
-      ${ingListHtml}
-    </div>` : ''}`}
+    </div>`}
 
     <button class="cooked-btn ${cookedNow(r)?'on':''}" data-act="recipe-cooked" data-id="${esc(r.id)}">${cookedNow(r) ? 'Cooked ✓ (tap to undo)' : 'Cooked'}</button>
 
