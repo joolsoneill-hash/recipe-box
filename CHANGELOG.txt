@@ -199,3 +199,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.34
 - Auto: issue #12, Bug: In the edit ingredients function of the cooking mode, the default choi
+
+0.35
+- Auto: issue #13, Bug: 3 reports, starting with: Add a dislike button at the end of the s

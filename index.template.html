@@ -133,6 +133,14 @@
   .steps-list .step-ings{list-style:none;padding:0;margin:8px 0 0;}
   .steps-list .step-ings li{counter-increment:none;display:flex;justify-content:space-between;gap:10px;padding:3px 0;border:none;font-size:14px;color:var(--brown);}
   .steps-list .step-ings li::before{content:none;}
+  .steps-list .step-ings li[data-act]{cursor:pointer;}
+  .steps-list .step-ings li.editing{display:block;color:var(--ink);}
+  .step-edit-link{background:none;border:none;padding:0 2px;font:inherit;font-size:13px;color:var(--brown);text-decoration:underline;cursor:pointer;}
+  .step-edit-text{width:100%;min-height:110px;font:inherit;font-size:16px;line-height:1.5;padding:8px;border:1px solid var(--line-strong);border-radius:2px;background:#fff;color:var(--ink);box-sizing:border-box;}
+  .step-edit-actions{display:flex;gap:8px;margin-top:6px;}
+  .step-edit-actions input{flex:1;min-width:0;font:inherit;font-size:16px;padding:8px;border:1px solid var(--line-strong);border-radius:2px;background:#fff;color:var(--ink);}
+  .step-edit-actions button{flex:1;font:inherit;font-size:13px;font-weight:600;padding:9px 12px;border:1px solid var(--line-strong);border-radius:2px;background:none;color:var(--brown);}
+  .step-edit-actions button.ok{background:var(--tomato);border-color:var(--tomato);color:#fff;}
   .recipe-sub-head{margin:18px 0 10px;font-size:14px;font-weight:700;color:var(--brown);}
 
   /* Meal plan view */
@@ -274,6 +282,9 @@
   .cook-finish{text-align:center;padding:20px 10px;}
   .cook-finish h2{font-size:28px;margin:0 0 6px;}
   .cook-finish p{color:var(--brown);margin:0 0 20px;}
+  .dislike-btn{display:block;width:100%;margin:10px 0 4px;padding:12px;font:inherit;font-size:13px;font-weight:600;border-radius:2px;border:1px solid var(--line-strong);background:none;color:var(--brown);}
+  .dislike-btn.on{border-color:var(--tomato);color:var(--tomato);}
+  .cook-finish .dislike-btn{max-width:320px;margin:16px auto 0;}
   .cook-finish .fav-btn{width:auto;border-radius:24px;padding:0 20px;height:46px;font-size:16px;gap:8px;margin:0 auto;}
   .app-header .brand{display:flex;flex-direction:row;align-items:center;gap:12px;padding-right:56px;}
   .app-header .brand svg{width:88px;height:88px;flex-shrink:0;border-radius:20px;}
@@ -1088,6 +1099,12 @@ function splitTitle(t){
   return [t, ''];
 }
 function fullTitle(r){ return r.subtitle ? r.title + ' ' + r.subtitle : r.title; }
+// an existing recipe with the same title (ignoring case, spaces and punctuation), used to catch duplicate imports
+const titleKey = t => String(t || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+function findRecipeByTitle(title, exceptId){
+  const k = titleKey(title);
+  return k ? Object.values(state.recipes).find(r => r.id !== exceptId && titleKey(fullTitle(r)) === k) : null;
+}
 function migrateSubtitles(){
   const writes = [];
   Object.values(state.recipes).forEach(r=>{
@@ -1110,6 +1127,15 @@ async function setFavourite(id){
   await saveRecipe(r);
   return !!r.fav;
 }
+// a disliked recipe is never picked by "Suggest meals"; it can still be added to a menu by hand
+async function setDislike(id){
+  const r = state.recipes[id];
+  if(!r) return false;
+  r.dislike = !r.dislike;
+  await saveRecipe(r);
+  return !!r.dislike;
+}
+function dislikeLabel(on){ return on ? 'Disliked: not suggested for menus (tap to undo)' : 'Dislike: never suggest for menus'; }
 function favBtnHtml(r, withText){
   return `<button type="button" class="fav-btn ${r.fav?'on':''}" data-act="fav" data-id="${esc(r.id)}" aria-label="${r.fav?'Remove from favourites':'Add to favourites'}">${starSvg(r.fav)}${withText ? `<span>${r.fav?'Favourite':'Add to favourites'}</span>` : ''}</button>`;
 }
@@ -1187,6 +1213,7 @@ function recipeCardHtml(r){
         </div>`;
 }
 
+let stepEdit = null;   // {id, si, ix}: what is being edited on the Steps tab (ix is an ingredient index or 'step')
 function renderRecipeDetail(id){
   const r = state.recipes[id];
   if(!r) return renderBox();
@@ -1223,9 +1250,19 @@ function renderRecipeDetail(id){
       <ol class="steps-list">
         ${r.steps.map((s, si)=>{
           const used = getStepIngredients(r, si);
-          return `<li>${esc(s)}${used.length ? `<ul class="step-ings">${used.map(i=>`<li><span class="ing-nm">${esc(ingShownName(r, i))}</span><span class="ing-q">${esc(ingQtyText(i.qty, i.unit, sf))}</span></li>`).join('')}</ul>` : ''}</li>`;
+          const ed = (stepEdit && stepEdit.id === r.id && stepEdit.si === si) ? stepEdit : null;
+          const textHtml = ed && ed.ix === 'step'
+            ? `<textarea id="se-text" class="step-edit-text">${esc(s)}</textarea><div class="step-edit-actions"><button type="button" class="ok" data-act="se-step-save" data-id="${si}">Save step</button><button type="button" data-act="se-cancel">Cancel</button></div>`
+            : `${esc(s)} <button type="button" class="step-edit-link" data-act="se-step-edit" data-id="${si}">Edit step</button>`;
+          return `<li>${textHtml}${used.length ? `<ul class="step-ings">${used.map(i=>{
+            const ix = r.ingredients.indexOf(i);
+            if(ed && ed.ix === ix) return `<li class="editing"><span>${esc(ingShownName(r, i))} <small>(recipe amount)</small></span><div class="step-edit-actions"><input id="se-qty" inputmode="decimal" value="${esc(i.qty)}" placeholder="Qty" aria-label="Quantity"><input id="se-unit" value="${esc(i.unit)}" placeholder="Unit" aria-label="Unit"></div><div class="step-edit-actions"><button type="button" class="ok" data-act="se-ing-save" data-id="${si}:${ix}">Save</button><button type="button" data-act="se-cancel">Cancel</button></div><div class="step-edit-actions"><button type="button" data-act="se-ing-remove" data-id="${si}:${ix}">Remove from this step</button></div></li>`;
+            return `<li data-act="se-ing-edit" data-id="${si}:${ix}"><span class="ing-nm">${esc(ingShownName(r, i))}</span><span class="ing-q">${esc(ingQtyText(i.qty, i.unit, sf))}</span></li>`;
+          }).join('')}</ul>` : ''}</li>`;
         }).join('')}
       </ol>
+      <p class="plan-hint">Tap an ingredient to change its amount or remove it from a step.</p>
+      <button type="button" class="dislike-btn ${r.dislike?'on':''}" data-act="dislike" data-id="${esc(r.id)}">${dislikeLabel(r.dislike)}</button>
     </div>`}
 
     <button class="cooked-btn ${cookedNow(r)?'on':''}" data-act="recipe-cooked" data-id="${esc(r.id)}">${cookedNow(r) ? 'Cooked ✓ (tap to undo)' : 'Cooked'}</button>
@@ -1368,7 +1405,7 @@ async function toggleDraft(id){
 /* ---------- PLANNER SCREEN ----------
    The Planner is where a menu is put together: a draft that stays here until it is built, or a built menu being edited. */
 /* Suggest meals: two favourites first, then one meal from a different cuisine each time (no cuisine repeats until all have been used). Snacks and desserts are left out. */
-function suggestPool(pl){ return Object.values(state.recipes).filter(r => r.tag !== 'snack' && r.tag !== 'dessert' && !pl.recipeIds.includes(r.id)); }
+function suggestPool(pl){ return Object.values(state.recipes).filter(r => r.tag !== 'snack' && r.tag !== 'dessert' && !r.dislike && !pl.recipeIds.includes(r.id)); }
 function suggestNext(pl){
   const pool = suggestPool(pl);
   if(!pool.length) return null;
@@ -1917,6 +1954,7 @@ function openImportDataSheet(){
             skipped++; continue;
           }
           const r = parsed.recipes[id];
+          if(!r || findRecipeByTitle(fullTitle(r))){ skipped++; continue; }   // the same recipe saved under another id
           if(typeof r.subtitle !== 'string'){ const [mt, st] = splitTitle(r.title); r.title = mt; r.subtitle = st; }
           if(!CUISINE_KEYS.includes(r.cuisine)) r.cuisine = guessCuisine(fullTitle(r), r.ingredients);
           (r.ingredients || []).forEach(i => { if(!CAT_KEYS.includes(i.category)) i.category = guessCategory(i.name); });
@@ -2520,6 +2558,8 @@ async function runImport(){
     st.busy = false;
     st.message = '';
     if(!importSheetIsShowing()) return; // the sheet was closed while we waited
+    const dup = findRecipeByTitle(draft.title);
+    if(dup && !(await appConfirm(`You already have "${fullTitle(dup)}". Import it again anyway?`, 'Import anyway'))){ paintImportSheet(); return; }
     closeSheet();
     openRecipeForm(null, draft);
   } catch(err){
@@ -2826,6 +2866,7 @@ function openRecipeForm(existingId, draft){
     const cuisinesPicked = Array.from(document.querySelectorAll('#f-cuisines input:checked')).map(i => i.value);
     if(!cuisinesPicked.length) cuisinesPicked.push('other');
     const recipe = {id, title, subtitle: document.getElementById('f-subtitle').value.trim(), tag, cuisine: cuisinesPicked[0], cuisines: cuisinesPicked, time: parseInt(time)||0, servings: parseInt(servings)||1, ingredients, steps, fav: !!(existingId && state.recipes[existingId] && state.recipes[existingId].fav)};
+    if(existingId && state.recipes[existingId] && state.recipes[existingId].dislike) recipe.dislike = true;
     const old = existingId ? state.recipes[existingId] : null;
     // keep ingredients picked for / removed from steps in cooking mode, while the steps themselves are unchanged
     if(old && JSON.stringify(old.steps) === JSON.stringify(steps)) ingredients.forEach(i => {
@@ -2855,6 +2896,32 @@ mainEl.addEventListener('click', async (e)=>{
     case 'clear-filters': state.activeFilter = 'all'; state.activeCuisine = 'all'; state.searchTerm = ''; render(); break;
     case 'cfilter': state.activeCuisine = id; render(); break;
     case 'fav': await setFavourite(id); render(); break;
+    case 'dislike': await setDislike(id); render(); break;
+    // editing a step, or the ingredients shown under it, from the recipe's Steps tab (the same edits as cooking mode)
+    case 'se-step-edit': case 'se-ing-edit': {
+      const rid = currentView().recipeId; if(!state.recipes[rid]) break;
+      const [si, ix] = id.split(':');
+      stepEdit = {id: rid, si: +si, ix: act === 'se-step-edit' ? 'step' : +ix};
+      render();
+      const f = document.getElementById(act === 'se-step-edit' ? 'se-text' : 'se-qty'); if(f) f.focus();
+      break;
+    }
+    case 'se-cancel': stepEdit = null; render(); break;
+    case 'se-step-save': case 'se-ing-save': case 'se-ing-remove': {
+      const r = state.recipes[currentView().recipeId]; if(!r) break;
+      const [si, ix] = id.split(':').map(Number);
+      const ing = r.ingredients[ix];
+      if(act === 'se-step-save'){ const v = document.getElementById('se-text').value.trim(); if(v) r.steps[si] = v; }
+      else if(!ing) break;
+      else if(act === 'se-ing-save'){ ing.qty = document.getElementById('se-qty').value.trim(); ing.unit = document.getElementById('se-unit').value.trim(); }
+      else {
+        ing.stepsOn = (ing.stepsOn || []).filter(n => n !== si);
+        ing.stepsOff = (ing.stepsOff || []).filter(n => n !== si).concat([si]);
+      }
+      stepEdit = null; render(); await saveRecipe(r);
+      showToast(act === 'se-step-save' ? 'Step saved to the recipe' : act === 'se-ing-save' ? 'Ingredient saved to the recipe' : 'Removed from this step');
+      break;
+    }
     case 'plan-done': {
       const pl = activePlan(); if(!pl) break;
       pl.done = pl.done || {};
@@ -3492,7 +3559,12 @@ function renderCookStep(){
   if(cookState.finished){
     document.getElementById('cook-progress').textContent = 'Finished';
     document.getElementById('cook-step-area').innerHTML = `<div class="cook-finish"><h2>Enjoy your meal! 🎉</h2><p>${esc(fullTitle(r))}</p>
-      <button type="button" class="fav-btn ${r.fav?'on':''}" id="cook-fav-btn">${starSvg(r.fav)}<span>${r.fav?'In your favourites':'Add to favourites'}</span></button></div>`;
+      <button type="button" class="fav-btn ${r.fav?'on':''}" id="cook-fav-btn">${starSvg(r.fav)}<span>${r.fav?'In your favourites':'Add to favourites'}</span></button>
+      <button type="button" class="dislike-btn ${r.dislike?'on':''}" id="cook-dislike-btn">${dislikeLabel(r.dislike)}</button></div>`;
+    document.getElementById('cook-dislike-btn').onclick = async ()=>{
+      const on = await setDislike(r.id);
+      const b = document.getElementById('cook-dislike-btn'); b.classList.toggle('on', on); b.textContent = dislikeLabel(on);
+    };
     document.getElementById('cook-fav-btn').onclick = async ()=>{
       const on = await setFavourite(r.id);
       const b = document.getElementById('cook-fav-btn'); b.classList.toggle('on', on); b.innerHTML = starSvg(on) + '<span>' + (on ? 'In your favourites' : 'Add to favourites') + '</span>';
