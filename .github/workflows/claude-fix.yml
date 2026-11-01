@@ -48,7 +48,10 @@ jobs:
         id: claude
         uses: anthropics/claude-code-action@v1
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          anthropic_federation_rule_id: fdrl_018PJywQEL28ezxAGRRxoc8K
+          anthropic_organization_id: 52e2f0c7-7cda-4f9c-a1f6-a081c89ea0dd
+          anthropic_service_account_id: svac_01KDN52NgCEiZ7oSQ9Z3bxtK
+          anthropic_workspace_id: wrkspc_01G1yuz32YVsBF8jsZvrteza
           claude_args: >-
             --max-turns 40
             --allowedTools "Read,Edit,Write,Glob,Grep,Bash(python3 build.py),Bash(node tools/check.js)"
