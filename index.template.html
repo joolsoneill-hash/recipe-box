@@ -307,6 +307,7 @@
   .dlg-title{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--herb);margin-bottom:8px;}
   .dlg-msg{font-size:15px;line-height:1.45;color:var(--ink);margin-bottom:16px;white-space:pre-line;}
   .dlg-actions{display:flex;gap:10px;justify-content:flex-end;}
+  .dlg-actions.stack{flex-direction:column;}
   .dlg-actions button{border-radius:2px;padding:10px 16px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--line-strong);background:var(--card);color:var(--ink);}
   .dlg-actions button.ok{background:var(--herb);border-color:var(--herb);color:#fff;}
   .dlg-actions button.danger{background:var(--tomato);border-color:var(--tomato);color:#fff;}
@@ -1127,15 +1128,32 @@ async function setFavourite(id){
   await saveRecipe(r);
   return !!r.fav;
 }
-// a disliked recipe is never picked by "Suggest meals"; it can still be added to a menu by hand
+// a disliked recipe is not picked by "Suggest meals"; it can still be added to a menu by hand.
+// `dislike: true` = never suggest; `dislikeUntil` (ms timestamp) = not suggested until that date
+function isDisliked(r){ return !!(r && (r.dislike || (r.dislikeUntil && r.dislikeUntil > Date.now()))); }
 async function setDislike(id){
   const r = state.recipes[id];
   if(!r) return false;
-  r.dislike = !r.dislike;
+  if(isDisliked(r)){
+    r.dislike = false; delete r.dislikeUntil;
+  } else {
+    const pick = await appDialog('Dislike ' + fullTitle(r) + '?', [
+      {label:'Never recommend this recipe again', value:'never', cls:'danger'},
+      {label:"Don't recommend for at least two months", value:'months'},
+      {label:'Cancel', value:false}
+    ]);
+    if(!pick) return false;
+    if(pick === 'never'){ r.dislike = true; delete r.dislikeUntil; }
+    else { const d = new Date(); d.setMonth(d.getMonth() + 2); r.dislike = false; r.dislikeUntil = d.getTime(); }
+  }
   await saveRecipe(r);
-  return !!r.dislike;
+  return isDisliked(r);
 }
-function dislikeLabel(on){ return on ? 'Disliked: not suggested for menus (tap to undo)' : 'Dislike: never suggest for menus'; }
+function dislikeLabel(r){
+  if(r && r.dislike) return 'Disliked: never suggested for menus (tap to undo)';
+  if(isDisliked(r)) return 'Disliked: not suggested until ' + new Date(r.dislikeUntil).toLocaleDateString('en-AU', {day:'numeric', month:'short', year:'numeric'}) + ' (tap to undo)';
+  return 'Dislike: stop suggesting for menus';
+}
 function favBtnHtml(r, withText){
   return `<button type="button" class="fav-btn ${r.fav?'on':''}" data-act="fav" data-id="${esc(r.id)}" aria-label="${r.fav?'Remove from favourites':'Add to favourites'}">${starSvg(r.fav)}${withText ? `<span>${r.fav?'Favourite':'Add to favourites'}</span>` : ''}</button>`;
 }
@@ -1262,7 +1280,7 @@ function renderRecipeDetail(id){
         }).join('')}
       </ol>
       <p class="plan-hint">Tap an ingredient to change its amount or remove it from a step.</p>
-      <button type="button" class="dislike-btn ${r.dislike?'on':''}" data-act="dislike" data-id="${esc(r.id)}">${dislikeLabel(r.dislike)}</button>
+      <button type="button" class="dislike-btn ${isDisliked(r)?'on':''}" data-act="dislike" data-id="${esc(r.id)}">${dislikeLabel(r)}</button>
     </div>`}
 
     <button class="cooked-btn ${cookedNow(r)?'on':''}" data-act="recipe-cooked" data-id="${esc(r.id)}">${cookedNow(r) ? 'Cooked ✓ (tap to undo)' : 'Cooked'}</button>
@@ -1405,7 +1423,7 @@ async function toggleDraft(id){
 /* ---------- PLANNER SCREEN ----------
    The Planner is where a menu is put together: a draft that stays here until it is built, or a built menu being edited. */
 /* Suggest meals: two favourites first, then one meal from a different cuisine each time (no cuisine repeats until all have been used). Snacks and desserts are left out. */
-function suggestPool(pl){ return Object.values(state.recipes).filter(r => r.tag !== 'snack' && r.tag !== 'dessert' && !r.dislike && !pl.recipeIds.includes(r.id)); }
+function suggestPool(pl){ return Object.values(state.recipes).filter(r => r.tag !== 'snack' && r.tag !== 'dessert' && !isDisliked(r) &&!pl.recipeIds.includes(r.id)); }
 function suggestNext(pl){
   const pool = suggestPool(pl);
   if(!pool.length) return null;
@@ -2642,6 +2660,7 @@ function appDialog(message, buttons){
     document.getElementById('dlg-msg').textContent = message;
     const box = document.getElementById('dlg-actions');
     box.innerHTML = '';
+    box.classList.toggle('stack', buttons.length > 2);
     const finish = v => { ov.classList.add('hidden'); document.removeEventListener('keydown', onKey); resolve(v); };
     const onKey = e => { if(e.key === 'Escape') finish(false); };
     buttons.forEach(b=>{
@@ -2867,6 +2886,7 @@ function openRecipeForm(existingId, draft){
     if(!cuisinesPicked.length) cuisinesPicked.push('other');
     const recipe = {id, title, subtitle: document.getElementById('f-subtitle').value.trim(), tag, cuisine: cuisinesPicked[0], cuisines: cuisinesPicked, time: parseInt(time)||0, servings: parseInt(servings)||1, ingredients, steps, fav: !!(existingId && state.recipes[existingId] && state.recipes[existingId].fav)};
     if(existingId && state.recipes[existingId] && state.recipes[existingId].dislike) recipe.dislike = true;
+    if(existingId && state.recipes[existingId] && state.recipes[existingId].dislikeUntil) recipe.dislikeUntil = state.recipes[existingId].dislikeUntil;
     const old = existingId ? state.recipes[existingId] : null;
     // keep ingredients picked for / removed from steps in cooking mode, while the steps themselves are unchanged
     if(old && JSON.stringify(old.steps) === JSON.stringify(steps)) ingredients.forEach(i => {
@@ -3560,10 +3580,10 @@ function renderCookStep(){
     document.getElementById('cook-progress').textContent = 'Finished';
     document.getElementById('cook-step-area').innerHTML = `<div class="cook-finish"><h2>Enjoy your meal! 🎉</h2><p>${esc(fullTitle(r))}</p>
       <button type="button" class="fav-btn ${r.fav?'on':''}" id="cook-fav-btn">${starSvg(r.fav)}<span>${r.fav?'In your favourites':'Add to favourites'}</span></button>
-      <button type="button" class="dislike-btn ${r.dislike?'on':''}" id="cook-dislike-btn">${dislikeLabel(r.dislike)}</button></div>`;
+      <button type="button" class="dislike-btn ${isDisliked(r)?'on':''}" id="cook-dislike-btn">${dislikeLabel(r)}</button></div>`;
     document.getElementById('cook-dislike-btn').onclick = async ()=>{
       const on = await setDislike(r.id);
-      const b = document.getElementById('cook-dislike-btn'); b.classList.toggle('on', on); b.textContent = dislikeLabel(on);
+      const b = document.getElementById('cook-dislike-btn'); b.classList.toggle('on', on); b.textContent = dislikeLabel(r);
     };
     document.getElementById('cook-fav-btn').onclick = async ()=>{
       const on = await setFavourite(r.id);

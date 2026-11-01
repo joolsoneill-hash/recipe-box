@@ -307,6 +307,7 @@
   .dlg-title{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--herb);margin-bottom:8px;}
   .dlg-msg{font-size:15px;line-height:1.45;color:var(--ink);margin-bottom:16px;white-space:pre-line;}
   .dlg-actions{display:flex;gap:10px;justify-content:flex-end;}
+  .dlg-actions.stack{flex-direction:column;}
   .dlg-actions button{border-radius:2px;padding:10px 16px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--line-strong);background:var(--card);color:var(--ink);}
   .dlg-actions button.ok{background:var(--herb);border-color:var(--herb);color:#fff;}
   .dlg-actions button.danger{background:var(--tomato);border-color:var(--tomato);color:#fff;}
@@ -491,7 +492,7 @@
 <body>
 <div id="app" class="booting">
   <header class="app-header">
-    <div class="header-right"><button type="button" class="header-btn" id="menu-header-btn" aria-label="More options" aria-haspopup="true" aria-expanded="false">⋯</button><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button><span class="app-version" id="app-version">v0.35</span></div>
+    <div class="header-right"><button type="button" class="header-btn" id="menu-header-btn" aria-label="More options" aria-haspopup="true" aria-expanded="false">⋯</button><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button><span class="app-version" id="app-version">v0.36</span></div>
     <div class="app-menu" id="app-menu" hidden></div>
     <div class="brand"><svg viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#2B2620"/><defs><clipPath id="rr"><rect width="512" height="512" rx="112"/></clipPath> <pattern id="gh" width="64" height="64" patternUnits="userSpaceOnUse"><rect width="64" height="64" fill="#F6EEDC"/><rect width="32" height="64" fill="#C8452D" opacity=".5"/><rect width="64" height="32" fill="#C8452D" opacity=".5"/></pattern></defs><g clip-path="url(#rr)"><path d="M0 408 Q256 388 512 408 V512 H0Z" fill="url(#gh)"/><path d="M0 408 Q256 388 512 408" fill="none" stroke="#2B2620" stroke-opacity=".25" stroke-width="3"/></g><g transform="translate(256 262) scale(.9) translate(-256 -256)"> <!-- steam --> <g fill="none" stroke="#EDE3D0" stroke-width="12" stroke-linecap="round" opacity=".85"> <path d="M206 120c-18-22 18-34 0-58"/><path d="M256 108c-18-22 18-34 0-58"/><path d="M306 120c-18-22 18-34 0-58"/> </g> <!-- shallow pasta bowl: underside, rim, well --> <path d="M52 322c4 52 84 86 204 86s200-34 204-86z" fill="#EFE6D0"/> <path d="M52 322c4 52 84 86 204 86s200-34 204-86c-30 20-100 32-204 32S82 342 52 322z" fill="#E4D8BC" opacity=".6"/> <rect x="190" y="402" width="132" height="18" rx="9" fill="#EFE6D0"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="#FAF6EC"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="none" stroke="#D9CDB4" stroke-width="5"/> <!-- painted rim --> <ellipse cx="256" cy="322" rx="186" ry="55" fill="none" stroke="#2F5D8C" stroke-width="7"/> <ellipse cx="256" cy="322" rx="164" ry="46" fill="none" stroke="#2F5D8C" stroke-width="3"/> <circle cx="432" cy="330" r="5" fill="#E9B949"/><circle cx="408" cy="354" r="5" fill="#E9B949"/><circle cx="344" cy="373" r="5" fill="#E9B949"/><circle cx="256" cy="379" r="5" fill="#E9B949"/><circle cx="168" cy="373" r="5" fill="#E9B949"/><circle cx="103" cy="355" r="5" fill="#E9B949"/><circle cx="80" cy="330" r="5" fill="#E9B949"/><circle cx="103" cy="305" r="5" fill="#E9B949"/><circle cx="167" cy="286" r="5" fill="#E9B949"/><circle cx="255" cy="280" r="5" fill="#E9B949"/><circle cx="343" cy="286" r="5" fill="#E9B949"/><circle cx="408" cy="304" r="5" fill="#E9B949"/> <!-- well --> <ellipse cx="256" cy="324" rx="138" ry="36" fill="#F1E8D2"/> <!-- spaghetti nest --> <g fill="none" stroke="#F0CF6E" stroke-width="18" stroke-linecap="round"> <path d="M130 318c26-30 50 18 76-4s50 22 76-4 50 18 76-4"/> <ellipse cx="256" cy="302" rx="104" ry="30"/> <ellipse cx="256" cy="278" rx="80" ry="24"/> <ellipse cx="256" cy="256" rx="56" ry="17"/> <ellipse cx="256" cy="238" rx="32" ry="10"/> <path d="M360 326c20 6 36 14 40 24" /> </g> <g fill="none" stroke="#C8962A" stroke-width="4" stroke-linecap="round" opacity=".5"> <ellipse cx="256" cy="310" rx="104" ry="30"/><ellipse cx="256" cy="286" rx="80" ry="24"/><ellipse cx="256" cy="264" rx="56" ry="17"/> </g> <!-- sauce and basil --> <ellipse cx="256" cy="226" rx="30" ry="12" fill="#B94A2F"/> <ellipse cx="248" cy="222" rx="11" ry="4" fill="#D8674A" opacity=".8"/> <path d="M262 218c8-24 32-26 40-12-10 18-30 22-40 12z" fill="#4D7A5A"/> <path d="M268 216c10-6 20-8 30-4" stroke="#2F5A3C" stroke-width="3.5" fill="none" stroke-linecap="round"/> <!-- fork --> <g stroke-linecap="round" stroke-linejoin="round" fill="none"> <line x1="410" y1="150" x2="306" y2="238" stroke="#9AA3AB" stroke-width="16"/> <line x1="410" y1="150" x2="306" y2="238" stroke="#DDE2E6" stroke-width="9"/> <g stroke="#9AA3AB" stroke-width="14"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> <g stroke="#DDE2E6" stroke-width="7"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> </g> </g> <g><circle cx="74" cy="446" r="28" fill="#D2452E"/><ellipse cx="64" cy="436" rx="9" ry="6" fill="#fff" opacity=".35"/> <path d="M74 418c-4-8-14-10-20-6 6 6 12 8 20 6z M74 418c4-8 14-10 20-6-6 6-12 8-20 6z M74 418l0-10" fill="#4D7A5A" stroke="#2F5A3C" stroke-width="3" stroke-linejoin="round"/></g> <g><path d="M438 452c10-26 40-30 54-14-12 22-40 28-54 14z" fill="#4D7A5A"/><path d="M446 450c14-8 28-10 42-6" stroke="#2F5A3C" stroke-width="4" fill="none" stroke-linecap="round"/></g></svg><h1>Tavola</h1></div>
   </header>
@@ -1127,15 +1128,32 @@ async function setFavourite(id){
   await saveRecipe(r);
   return !!r.fav;
 }
-// a disliked recipe is never picked by "Suggest meals"; it can still be added to a menu by hand
+// a disliked recipe is not picked by "Suggest meals"; it can still be added to a menu by hand.
+// `dislike: true` = never suggest; `dislikeUntil` (ms timestamp) = not suggested until that date
+function isDisliked(r){ return !!(r && (r.dislike || (r.dislikeUntil && r.dislikeUntil > Date.now()))); }
 async function setDislike(id){
   const r = state.recipes[id];
   if(!r) return false;
-  r.dislike = !r.dislike;
+  if(isDisliked(r)){
+    r.dislike = false; delete r.dislikeUntil;
+  } else {
+    const pick = await appDialog('Dislike ' + fullTitle(r) + '?', [
+      {label:'Never recommend this recipe again', value:'never', cls:'danger'},
+      {label:"Don't recommend for at least two months", value:'months'},
+      {label:'Cancel', value:false}
+    ]);
+    if(!pick) return false;
+    if(pick === 'never'){ r.dislike = true; delete r.dislikeUntil; }
+    else { const d = new Date(); d.setMonth(d.getMonth() + 2); r.dislike = false; r.dislikeUntil = d.getTime(); }
+  }
   await saveRecipe(r);
-  return !!r.dislike;
+  return isDisliked(r);
 }
-function dislikeLabel(on){ return on ? 'Disliked: not suggested for menus (tap to undo)' : 'Dislike: never suggest for menus'; }
+function dislikeLabel(r){
+  if(r && r.dislike) return 'Disliked: never suggested for menus (tap to undo)';
+  if(isDisliked(r)) return 'Disliked: not suggested until ' + new Date(r.dislikeUntil).toLocaleDateString('en-AU', {day:'numeric', month:'short', year:'numeric'}) + ' (tap to undo)';
+  return 'Dislike: stop suggesting for menus';
+}
 function favBtnHtml(r, withText){
   return `<button type="button" class="fav-btn ${r.fav?'on':''}" data-act="fav" data-id="${esc(r.id)}" aria-label="${r.fav?'Remove from favourites':'Add to favourites'}">${starSvg(r.fav)}${withText ? `<span>${r.fav?'Favourite':'Add to favourites'}</span>` : ''}</button>`;
 }
@@ -1262,7 +1280,7 @@ function renderRecipeDetail(id){
         }).join('')}
       </ol>
       <p class="plan-hint">Tap an ingredient to change its amount or remove it from a step.</p>
-      <button type="button" class="dislike-btn ${r.dislike?'on':''}" data-act="dislike" data-id="${esc(r.id)}">${dislikeLabel(r.dislike)}</button>
+      <button type="button" class="dislike-btn ${isDisliked(r)?'on':''}" data-act="dislike" data-id="${esc(r.id)}">${dislikeLabel(r)}</button>
     </div>`}
 
     <button class="cooked-btn ${cookedNow(r)?'on':''}" data-act="recipe-cooked" data-id="${esc(r.id)}">${cookedNow(r) ? 'Cooked ✓ (tap to undo)' : 'Cooked'}</button>
@@ -1405,7 +1423,7 @@ async function toggleDraft(id){
 /* ---------- PLANNER SCREEN ----------
    The Planner is where a menu is put together: a draft that stays here until it is built, or a built menu being edited. */
 /* Suggest meals: two favourites first, then one meal from a different cuisine each time (no cuisine repeats until all have been used). Snacks and desserts are left out. */
-function suggestPool(pl){ return Object.values(state.recipes).filter(r => r.tag !== 'snack' && r.tag !== 'dessert' && !r.dislike && !pl.recipeIds.includes(r.id)); }
+function suggestPool(pl){ return Object.values(state.recipes).filter(r => r.tag !== 'snack' && r.tag !== 'dessert' && !isDisliked(r) &&!pl.recipeIds.includes(r.id)); }
 function suggestNext(pl){
   const pool = suggestPool(pl);
   if(!pool.length) return null;
@@ -2008,7 +2026,7 @@ async function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '0.35';
+const APP_VERSION = '0.36';
 // Reports are also sent here (a small relay that opens a GitHub issue, which Claude then works on). Empty = reports are only saved to the shared list.
 const BUG_RELAY_URL = 'https://tavola-relay.jools-oneill.workers.dev/';
 async function sendToRelay(bugs){   // bugs: an array of reports. Returns {why:'' when all were sent, otherwise the reason, sent:[ids of those that were]}
@@ -2642,6 +2660,7 @@ function appDialog(message, buttons){
     document.getElementById('dlg-msg').textContent = message;
     const box = document.getElementById('dlg-actions');
     box.innerHTML = '';
+    box.classList.toggle('stack', buttons.length > 2);
     const finish = v => { ov.classList.add('hidden'); document.removeEventListener('keydown', onKey); resolve(v); };
     const onKey = e => { if(e.key === 'Escape') finish(false); };
     buttons.forEach(b=>{
@@ -2867,6 +2886,7 @@ function openRecipeForm(existingId, draft){
     if(!cuisinesPicked.length) cuisinesPicked.push('other');
     const recipe = {id, title, subtitle: document.getElementById('f-subtitle').value.trim(), tag, cuisine: cuisinesPicked[0], cuisines: cuisinesPicked, time: parseInt(time)||0, servings: parseInt(servings)||1, ingredients, steps, fav: !!(existingId && state.recipes[existingId] && state.recipes[existingId].fav)};
     if(existingId && state.recipes[existingId] && state.recipes[existingId].dislike) recipe.dislike = true;
+    if(existingId && state.recipes[existingId] && state.recipes[existingId].dislikeUntil) recipe.dislikeUntil = state.recipes[existingId].dislikeUntil;
     const old = existingId ? state.recipes[existingId] : null;
     // keep ingredients picked for / removed from steps in cooking mode, while the steps themselves are unchanged
     if(old && JSON.stringify(old.steps) === JSON.stringify(steps)) ingredients.forEach(i => {
@@ -3560,10 +3580,10 @@ function renderCookStep(){
     document.getElementById('cook-progress').textContent = 'Finished';
     document.getElementById('cook-step-area').innerHTML = `<div class="cook-finish"><h2>Enjoy your meal! 🎉</h2><p>${esc(fullTitle(r))}</p>
       <button type="button" class="fav-btn ${r.fav?'on':''}" id="cook-fav-btn">${starSvg(r.fav)}<span>${r.fav?'In your favourites':'Add to favourites'}</span></button>
-      <button type="button" class="dislike-btn ${r.dislike?'on':''}" id="cook-dislike-btn">${dislikeLabel(r.dislike)}</button></div>`;
+      <button type="button" class="dislike-btn ${isDisliked(r)?'on':''}" id="cook-dislike-btn">${dislikeLabel(r)}</button></div>`;
     document.getElementById('cook-dislike-btn').onclick = async ()=>{
       const on = await setDislike(r.id);
-      const b = document.getElementById('cook-dislike-btn'); b.classList.toggle('on', on); b.textContent = dislikeLabel(on);
+      const b = document.getElementById('cook-dislike-btn'); b.classList.toggle('on', on); b.textContent = dislikeLabel(r);
     };
     document.getElementById('cook-fav-btn').onclick = async ()=>{
       const on = await setFavourite(r.id);

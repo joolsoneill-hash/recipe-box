@@ -202,3 +202,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.35
 - Auto: issue #13, Bug: 3 reports, starting with: Add a dislike button at the end of the s
+
+0.36
+- Auto: issue #19, Bug: on the dislike button have a confirmation that has two options "never 
