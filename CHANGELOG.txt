@@ -208,3 +208,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.37
 - Import data can now bring its own categories (a "customCuisines" section in the file). Used for the BBC Good Food recipes.
+
+0.38
+- Auto: issue #20, Bug: in the "steps" screen of a recipe. Allow adding another ingredient, th
