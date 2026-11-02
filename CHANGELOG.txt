@@ -205,3 +205,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.36
 - Auto: issue #19, Bug: on the dislike button have a confirmation that has two options "never 
+
+0.37
+- Import data can now bring its own categories (a "customCuisines" section in the file). Used for the BBC Good Food recipes.

@@ -1962,6 +1962,17 @@ function openImportDataSheet(){
     status.textContent = 'Importing…';
     let importSummary = '';
     try {
+      // categories the file brings with it (e.g. a "BBC Good Food" category); existing ones are left alone
+      if(parsed.customCuisines && typeof parsed.customCuisines === 'object'){
+        let newCats = false;
+        for(const key in parsed.customCuisines){
+          const label = parsed.customCuisines[key];
+          if(typeof label !== 'string' || !/^c-[a-z0-9-]+$/.test(key) || CUISINE_KEYS.includes(key)) continue;
+          state.customCuisines[key] = label; newCats = true;
+          await dbSet('customCuisines/' + key, label);
+        }
+        if(newCats) applyCustomCuisines();
+      }
       if(parsed.recipes){
         let added = 0, skipped = 0, photosAdded = 0;
         for(const id in parsed.recipes){
