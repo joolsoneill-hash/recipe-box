@@ -40,6 +40,7 @@
     --paper-35:color-mix(in srgb, var(--paper) 35%, transparent);
     --line:color-mix(in srgb, var(--ink) 12%, transparent);
     --line-strong:color-mix(in srgb, var(--ink) 28%, transparent);
+    --herb-deep:color-mix(in srgb, var(--herb) 72%, var(--ink));
     --r:10px;
     --r-lg:14px;
     --font-body:'Work Sans',system-ui,sans-serif;
@@ -535,7 +536,7 @@
   .round-add{flex-shrink:0;width:46px;height:46px;border-radius:50%;border:none;background:var(--tomato);color:var(--white);display:flex;align-items:center;justify-content:center;padding:0;}
   .round-add svg{width:22px;height:22px;}
   .chip{border:none;background:var(--paper);border-radius:999px;padding:8px 14px;font-size:13px;font-weight:500;color:var(--ink);white-space:nowrap;flex-shrink:0;}
-  .chip.active{background:var(--herb);color:var(--white);}
+  .chip.active{background:var(--herb-deep);color:var(--white);}
   .chip-row.scroll{flex-wrap:nowrap;overflow-x:auto;margin:0 -16px 10px;padding:0 16px;scrollbar-width:none;}
   .chip-row.scroll::-webkit-scrollbar{display:none;}
   .link-btn{background:none;border:none;padding:4px 0;margin:0 0 8px;font-size:13px;color:var(--brown);text-decoration:underline;}
@@ -565,7 +566,7 @@
   .detail-title + .recipe-meta,.detail-sub + .recipe-meta{color:var(--stone);margin-bottom:0;}
   .rtabs{margin-top:18px;padding:4px;background:var(--paper);border:none;border-radius:var(--r-lg);gap:4px;}
   .rtab{border:none;margin:0;padding:10px 0;border-radius:var(--r);font-size:14px;font-weight:600;color:var(--brown);}
-  .rtab.active{background:var(--herb);color:var(--white);}
+  .rtab.active{background:var(--herb-deep);color:var(--white);}
   .ing-list li{border-bottom:none;padding:11px 0;font-size:16px;}
   .ing-list li .ing-q{color:var(--stone);font-weight:500;font-size:15px;}
   .steps-list li{border-bottom:none;padding:12px 0 12px 32px;font-size:16px;}
