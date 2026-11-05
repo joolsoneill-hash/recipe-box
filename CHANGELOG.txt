@@ -220,3 +220,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.41
 - Going back from a recipe returns you to the same place on the screen (Planner, Recipes and the other tabs), not the top.
+
+0.42
+- Suggest meals no longer brings back a meal you removed during the same planning session, and a removed suggestion still counts so the next one comes from a new cuisine.

@@ -576,6 +576,8 @@ let state = {
   npSugg: {},            // random suggestions made on the Planner, by cuisine
   npLog: [],             // meals added by the Suggest meals counter, in order: {id, cu}
   npUsed: [],            // cuisines already used in the current round of suggestions
+  npGone: [],            // meals taken off the plan this session: Suggest meals does not bring them back
+  npFavGone: 0,          // favourite suggestions taken off the plan: they still count towards the two favourites
   checks: {},
   searchTerm: '',
   openPlans: {},
@@ -1418,7 +1420,7 @@ async function togglePlanRecipe(rid, planArg){
   const plan = planArg || viewPlan();
   if(!plan || plan.locked) return;
   const i = plan.recipeIds.indexOf(rid);
-  if(i >= 0){ plan.recipeIds.splice(i, 1); if(plan.servings) delete plan.servings[rid]; if(plan.carried) plan.carried = plan.carried.filter(x => x !== rid); } else addRecipeToPlan(plan, rid);
+  if(i >= 0){ const was = state.npLog.find(e => e.id === rid); if(!state.npGone.includes(rid)) state.npGone.push(rid); if(was && !was.cu) state.npFavGone++; plan.recipeIds.splice(i, 1); if(plan.servings) delete plan.servings[rid]; if(plan.carried) plan.carried = plan.carried.filter(x => x !== rid); } else addRecipeToPlan(plan, rid);
   render();
   await savePlan(plan);
 }
@@ -1544,7 +1546,7 @@ async function buildMenuNow(fruit){
     if(!d.extras.some(x => String(x.name).toLowerCase() === n)) d.extras.push({id: uid(), name, qty: '', category: 'produce'});
   });
   d.built = true; d.locked = true; d.groceryDone = false;
-  state.npLog = []; state.npUsed = []; state.npSugg = {};
+  state.npLog = []; state.npUsed = []; state.npGone = []; state.npFavGone = 0; state.npSugg = {};
   state.activePlanId = d.id;
   state.checks = {};
   goTab('plan');
@@ -1557,7 +1559,7 @@ async function buildMenuNow(fruit){
 /* ---------- PLANNER SCREEN ----------
    The Planner is where a menu is put together: a draft that stays here until it is built, or a built menu being edited. */
 /* Suggest meals: two favourites first, then one meal from a different cuisine each time (no cuisine repeats until all have been used). Snacks and desserts are left out. */
-function suggestPool(pl){ return Object.values(state.recipes).filter(r => r.tag !== 'snack' && r.tag !== 'dessert' && !isDisliked(r) &&!pl.recipeIds.includes(r.id)); }
+function suggestPool(pl){ return Object.values(state.recipes).filter(r => r.tag !== 'snack' && r.tag !== 'dessert' && !isDisliked(r) &&!pl.recipeIds.includes(r.id) && !state.npGone.includes(r.id)); }
 function suggestNext(pl){
   const pool = suggestPool(pl);
   if(!pool.length) return null;
@@ -1566,7 +1568,7 @@ function suggestNext(pl){
   const okIds = new Set(pool.filter(r => !outOfSeason(r).length).map(r => r.id));
   const prefer = list => { const a = list.filter(r => okIds.has(r.id)); return a.length ? a : list; };
   const log = state.npLog.filter(e => pl.recipeIds.includes(e.id));
-  const favs = log.filter(e => !e.cu).length;
+  const favs = log.filter(e => !e.cu).length + state.npFavGone;
   if(favs < 2){
     const f = prefer(pool.filter(r => r.fav));
     if(f.length) return {id: pickOf(f).id, cu: null};
@@ -3232,7 +3234,7 @@ mainEl.addEventListener('click', async (e)=>{
     case 'draft-discard': {
       const dr = curDraft();
       if(!dr || !(await appConfirm('Discard your draft menu?', 'Discard', true))) break;
-      delete state.plans[dr.id]; state.npLog = []; state.npUsed = []; state.npSugg = {}; render(); await deletePlanStorage(dr.id); break;
+      delete state.plans[dr.id]; state.npLog = []; state.npUsed = []; state.npGone = []; state.npFavGone = 0; state.npSugg = {}; render(); await deletePlanStorage(dr.id); break;
     }
     case 'rtab': currentView().rtab = (id === 'steps') ? 'steps' : 'ingredients'; render(); break;
     case 'serv-dec': case 'serv-inc': {
