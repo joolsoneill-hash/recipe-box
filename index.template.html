@@ -1247,7 +1247,7 @@ function renderRecipeDetail(id){
   const sf = scaleFactorFor(r);
   const rtab = currentView().rtab === 'steps' ? 'steps' : 'ingredients';
   const ingListHtml = `<ul class="ing-list">
-        ${r.ingredients.map(i=>`<li><span class="ing-nm">${esc(ingShownName(r, i))}</span><span class="ing-q">${esc(ingQtyText(i.qty, i.unit, sf))}</span></li>`).join('')}
+        ${r.ingredients.map(i=>`<li><span class="ing-nm">${esc(ingShownName(r, i))}${ingOutOfSeason(i, new Date().getMonth() + 1) ? ' <span class="ooseason" title="Out of season in Sydney now">(!)</span>' : ''}</span><span class="ing-q">${esc(ingQtyText(i.qty, i.unit, sf))}</span></li>`).join('')}
       </ul>`;
   return `
     <button class="detail-back" data-act="back">Back</button>
@@ -1463,17 +1463,18 @@ function seasonItems(){
   return seasonTokCache;
 }
 /* the main vegetables and fruit of a recipe that are out of season this month (names from the seasonal list) */
+function ingOutOfSeason(i, m){
+  const name = String(i.name || '');
+  if(!name || SEASON_SKIP.test(name)) return null;
+  if((CAT_KEYS.includes(i.category) ? i.category : guessCategory(name)) !== 'produce') return null;
+  const tok = fridgeTokens(name);
+  let best = null;
+  seasonItems().forEach(e => { if(e.tok.every(w => tok.includes(w)) && (!best || e.tok.length > best.tok.length)) best = e; });
+  return best && !monthIn(best.months, m) ? best.name : null;
+}
 function outOfSeason(r){
-  const m = new Date().getMonth() + 1, items = seasonItems(), out = [];
-  (r.ingredients || []).forEach(i => {
-    const name = String(i.name || '');
-    if(!name || SEASON_SKIP.test(name)) return;
-    if((CAT_KEYS.includes(i.category) ? i.category : guessCategory(name)) !== 'produce') return;
-    const tok = fridgeTokens(name);
-    let best = null;
-    items.forEach(e => { if(e.tok.every(w => tok.includes(w)) && (!best || e.tok.length > best.tok.length)) best = e; });
-    if(best && !monthIn(best.months, m) && !out.includes(best.name)) out.push(best.name);
-  });
+  const m = new Date().getMonth() + 1, out = [];
+  (r.ingredients || []).forEach(i => { const n = ingOutOfSeason(i, m); if(n && !out.includes(n)) out.push(n); });
   return out;
 }
 const seasonMark = r => { const o = outOfSeason(r); return o.length ? ` <span class="ooseason" data-act="ooseason" data-id="${esc(r.id)}" title="Out of season: ${esc(o.join(', '))}">(!)</span>` : ''; };
