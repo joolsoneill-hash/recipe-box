@@ -403,6 +403,11 @@
   .np-sec h3{font-size:14px;margin:0 0 8px;}
   .np-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0;font-size:14px;}
   .np-row .stepper{flex-shrink:0}
+  .ooseason{color:var(--tomato);font-weight:700;white-space:nowrap;}
+  .ss-row{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px;}
+  .ss-n{flex:1;min-width:0;text-transform:capitalize;font-weight:600;}
+  .ss-n.off{color:var(--brown);font-weight:400;opacity:.7;}
+  .ss-row select,.ss-row input{padding:6px;border:1px solid var(--line-strong);border-radius:2px;background:var(--card);color:inherit;font-size:13px;}
   .np-opt{display:flex;gap:8px;align-items:flex-start;padding:6px 0;font-size:14px;line-height:1.4;}
   .np-opt input{margin-top:3px}
   .np-ings{max-height:150px;overflow:auto;border:1px solid var(--line-strong);border-radius:4px;padding:4px 8px;margin:6px 0;}
@@ -578,6 +583,7 @@ let state = {
   activeCuisine: 'all',
   customCuisines: {},
   storePrefs: {},
+  seasonal: null,        // edited in-season fruit and veg list (null = the Sydney starting list)
   draftPlan: {},
   loaded: false
 };
@@ -878,11 +884,12 @@ async function loadState(){
     // fetch everything at once; photos are stored apart from the recipes and load afterwards
     const failed = [];
     const grab = (path) => dbGet(path).catch(e => { console.error('load failed', path, e); failed.push(path); return null; });
-    const got = await Promise.all([grab('recipes'), grab('plans'), grab('activePlanId'), grab('checks'), grab('customCuisines'), grab('storePrefs'), grab('draftPlan')]);
+    const got = await Promise.all([grab('recipes'), grab('plans'), grab('activePlanId'), grab('checks'), grab('customCuisines'), grab('storePrefs'), grab('draftPlan'), grab('seasonal')]);
     if(failed.includes('recipes') || failed.includes('plans')){ showLoadError(); return; }   // never carry on with an empty picture of the data
     hideLoadError();
     const [recData, plansData, apData, checksData] = got;
     state.customCuisines = got[4] || {}; state.storePrefs = got[5] || {}; state.draftPlan = got[6] || {};
+    state.seasonal = got[7] || null; seasonTokCache = null;
     state.recipes = recData || {};
     applyCustomCuisines();
 
@@ -1425,6 +1432,127 @@ async function toggleDraft(id){
   await savePlan(d);
 }
 
+/* ---------- IN-SEASON FRUIT AND VEG ----------
+   A starting list for Sydney, as a month range for each item ("9-2" = September to February). It is compiled from the
+   Sydney Markets seasonal guides, the NSW EPA "Love Food Hate Waste" seasonal guide and the Campion & Curtis month-by-month
+   Australian list. The shared copy in the database (`seasonal`) replaces it once the list is edited in the app. */
+const SEASON_DEFAULT = {
+  veg: {'asparagus':'9-2','avocado':'1-12','green bean':'9-5','broad bean':'9-11','beetroot':'12-8','broccoli':'3-11','brussels sprout':'3-8','cabbage':'1-12','capsicum':'12-5','carrot':'3-11','cauliflower':'3-11','celeriac':'3-8','celery':'12-8','chilli':'1-12','choko':'9-2','cucumber':'9-5','daikon':'12-5','eggplant':'12-5','fennel':'3-8','garlic':'3-11','ginger':'3-11','globe artichoke':'9-11','jerusalem artichoke':'6-8','kale':'6-8','kohlrabi':'6-8','leek':'1-12','lettuce':'9-5','mushroom':'1-12','okra':'12-8','onion':'1-12','spring onion':'9-5','parsnip':'3-8','pea':'1-12','potato':'1-12','pumpkin':'3-11','radish':'9-2','shallot':'3-8','silverbeet':'3-11','spinach':'3-11','squash':'12-5','swede':'3-8','sweet potato':'3-8','sweetcorn':'9-5','tomato':'9-5','turnip':'3-8','watercress':'9-2','witlof':'3-8','zucchini':'9-5','bok choy':'3-11','choy sum':'3-11'},
+  fruit: {'apple':'3-8','apricot':'12-2','banana':'1-12','blackberry':'12-2','blueberry':'12-2','raspberry':'12-2','strawberry':'9-2','cherry':'9-2','custard apple':'3-8','fig':'12-5','grape':'12-5','grapefruit':'3-11','honeydew':'9-2','kiwifruit':'3-8','lemon':'1-12','lime':'1-12','lychee':'9-2','mandarin':'3-11','mango':'9-2','nashi':'3-8','nectarine':'12-3','orange':'1-12','papaya':'3-11','pawpaw':'3-11','passionfruit':'12-5','peach':'12-4','pear':'12-8','persimmon':'3-8','pineapple':'1-12','plum':'12-5','pomegranate':'3-5','quince':'3-8','rhubarb':'12-8','rockmelon':'9-2','tangelo':'6-11','watermelon':'9-2'}
+};
+const MONTHS_S = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const SEASON_SKIP = /\b(tinned|canned|can|paste|sauce|pur[eé]e|dried|frozen|pickled|juice|powder|stock|flakes|vinegar|oil|dip|relish|kimchi)\b/i;
+let seasonTokCache = null;
+function seasonData(){
+  const s = state.seasonal;
+  if(s && typeof s === 'object' && (s.veg || s.fruit)) return {veg: Object.assign({}, s.veg), fruit: Object.assign({}, s.fruit)};
+  return {veg: Object.assign({}, SEASON_DEFAULT.veg), fruit: Object.assign({}, SEASON_DEFAULT.fruit)};
+}
+function monthIn(range, m){
+  const p = /^(\d{1,2})-(\d{1,2})$/.exec(String(range || ''));
+  if(!p) return true;
+  const a = +p[1], b = +p[2];
+  return a <= b ? (m >= a && m <= b) : (m >= a || m <= b);
+}
+function seasonItems(){
+  if(!seasonTokCache){
+    const d = seasonData();
+    seasonTokCache = [];
+    ['veg', 'fruit'].forEach(t => Object.keys(d[t]).forEach(name => { const tok = fridgeTokens(name); if(tok.length) seasonTokCache.push({name, type: t, months: d[t][name], tok}); }));
+  }
+  return seasonTokCache;
+}
+/* the main vegetables and fruit of a recipe that are out of season this month (names from the seasonal list) */
+function outOfSeason(r){
+  const m = new Date().getMonth() + 1, items = seasonItems(), out = [];
+  (r.ingredients || []).forEach(i => {
+    const name = String(i.name || '');
+    if(!name || SEASON_SKIP.test(name)) return;
+    if((CAT_KEYS.includes(i.category) ? i.category : guessCategory(name)) !== 'produce') return;
+    const tok = fridgeTokens(name);
+    let best = null;
+    items.forEach(e => { if(e.tok.every(w => tok.includes(w)) && (!best || e.tok.length > best.tok.length)) best = e; });
+    if(best && !monthIn(best.months, m) && !out.includes(best.name)) out.push(best.name);
+  });
+  return out;
+}
+const seasonMark = r => { const o = outOfSeason(r); return o.length ? ` <span class="ooseason" data-act="ooseason" data-id="${esc(r.id)}" title="Out of season: ${esc(o.join(', '))}">(!)</span>` : ''; };
+async function saveSeasonal(){
+  seasonTokCache = null;
+  try{ if(state.seasonal) await dbSet('seasonal', state.seasonal); else await dbDelete('seasonal'); }catch(err){ console.error(err); showToast("Couldn't save the seasonal list. Check your connection."); }
+}
+function openSeasonSheet(){
+  const d = seasonData(), mo = new Date().getMonth() + 1;
+  const opts = sel => MONTHS_S.map((m, i) => `<option value="${i+1}" ${i+1===sel?'selected':''}>${m}</option>`).join('');
+  const rows = t => Object.keys(d[t]).sort().map(name => {
+    const p = /^(\d{1,2})-(\d{1,2})$/.exec(d[t][name]) || [0, 1, 12];
+    return `<div class="ss-row"><span class="ss-n${monthIn(d[t][name], mo) ? '' : ' off'}">${esc(name)}</span><select data-ss="from" data-t="${t}" data-n="${esc(name)}" aria-label="From">${opts(+p[1])}</select><span>to</span><select data-ss="to" data-t="${t}" data-n="${esc(name)}" aria-label="To">${opts(+p[2])}</select><button type="button" class="np-x" data-ss="del" data-t="${t}" data-n="${esc(name)}" aria-label="Remove">×</button></div>`;
+  }).join('');
+  const sc = document.getElementById('sheet').scrollTop;
+  openSheet(`<div class="sheet-handle"></div><h2>In-season fruit and veg</h2>
+    <p class="sheet-note">Starting list for Sydney, put together from the Sydney Markets seasonal guides, the NSW EPA Love Food Hate Waste seasonal guide and the Campion &amp; Curtis month-by-month Australian list. Change the months, remove items or add your own. Greyed names are out of season now (${MONTHS_S[mo-1]}). The Planner prefers meals whose vegetables are in season and marks the others (!).</p>
+    <h3>Vegetables</h3>${rows('veg')}<h3>Fruit</h3>${rows('fruit')}
+    <h3>Add an item</h3>
+    <div class="ss-row"><input type="text" id="ss-new" placeholder="Name, e.g. kale" style="flex:1;min-width:0;"><select id="ss-type"><option value="veg">Veg</option><option value="fruit">Fruit</option></select></div>
+    <div class="ss-row"><span>From</span><select id="ss-from">${opts(1)}</select><span>to</span><select id="ss-to">${opts(12)}</select><button type="button" class="secondary-btn" id="ss-add" style="width:auto;margin:0;padding:8px 14px;">Add</button></div>
+    <div class="btn-row"><button type="button" class="secondary-btn" id="ss-reset" style="flex:1;margin:0;">Reset to starting list</button><button type="button" class="add-btn" id="ss-close" style="flex:1;margin:0;">Done</button></div>`);
+  document.getElementById('sheet').scrollTop = sc;
+  const commit = async () => { state.seasonal = d; await saveSeasonal(); openSeasonSheet(); };
+  document.querySelectorAll('#sheet [data-ss]').forEach(el => {
+    if(el.dataset.ss === 'del') el.onclick = () => { delete d[el.dataset.t][el.dataset.n]; commit(); };
+    else el.onchange = () => {
+      const p = d[el.dataset.t][el.dataset.n].split('-');
+      d[el.dataset.t][el.dataset.n] = el.dataset.ss === 'from' ? el.value + '-' + p[1] : p[0] + '-' + el.value;
+      commit();
+    };
+  });
+  document.getElementById('ss-add').onclick = () => {
+    const name = document.getElementById('ss-new').value.trim().toLowerCase().replace(/[.$#\[\]\/]/g, '');
+    if(!name) return;
+    const t = document.getElementById('ss-type').value;
+    delete d[t === 'veg' ? 'fruit' : 'veg'][name];
+    d[t][name] = document.getElementById('ss-from').value + '-' + document.getElementById('ss-to').value;
+    commit();
+  };
+  document.getElementById('ss-reset').onclick = async () => {
+    if(!(await appConfirm('Put the seasonal list back to the Sydney starting list? Your changes will be lost.', 'Reset', true))) return;
+    state.seasonal = null; await saveSeasonal(); openSeasonSheet();
+  };
+  document.getElementById('ss-close').onclick = closeSheet;
+}
+/* Build menu: offer the fruit that is in season now as extras on the grocery list */
+function openFruitSheet(){
+  const mo = new Date().getMonth() + 1, d = seasonData();
+  const fruit = Object.keys(d.fruit).filter(n => monthIn(d.fruit[n], mo)).sort();
+  openSeasonFruit = fruit;
+  openSheet(`<div class="sheet-handle"></div><h2>Add in-season fruit?</h2>
+    <p class="sheet-note">These fruits are in season in Sydney this month (${MONTHS_S[mo-1]}). Tick any you want and they go on the grocery list.</p>
+    ${fruit.map((n, i) => `<label class="np-opt"><input type="checkbox" data-fruit="${i}"><span>${esc(n.charAt(0).toUpperCase() + n.slice(1))}</span></label>`).join('')}
+    <div class="btn-row"><button type="button" class="secondary-btn" id="fr-skip" style="flex:1;margin:0;">No fruit</button><button type="button" class="add-btn" id="fr-ok" style="flex:1;margin:0;">Build menu</button></div>`);
+  const go = picked => { closeSheet(); buildMenuNow(picked); };
+  document.getElementById('fr-skip').onclick = () => go([]);
+  document.getElementById('fr-ok').onclick = () => go(Array.from(document.querySelectorAll('#sheet [data-fruit]:checked')).map(el => openSeasonFruit[+el.dataset.fruit]));
+}
+let openSeasonFruit = [];
+async function buildMenuNow(fruit){
+  const d = curDraft();
+  if(!d || !d.recipeIds.length) return;
+  d.extras = d.extras || [];
+  (fruit || []).forEach(n => {
+    const name = n.charAt(0).toUpperCase() + n.slice(1);
+    if(!d.extras.some(x => String(x.name).toLowerCase() === n)) d.extras.push({id: uid(), name, qty: '', category: 'produce'});
+  });
+  d.built = true; d.locked = true; d.groceryDone = false;
+  state.npLog = []; state.npUsed = []; state.npSugg = {};
+  state.activePlanId = d.id;
+  state.checks = {};
+  goTab('plan');
+  showToast('Menu built. Your grocery list is ready.');
+  await savePlan(d);
+  await saveActivePlanId();
+  await saveChecks();
+}
+
 /* ---------- PLANNER SCREEN ----------
    The Planner is where a menu is put together: a draft that stays here until it is built, or a built menu being edited. */
 /* Suggest meals: two favourites first, then one meal from a different cuisine each time (no cuisine repeats until all have been used). Snacks and desserts are left out. */
@@ -1433,10 +1561,13 @@ function suggestNext(pl){
   const pool = suggestPool(pl);
   if(!pool.length) return null;
   const pickOf = list => list[Math.floor(Math.random() * list.length)];
+  // meals whose main vegetables are all in season come first; the rest are only used when nothing else fits
+  const okIds = new Set(pool.filter(r => !outOfSeason(r).length).map(r => r.id));
+  const prefer = list => { const a = list.filter(r => okIds.has(r.id)); return a.length ? a : list; };
   const log = state.npLog.filter(e => pl.recipeIds.includes(e.id));
   const favs = log.filter(e => !e.cu).length;
   if(favs < 2){
-    const f = pool.filter(r => r.fav);
+    const f = prefer(pool.filter(r => r.fav));
     if(f.length) return {id: pickOf(f).id, cu: null};
   }
   const cuOf = r => { const c = recipeCuisines(r).filter(x => x !== 'other'); return c.length ? c : ['other']; };
@@ -1444,7 +1575,7 @@ function suggestNext(pl){
   let fresh = avail.filter(c => !state.npUsed.includes(c));
   if(!fresh.length){ state.npUsed = []; fresh = avail; }   // every cuisine has had a turn: start a new round
   const cu = pickOf(fresh);
-  return {id: pickOf(pool.filter(r => cuOf(r).includes(cu))).id, cu};
+  return {id: pickOf(prefer(pool.filter(r => cuOf(r).includes(cu)))).id, cu};
 }
 const uncookedOf = cur => cur ? cur.recipeIds.filter(id => state.recipes[id] && !(cur.done && cur.done[id])) : [];
 function renderPlanner(){
@@ -1483,10 +1614,11 @@ function renderPlanner(){
   let h = `<h2 class="planner-title">${editing ? 'Edit menu' : 'Planner'}</h2>
     <p class="planner-lead">${editing ? 'Change the meals in your menu. Your grocery list updates as you go.' : 'Line up meals for your next menu. It stays here as a draft until you build it. Then it moves to the Menu tab and your grocery list is made.'}</p>
     ${ch}${topIdeas}
-    <div class="np-suggest"><span><strong>Suggest meals</strong><small>Two favourites, then a different cuisine each time</small></span><span class="stepper"><button type="button" data-act="sg-dec" aria-label="Remove the last suggestion">−</button><strong>${sgCount}</strong><button type="button" data-act="sg-inc" aria-label="Suggest another meal">+</button></span></div>
+    <div class="np-suggest"><span><strong>Suggest meals</strong><small>Two favourites, then a different cuisine each time. Meals with in-season vegetables come first; (!) marks an out-of-season one.</small></span><span class="stepper"><button type="button" data-act="sg-dec" aria-label="Remove the last suggestion">−</button><strong>${sgCount}</strong><button type="button" data-act="sg-inc" aria-label="Suggest another meal">+</button></span></div>
+    <div class="btn-row"><button type="button" class="secondary-btn" data-act="season-edit">In-season fruit and veg</button></div>
     <div class="np-total">Meals planned: <strong>${items.length}</strong></div>
     <div class="np-ch np-chhead"><span class="np-ch-t">Meal</span><span class="np-sv">Serves</span><span class="np-xsp"></span></div>
-    <div class="np-chosen" id="np-chosen">${has ? items.map(r => `<div class="np-ch"><span class="np-ch-t" data-act="open-recipe" data-id="${esc(r.id)}">${esc(r.title)}</span><span class="stepper np-sv"><button type="button" data-act="serv-dec" data-id="${esc(r.id)}" aria-label="Fewer servings">−</button><strong>${planServings(pl, r)}</strong><button type="button" data-act="serv-inc" data-id="${esc(r.id)}" aria-label="More servings">+</button></span><button type="button" class="np-x" data-act="plan-remove" data-id="${esc(r.id)}" aria-label="Remove">×</button></div>`).join('') : `<div class="np-empty">Nothing chosen yet. Pick meals below.</div>`}</div>`;
+    <div class="np-chosen" id="np-chosen">${has ? items.map(r => `<div class="np-ch"><span class="np-ch-t" data-act="open-recipe" data-id="${esc(r.id)}">${esc(r.title)}${seasonMark(r)}</span><span class="stepper np-sv"><button type="button" data-act="serv-dec" data-id="${esc(r.id)}" aria-label="Fewer servings">−</button><strong>${planServings(pl, r)}</strong><button type="button" data-act="serv-inc" data-id="${esc(r.id)}" aria-label="More servings">+</button></span><button type="button" class="np-x" data-act="plan-remove" data-id="${esc(r.id)}" aria-label="Remove">×</button></div>`).join('') : `<div class="np-empty">Nothing chosen yet. Pick meals below.</div>`}</div>`;
   if(editing){
     h += `<button class="add-btn" data-act="edit-done" style="margin-top:12px;background:var(--tomato);">Done editing</button>
       <div class="btn-row"><button class="secondary-btn share-btn${has?'':off}" data-act="${has?'share-plan':'noop'}" aria-label="Share as image"><svg class="share-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg></button><button class="secondary-btn${has?'':off}" data-act="${has?'plan-clear':'noop'}">Clear all meals</button></div>`;
@@ -1506,7 +1638,7 @@ function renderPlanner(){
       if(isOpen){
         const rank = r => sugg.includes(r.id) ? 0 : (ids.has(r.id) ? 1 : 2);
         const sorted = list.slice().sort((a,b)=> rank(a)-rank(b) || a.title.localeCompare(b.title));
-        h += `<div class="np-list">${sorted.map(r => { const on = ids.has(r.id); return `<div class="np-recipe ${on?'on':''}">${thumbHtml(r, true)}<span class="np-rt" data-act="open-recipe" data-id="${esc(r.id)}"><strong>${sugg.includes(r.id)?'🎲 ':''}${esc(r.title)}</strong>${r.subtitle?`<em class="pick-sub">${esc(r.subtitle)}</em>`:''}<small>${esc(TAG_LABELS[r.tag]||r.tag)}${r.time?' · '+esc(r.time)+' min':''}</small></span><button type="button" class="np-add ${on?'on':''}" data-act="np-pick" data-id="${esc(r.id)}" aria-label="${on?'Remove from':'Add to'} the plan">${on?'✓':'+'}</button></div>`; }).join('')}</div>`;
+        h += `<div class="np-list">${sorted.map(r => { const on = ids.has(r.id); return `<div class="np-recipe ${on?'on':''}">${thumbHtml(r, true)}<span class="np-rt" data-act="open-recipe" data-id="${esc(r.id)}"><strong>${sugg.includes(r.id)?'🎲 ':''}${esc(r.title)}${seasonMark(r)}</strong>${r.subtitle?`<em class="pick-sub">${esc(r.subtitle)}</em>`:''}<small>${esc(TAG_LABELS[r.tag]||r.tag)}${r.time?' · '+esc(r.time)+' min':''}</small></span><button type="button" class="np-add ${on?'on':''}" data-act="np-pick" data-id="${esc(r.id)}" aria-label="${on?'Remove from':'Add to'} the plan">${on?'✓':'+'}</button></div>`; }).join('')}</div>`;
       }
       h += `</div>`;
     });
@@ -3118,17 +3250,12 @@ mainEl.addEventListener('click', async (e)=>{
     case 'plan-build': {
       const d = curDraft();
       if(!d || !d.recipeIds.length) break;
-      d.built = true; d.locked = true; d.groceryDone = false;
-      state.npLog = []; state.npUsed = []; state.npSugg = {};
-      state.activePlanId = d.id;
-      state.checks = {};
-      goTab('plan');
-      showToast('Menu built. Your grocery list is ready.');
-      await savePlan(d);
-      await saveActivePlanId();
-      await saveChecks();
+      const d0 = seasonData(), mo = new Date().getMonth() + 1;
+      if(Object.keys(d0.fruit).some(n => monthIn(d0.fruit[n], mo))) openFruitSheet(); else await buildMenuNow([]);
       break;
     }
+    case 'season-edit': openSeasonSheet(); break;
+    case 'ooseason': { const r = state.recipes[id]; if(r) showToast('Out of season in Sydney now: ' + outOfSeason(r).join(', '), 5000); break; }
     case 'plan-lock': {
       const plan = activePlan();
       if(!plan || !plan.recipeIds.length) break;

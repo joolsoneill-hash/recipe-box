@@ -211,3 +211,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.38
 - Auto: issue #20, Bug: in the "steps" screen of a recipe. Allow adding another ingredient, th
+
+0.39
+- Planner: in-season fruit and veg for Sydney. Suggest meals prefers meals whose vegetables are in season, and (!) marks an out-of-season one. The seasonal list can be edited (In-season fruit and veg button). Build menu offers the fruit in season now for the grocery list.
