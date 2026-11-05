@@ -1079,9 +1079,9 @@ function render(){
 }
 function updateGroceryBadge(){ /* the tab just says Groceries */ }
 
-function goTo(view){ viewStack.push(view); render(); window.scrollTo(0, 0); }
+function goTo(view){ currentView().scrollY = window.scrollY; viewStack.push(view); render(); window.scrollTo(0, 0); }   // the screen we leave remembers where it was scrolled to
 function goBack(){
-  if(viewStack.length > 1){ viewStack.pop(); render(); window.scrollTo(0, 0); return true; }
+  if(viewStack.length > 1){ viewStack.pop(); const back = currentView(); render(); window.scrollTo(0, back.scrollY || 0); back.scrollY = 0; return true; }
   return false;
 }
 function goTab(tab, keepEdit){

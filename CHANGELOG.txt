@@ -217,3 +217,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.40
 - Recipe pages: out-of-season fruit and veg in the ingredient list are marked (!).
+
+0.41
+- Going back from a recipe returns you to the same place on the screen (Planner, Recipes and the other tabs), not the top.
