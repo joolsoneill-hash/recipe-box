@@ -223,3 +223,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.42
 - Suggest meals no longer brings back a meal you removed during the same planning session, and a removed suggestion still counts so the next one comes from a new cuisine.
+
+0.43
+- Planner: search box to find a recipe by name and add it to the plan. A recipe that fails to save to the shared database now shows a message instead of failing silently.
