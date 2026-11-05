@@ -226,3 +226,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.43
 - Planner: search box to find a recipe by name and add it to the plan. A recipe that fails to save to the shared database now shows a message instead of failing silently.
+
+0.44
+- Restyle (branch restyle-hallmark): lighter header, flat white cards with hairline borders, Marcellus titles, line icons in the header and tab bar, no emoji, no dotted background, every colour and font a token.

@@ -10,7 +10,8 @@ A shared household recipe, menu and grocery app for two people. One HTML file of
 
 ## House rules
 - Australian spelling and terms (zucchini, capsicum, coriander, spring onion). Liquids are stored in ml.
-- No icons on buttons (the calendar is the only exception). Square corners (2px radius). Olive green is `--herb`, primary buttons are solid tomato, secondary buttons are outlined. Two buttons per row where there are two.
+- Icons on buttons are fine (simple line SVG icons, never emoji). Square corners (2px radius). Olive green is `--herb`, primary buttons are solid tomato, secondary buttons are outlined. Two buttons per row where there are two.
+- Restyle (v0.44): every colour and font goes through a token in `:root` (no colour literals elsewhere). Flat white cards with hairline borders, no shadows. Recipe and page titles use `--font-display` (Marcellus), everything else `--font-body`. Labels are sentence case, never tracked capitals.
 - Keep the app fast on a phone. No new libraries or outside requests.
 - Do not touch the Firebase config, sign-in, or the database rules.
 - Database paths in use: `recipes`, `photos`, `plans`, `activePlanId`, `checks`, `bugs`, `customCuisines`, `storePrefs`. Never rename or remove a field. Old data must keep loading; add a migration if the shape changes.
