@@ -279,6 +279,5 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 0.58
 - Planner: the box of meals not cooked from the last menu has an Uncooked label at its top left; the cook-again arrows on those meals are gone. Each meal is its own card, with its remove × in a dark circle on the card's top-right corner.
 
-0.59
-- Planner: the × on each meal is now a swap button that replaces that meal with a new suggestion (same spot, same serves); uncooked meals have no swap button.
-- Planner: press and hold a meal to start selecting; tap others to add them, then Remove (or Cancel) in the bar at the top of the list.
+0.60
+- Rolled back to the 0.58 Planner (× to remove, no swap or hold-to-select) while a report that the app hangs on opening is checked.
