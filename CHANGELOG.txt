@@ -284,3 +284,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.61
 - Planner swap button and hold-to-select are back (same as 0.59). The hang on opening was a slow first load, not these changes.
+
+0.62
+- Planner: when you hold a meal to select, the banner and tab bar hide and a round bin button (with the number selected) floats at the bottom of the screen with Cancel under it, and the buttons below the list are hidden.
