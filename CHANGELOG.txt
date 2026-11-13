@@ -281,3 +281,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.60
 - Rolled back to the 0.58 Planner (× to remove, no swap or hold-to-select) while a report that the app hangs on opening is checked.
+
+0.61
+- Planner swap button and hold-to-select are back (same as 0.59). The hang on opening was a slow first load, not these changes.
