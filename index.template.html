@@ -1709,7 +1709,8 @@ function renderPlanner(){
       h += `<div class="np-cu"><div class="np-row"><span class="np-cu-head" data-act="np-tog" data-id="${esc(t)}">${isOpen?'▾':'▸'} ${esc(cuiLabel(t))} <small style="color:var(--brown)">(${list.length} recipes)</small></span><span class="stepper"><button type="button" data-act="np-dec" data-id="${esc(t)}" aria-label="Remove a meal">−</button><strong>${nSel}</strong><button type="button" data-act="np-inc" data-id="${esc(t)}" aria-label="Suggest one more">+</button></span></div>`;
       if(isOpen){
         const rank = r => sugg.includes(r.id) ? 0 : (ids.has(r.id) ? 1 : 2);
-        const sorted = list.slice().sort((a,b)=> rank(a)-rank(b) || a.title.localeCompare(b.title));
+        // suggested and chosen meals first, the rest in a random order that holds while the app is open (so the list does not jump about as you tap)
+        const sorted = list.slice().sort((a,b)=> rank(a)-rank(b) || favShuffleKey(a.id) - favShuffleKey(b.id));
         h += `<div class="np-list">${sorted.map(r => rowHtml(r, sugg)).join('')}</div>`;
       }
       h += `</div>`;

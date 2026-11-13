@@ -263,3 +263,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.54
 - Suggest meals: cuisines with more recipes are more likely to be picked (in proportion to how many recipes they have). Still a different cuisine each time.
+
+0.55
+- Planner: recipes inside each cuisine are in a random order (suggested and chosen ones still first). The order stays put while the app is open and changes next time.
