@@ -246,3 +246,7 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 0.49
 - Every popup has an X at the top right. Bottom sheets can also be dragged down to close (when scrolled to the top).
 - Fix: the remove buttons in the In-season fruit and veg list were drawn in the wrong place since 0.48.
+
+0.50
+- Planner: Fridge, Cook again and In season labels under the icons. Meals not cooked from the current menu go straight into the draft, grouped at the top inside one orange outline (no question); removing one asks first. Their groceries are not added again.
+- All −/+ counters: − and + are small shaded buttons, the number sits in a light box. Meals carried from the last menu show their servings followed by the cook-again arrow and can't be changed.
