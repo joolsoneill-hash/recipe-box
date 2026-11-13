@@ -1635,7 +1635,10 @@ function suggestNext(pl){
   const avail = Array.from(new Set(pool.flatMap(cuOf)));
   let fresh = avail.filter(c => !state.npUsed.includes(c));
   if(!fresh.length){ state.npUsed = []; fresh = avail; }   // every cuisine has had a turn: start a new round
-  const cu = pickOf(fresh);
+  // cuisines with more recipes to choose from are more likely to come up (chance is in proportion to how many)
+  const weight = c => pool.filter(r => cuOf(r).includes(c)).length;
+  let roll = Math.random() * fresh.reduce((t, c) => t + weight(c), 0);
+  const cu = fresh.find(c => (roll -= weight(c)) < 0) || fresh[fresh.length - 1];
   return {id: pickOf(prefer(pool.filter(r => cuOf(r).includes(cu)))).id, cu};
 }
 const uncookedOf = cur => cur ? cur.recipeIds.filter(id => state.recipes[id] && !(cur.done && cur.done[id])) : [];
@@ -3353,7 +3356,7 @@ mainEl.addEventListener('click', async (e)=>{
     }
     case 'go-plan': goTab('plan'); break;
     case 'go-list': goTab('list'); break;
-    case 'sg-info': appAlert('Suggest meals adds meals for you, one per tap of +. The first two are favourites, then each one comes from a different cuisine. Meals whose vegetables are in season come first, and (!) marks a meal with an out-of-season vegetable. Tap − to take the last one away.'); break;
+    case 'sg-info': appAlert('Suggest meals adds meals for you, one per tap of +. The first two are favourites, then each one comes from a different cuisine, and cuisines you have more recipes for come up more often. Meals whose vegetables are in season come first, and (!) marks a meal with an out-of-season vegetable. Tap − to take the last one away.'); break;
     case 'plan-build': {
       const d = curDraft();
       if(!d || !d.recipeIds.length) break;

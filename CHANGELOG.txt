@@ -260,3 +260,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.53
 - Planner: Choose meals by cuisine is a bigger heading with the recipe search right under it; the instructions under it are gone.
+
+0.54
+- Suggest meals: cuisines with more recipes are more likely to be picked (in proportion to how many recipes they have). Still a different cuisine each time.
