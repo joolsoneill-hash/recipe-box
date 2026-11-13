@@ -273,7 +273,7 @@
   .done-col input:checked::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:700;}
   .np-total{font-size:14px;color:var(--ink);margin:14px 0 6px;}
   .np-chosen{box-sizing:border-box;margin-top:10px;min-height:60px;border:1px solid var(--line-strong);border-radius:2px;background:var(--card);}
-  .np-ch{display:flex;align-items:center;gap:8px;min-height:50px;box-sizing:border-box;padding:9px 8px 7px 13px;border-top:1px solid var(--line);}
+  .np-ch{display:flex;align-items:center;gap:10px;min-height:50px;box-sizing:border-box;padding:8px 8px 8px 8px;border-top:1px solid var(--line);}
   .np-tools{margin-top:0;}
   .np-tools .share-btn{flex-direction:column;gap:4px;padding:10px 4px 8px;}
   .btn-ico-row{display:inline-flex;align-items:center;justify-content:center;gap:8px;}
@@ -284,7 +284,7 @@
   .np-sg-l{display:flex;align-items:center;gap:8px;}
   .info-btn{width:20px;height:20px;flex-shrink:0;border:none;background:none;color:var(--brown);padding:0;display:inline-flex;align-items:center;justify-content:center;vertical-align:-4px;cursor:pointer;}
   .info-btn svg{width:20px;height:20px;display:block;}
-  .np-ch .thumb{width:52px;height:52px;}
+  .np-ch .thumb{width:72px;height:72px;}
   .np-fav{position:absolute;right:-5px;bottom:-5px;width:20px;height:20px;padding:3px;box-sizing:border-box;border-radius:50%;background:var(--card);color:var(--gold);}
 
   .np-ch:first-child{border-top:none;}
@@ -300,19 +300,25 @@
   .np-suggest .np-big button:last-child::after{height:15px;}
   .np-suggest .np-big strong{min-width:52px;font-size:21px;}
   /* serves is small and to the side so the meals counter leads */
-  .np-serves{display:flex;flex-direction:column;align-items:center;gap:2px;margin-top:14px;}
-  .np-serves-l{font-size:11.5px;color:var(--brown);line-height:1.2;}
-  .np-serves .stepper{gap:5px;}
-  .np-serves .stepper button, .np-serves .stepper strong{height:20px;}
-  .np-serves .stepper button{width:20px;}
-  .np-serves .stepper button::before{width:8px;}
-  .np-serves .stepper button:last-child::after{height:8px;}
-  .np-serves .stepper strong{min-width:22px;font-size:12px;}
   .np-suggest small{display:block;font-size:11.5px;color:var(--brown);margin-top:2px;}
   .np-ch-t{flex:1;min-width:0;font-size:16px;font-weight:600;line-height:1.3;overflow-wrap:anywhere;cursor:pointer;}
   .np-th{position:relative;flex-shrink:0;display:block;}
-  .np-x{border:none;background:none;font-size:20px;line-height:1;color:var(--brown);padding:2px 6px;cursor:pointer;}
-  .np-th .np-x{position:absolute;top:-7px;left:-7px;width:20px;height:20px;border-radius:50%;border:none;background:var(--ink);color:var(--paper);font-size:14px;line-height:1;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;}   /* remove sits on the photo's corner so the steppers line up */
+  .np-side{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}   /* × above the serves so the name gets more room */
+  .np-x{border:none;background:none;font-size:22px;line-height:1;color:var(--brown);padding:2px 6px 4px;margin-right:-2px;cursor:pointer;flex-shrink:0;}
+  .np-srv{display:inline-flex;align-items:center;gap:5px;flex-shrink:0;padding:5px 8px;border:1px solid var(--line-strong);border-radius:2px;background:var(--card);color:var(--ink);font:inherit;font-size:15px;cursor:pointer;}
+  .np-srv strong{font-weight:700;}
+  .np-srv.fixed{border-color:transparent;background:none;cursor:default;padding-right:2px;}
+  .np-srv .np-plate{width:17px;height:17px;color:var(--brown);}
+  .np-srv .np-again{width:18px;height:18px;}
+  .srv-pick{display:flex;flex-direction:column;align-items:center;gap:6px;margin:10px 0 18px;}
+  .srv-pick .np-big{gap:10px;}
+  .srv-pick .np-big button, .srv-pick .np-big strong{height:48px;}
+  .srv-pick .np-big button{width:48px;}
+  .srv-pick .np-big button::before{width:16px;}
+  .srv-pick .np-big button:last-child::after{height:16px;}
+  .srv-pick .np-big strong{min-width:60px;font-size:22px;}
+  .srv-l{font-size:13px;color:var(--brown);}
+  .np-cui-h{cursor:pointer;}
   .np-empty{height:100%;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--brown);}
   .is-off{opacity:.45;}
   .np-add{flex-shrink:0;width:34px;height:34px;border:1px solid var(--herb);background:transparent;color:var(--herb);font-size:18px;font-weight:700;border-radius:2px;margin-left:auto;cursor:pointer;}
@@ -565,7 +571,7 @@
 <body>
 <div id="app" class="booting">
   <header class="app-header">
-    <div class="header-right"><button type="button" class="header-btn" id="menu-header-btn" aria-label="More options" aria-haspopup="true" aria-expanded="false">⋯</button><span class="app-version" id="app-version">v0.56</span></div>
+    <div class="header-right"><button type="button" class="header-btn" id="menu-header-btn" aria-label="More options" aria-haspopup="true" aria-expanded="false">⋯</button><span class="app-version" id="app-version">v0.57</span></div>
     <div class="app-menu" id="app-menu" hidden></div>
     <div class="brand"><svg viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#2B2620"/><defs><clipPath id="rr"><rect width="512" height="512" rx="112"/></clipPath> <pattern id="gh" width="64" height="64" patternUnits="userSpaceOnUse"><rect width="64" height="64" fill="#F6EEDC"/><rect width="32" height="64" fill="#C8452D" opacity=".5"/><rect width="64" height="32" fill="#C8452D" opacity=".5"/></pattern></defs><g clip-path="url(#rr)"><path d="M0 408 Q256 388 512 408 V512 H0Z" fill="url(#gh)"/><path d="M0 408 Q256 388 512 408" fill="none" stroke="#2B2620" stroke-opacity=".25" stroke-width="3"/></g><g transform="translate(256 262) scale(.9) translate(-256 -256)"> <!-- steam --> <g fill="none" stroke="#EDE3D0" stroke-width="12" stroke-linecap="round" opacity=".85"> <path d="M206 120c-18-22 18-34 0-58"/><path d="M256 108c-18-22 18-34 0-58"/><path d="M306 120c-18-22 18-34 0-58"/> </g> <!-- shallow pasta bowl: underside, rim, well --> <path d="M52 322c4 52 84 86 204 86s200-34 204-86z" fill="#EFE6D0"/> <path d="M52 322c4 52 84 86 204 86s200-34 204-86c-30 20-100 32-204 32S82 342 52 322z" fill="#E4D8BC" opacity=".6"/> <rect x="190" y="402" width="132" height="18" rx="9" fill="#EFE6D0"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="#FAF6EC"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="none" stroke="#D9CDB4" stroke-width="5"/> <!-- painted rim --> <ellipse cx="256" cy="322" rx="186" ry="55" fill="none" stroke="#2F5D8C" stroke-width="7"/> <ellipse cx="256" cy="322" rx="164" ry="46" fill="none" stroke="#2F5D8C" stroke-width="3"/> <circle cx="432" cy="330" r="5" fill="#E9B949"/><circle cx="408" cy="354" r="5" fill="#E9B949"/><circle cx="344" cy="373" r="5" fill="#E9B949"/><circle cx="256" cy="379" r="5" fill="#E9B949"/><circle cx="168" cy="373" r="5" fill="#E9B949"/><circle cx="103" cy="355" r="5" fill="#E9B949"/><circle cx="80" cy="330" r="5" fill="#E9B949"/><circle cx="103" cy="305" r="5" fill="#E9B949"/><circle cx="167" cy="286" r="5" fill="#E9B949"/><circle cx="255" cy="280" r="5" fill="#E9B949"/><circle cx="343" cy="286" r="5" fill="#E9B949"/><circle cx="408" cy="304" r="5" fill="#E9B949"/> <!-- well --> <ellipse cx="256" cy="324" rx="138" ry="36" fill="#F1E8D2"/> <!-- spaghetti nest --> <g fill="none" stroke="#F0CF6E" stroke-width="18" stroke-linecap="round"> <path d="M130 318c26-30 50 18 76-4s50 22 76-4 50 18 76-4"/> <ellipse cx="256" cy="302" rx="104" ry="30"/> <ellipse cx="256" cy="278" rx="80" ry="24"/> <ellipse cx="256" cy="256" rx="56" ry="17"/> <ellipse cx="256" cy="238" rx="32" ry="10"/> <path d="M360 326c20 6 36 14 40 24" /> </g> <g fill="none" stroke="#C8962A" stroke-width="4" stroke-linecap="round" opacity=".5"> <ellipse cx="256" cy="310" rx="104" ry="30"/><ellipse cx="256" cy="286" rx="80" ry="24"/><ellipse cx="256" cy="264" rx="56" ry="17"/> </g> <!-- sauce and basil --> <ellipse cx="256" cy="226" rx="30" ry="12" fill="#B94A2F"/> <ellipse cx="248" cy="222" rx="11" ry="4" fill="#D8674A" opacity=".8"/> <path d="M262 218c8-24 32-26 40-12-10 18-30 22-40 12z" fill="#4D7A5A"/> <path d="M268 216c10-6 20-8 30-4" stroke="#2F5A3C" stroke-width="3.5" fill="none" stroke-linecap="round"/> <!-- fork --> <g stroke-linecap="round" stroke-linejoin="round" fill="none"> <line x1="410" y1="150" x2="306" y2="238" stroke="#9AA3AB" stroke-width="16"/> <line x1="410" y1="150" x2="306" y2="238" stroke="#DDE2E6" stroke-width="9"/> <g stroke="#9AA3AB" stroke-width="14"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> <g stroke="#DDE2E6" stroke-width="7"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> </g> </g> <g><circle cx="74" cy="446" r="28" fill="#D2452E"/><ellipse cx="64" cy="436" rx="9" ry="6" fill="#fff" opacity=".35"/> <path d="M74 418c-4-8-14-10-20-6 6 6 12 8 20 6z M74 418c4-8 14-10 20-6-6 6-12 8-20 6z M74 418l0-10" fill="#4D7A5A" stroke="#2F5A3C" stroke-width="3" stroke-linejoin="round"/></g> <g><path d="M438 452c10-26 40-30 54-14-12 22-40 28-54 14z" fill="#4D7A5A"/><path d="M446 450c14-8 28-10 42-6" stroke="#2F5A3C" stroke-width="4" fill="none" stroke-linecap="round"/></g></svg><div class="brand-text"><h1>Tavola</h1><div class="brand-sub" id="brand-sub" hidden></div></div></div>
   </header>
@@ -1485,15 +1491,6 @@ function addRecipeToPlan(plan, rid){
   plan.servings = plan.servings || {};
   if(!plan.servings[rid]) plan.servings[rid] = plan.people || DEFAULT_SERVES;
 }
-// one serves number for the whole menu (meals carried from the last menu keep theirs)
-function planGlobalServes(plan){
-  if(!plan) return DEFAULT_SERVES;
-  if(plan.people) return plan.people;
-  const counts = {};
-  planRecipes(plan).filter(r => !(plan.carried || []).includes(r.id)).forEach(r => { const n = planServings(plan, r); counts[n] = (counts[n] || 0) + 1; });
-  const best = Object.keys(counts).sort((a,b) => counts[b] - counts[a])[0];
-  return best ? parseInt(best) : DEFAULT_SERVES;
-}
 async function togglePlanRecipe(rid, planArg){
   const plan = planArg || viewPlan();
   if(!plan || plan.locked) return;
@@ -1677,6 +1674,22 @@ function carryUncooked(){
   savePlan(d);
 }
 
+// change how many one meal in the Planner serves
+function openServesSheet(id){
+  const pl = plannerPlan(), r = state.recipes[id];
+  if(!pl || !r || !pl.recipeIds.includes(id)) return;
+  const draw = () => {
+    openSheet(`<div class="sheet-handle"></div><h2>${esc(r.title)}</h2>
+      <div class="srv-pick"><span class="stepper np-big"><button type="button" id="srv-dec" aria-label="Fewer servings">−</button><strong>${planServings(pl, r)}</strong><button type="button" id="srv-inc" aria-label="More servings">+</button></span><div class="srv-l">Serves</div></div>
+      <button type="button" class="primary-btn" id="srv-done">Done</button>`);
+    const step = d => { pl.servings = pl.servings || {}; pl.servings[id] = Math.min(99, Math.max(1, planServings(pl, r) + d)); draw(); render(); savePlan(pl); };
+    document.getElementById('srv-dec').onclick = () => step(-1);
+    document.getElementById('srv-inc').onclick = () => step(1);
+    document.getElementById('srv-done').onclick = closeSheet;
+  };
+  draw();
+}
+
 function renderPlanner(){
   const editing = !!(state.editPlanId && plannerPlan() && plannerPlan().id === state.editPlanId);
   if(!editing) carryUncooked();
@@ -1696,10 +1709,10 @@ function renderPlanner(){
   // meals not cooked from the last menu sit together at the top inside one outline
   const isCarried = r => !!(pl && pl.carried && pl.carried.includes(r.id));
   const carriedRows = items.filter(isCarried), otherRows = items.filter(r => !isCarried(r));
-  const chRow = r => `<div class="np-ch"><span class="np-th">${thumbHtml(r, true)}<button type="button" class="np-x" data-act="plan-remove" data-id="${esc(r.id)}" aria-label="Remove">×</button>${r.fav ? '<svg class="np-fav" viewBox="0 0 24 24" role="img" aria-label="Favourite"><path d="M12 3.2l2.6 5.5 6 .7-4.4 4.1 1.2 5.9L12 16.5l-5.4 2.9 1.2-5.9L3.4 9.4l6-.7z" fill="currentColor"/></svg>' : ''}</span><span class="np-ch-t" data-act="open-recipe" data-id="${esc(r.id)}">${esc(r.title)}${seasonMark(r)}</span>${isCarried(r) ? `<svg class="np-again" viewBox="0 0 24 24" role="img" aria-label="From the last menu"><path d="M19 12a7 7 0 1 1-2.05-4.95M19 4v4h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>` : ''}</div>`;
+  const chRow = r => `<div class="np-ch"><span class="np-th">${thumbHtml(r, true)}${r.fav ? '<svg class="np-fav" viewBox="0 0 24 24" role="img" aria-label="Favourite"><path d="M12 3.2l2.6 5.5 6 .7-4.4 4.1 1.2 5.9L12 16.5l-5.4 2.9 1.2-5.9L3.4 9.4l6-.7z" fill="currentColor"/></svg>' : ''}</span><span class="np-ch-t" data-act="open-recipe" data-id="${esc(r.id)}">${esc(r.title)}${seasonMark(r)}</span><span class="np-side"><button type="button" class="np-x" data-act="plan-remove" data-id="${esc(r.id)}" aria-label="Remove">×</button>${isCarried(r) ? `<span class="np-srv fixed" title="From the last menu, serves ${planServings(pl, r)}"><strong>${planServings(pl, r)}</strong><svg class="np-again" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12a7 7 0 1 1-2.05-4.95M19 4v4h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>` : `<button type="button" class="np-srv" data-act="serv-pick" data-id="${esc(r.id)}" aria-label="Serves ${planServings(pl, r)}. Change"><svg class="np-plate" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg><strong>${planServings(pl, r)}</strong></button>`}</span></div>`;
   let h = `
     ${topIdeas}
-    <div class="np-suggest"><div class="np-sg-col"><span class="np-sg-l"><strong>Meals</strong><button type="button" class="info-btn" data-act="sg-info" aria-label="How suggestions work"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.6" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="10" cy="6.2" r="1.15" fill="currentColor"/><path d="M10 9v5.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button></span><span class="stepper np-big"><button type="button" data-act="sg-dec" aria-label="Remove the last suggested meal">−</button><strong>${sgCount}</strong><button type="button" data-act="sg-inc" aria-label="Suggest another meal">+</button></span></div><div class="np-serves"><span class="stepper"><button type="button" data-act="ppl-dec" aria-label="Fewer people">−</button><strong>${planGlobalServes(pl)}</strong><button type="button" data-act="ppl-inc" aria-label="More people">+</button></span><span class="np-serves-l">Serves</span></div></div>
+    <div class="np-suggest"><div class="np-sg-col"><span class="np-sg-l"><strong>Meals</strong><button type="button" class="info-btn" data-act="sg-info" aria-label="How suggestions work"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.6" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="10" cy="6.2" r="1.15" fill="currentColor"/><path d="M10 9v5.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button></span><span class="stepper np-big"><button type="button" data-act="sg-dec" aria-label="Remove the last suggested meal">−</button><strong>${sgCount}</strong><button type="button" data-act="sg-inc" aria-label="Suggest another meal">+</button></span></div></div>
     <div class="np-chosen" id="np-chosen">${has ? `${carriedRows.length ? `<div class="np-carried" title="Not cooked from the last menu">${carriedRows.map(chRow).join('')}</div>` : ''}${otherRows.map(chRow).join('')}` : `<div class="np-empty">Nothing chosen yet. Pick meals below.</div>`}</div>`;
   if(editing){
     h += `<button class="add-btn" data-act="edit-done" style="margin-top:12px;background:var(--tomato);">Done editing</button>
@@ -1711,13 +1724,16 @@ function renderPlanner(){
 
   const rowHtml = (r, sugg) => { const on = ids.has(r.id); return `<div class="np-recipe ${on?'on':''}">${thumbHtml(r, true)}<span class="np-rt" data-act="open-recipe" data-id="${esc(r.id)}"><strong>${sugg.includes(r.id)?'🎲 ':''}${esc(r.title)}${seasonMark(r)}</strong>${r.subtitle?`<em class="pick-sub">${esc(r.subtitle)}</em>`:''}<small>${esc(TAG_LABELS[r.tag]||r.tag)}${r.time?' · '+esc(r.time)+' min':''}</small></span><button type="button" class="np-add ${on?'on':''}" data-act="np-pick" data-id="${esc(r.id)}" aria-label="${on?'Remove from':'Add to'} the plan">${on?'✓':'+'}</button></div>`; };
   const nq = (state.npSearch || '').trim().toLowerCase();
-  const cuiHead = `<h3 class="np-cui-h">Choose meals by cuisine</h3>`;
+  const cuiOpen = !!state.npCuiOpen || !!nq;
+  const cuiHead = `<h3 class="np-cui-h" data-act="np-cui-tog" role="button" aria-expanded="${cuiOpen}">${cuiOpen ? '▾' : '▸'} Choose meals by cuisine</h3>`;
   const searchBox = `<div class="search-row" style="margin:0 0 8px;"><input type="text" id="np-search" placeholder="Search recipes to add…" value="${esc(state.npSearch || '')}"></div>`;
   if(nq){
     const found = recipes.filter(r => fullTitle(r).toLowerCase().includes(nq)).sort((a,b) => (ids.has(b.id)?1:0) - (ids.has(a.id)?1:0) || a.title.localeCompare(b.title));
     h += `<div class="np-sec">${cuiHead}${searchBox}${found.length ? `<div class="np-list">${found.map(r => rowHtml(r, [])).join('')}</div>` : `<div class="np-empty">No recipes match that search.</div>`}</div>`;
     return h;
   }
+  // folded away by default: add meals from the Recipes tab, or open this to browse by cuisine
+  if(!cuiOpen) return h + `<div class="np-sec">${cuiHead}</div>`;
   if(!tags.length) return h + `<div class="np-sec">${cuiHead}${searchBox}</div>`;
   if(tags.length){
     h += `<div class="np-sec">${cuiHead}${searchBox}`;
@@ -2320,7 +2336,7 @@ async function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '0.56';
+const APP_VERSION = '0.57';
 // Reports are also sent here (a small relay that opens a GitHub issue, which Claude then works on). Empty = reports are only saved to the shared list.
 const BUG_RELAY_URL = 'https://tavola-relay.jools-oneill.workers.dev/';
 async function sendToRelay(bugs){   // bugs: an array of reports. Returns {why:'' when all were sent, otherwise the reason, sent:[ids of those that were]}
@@ -3333,14 +3349,8 @@ mainEl.addEventListener('click', async (e)=>{
       state.npLog.push(n); if(n.cu && !state.npUsed.includes(n.cu)) state.npUsed.push(n.cu);
       addRecipeToPlan(pl, n.id); render(); await savePlan(pl); break;
     }
-    case 'ppl-dec': case 'ppl-inc': {
-      const pl = plannerPlan() || newDraft();
-      const next = Math.min(99, Math.max(1, planGlobalServes(pl) + (act === 'ppl-inc' ? 1 : -1)));
-      pl.people = next;
-      pl.servings = pl.servings || {};
-      pl.recipeIds.forEach(x => { if(!(pl.carried || []).includes(x)) pl.servings[x] = next; });
-      render(); await savePlan(pl); break;
-    }
+    case 'np-cui-tog': state.npCuiOpen = !state.npCuiOpen; render(); break;
+    case 'serv-pick': openServesSheet(id); break;
     case 'sg-dec': {
       const pl = plannerPlan(); if(!pl || !state.npLog.length) break;
       const last = state.npLog.pop();
