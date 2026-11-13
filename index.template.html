@@ -41,7 +41,8 @@
   input,textarea,select{font-family:'Work Sans',sans-serif;}
 
   .app-header{background:var(--ink);color:var(--paper);padding:10px 16px 10px;position:relative;margin-bottom:0;}
-  .brand-sub{font-size:15px;font-weight:600;color:var(--paper);opacity:0.75;margin-top:2px;letter-spacing:0.2px;}
+  .brand-text{align-self:stretch;position:relative;display:flex;flex-direction:column;justify-content:center;}
+  .brand-sub{position:absolute;left:2px;bottom:0;line-height:1;white-space:nowrap;font-size:15px;font-weight:600;color:var(--paper);opacity:0.75;margin-top:2px;letter-spacing:0.2px;}
   .brand-sub[hidden]{display:none;}
   .app-header h1{margin:0;font-family:"Marcellus",Georgia,serif;font-weight:400;letter-spacing:0.5px;font-size:32.8px;white-space:nowrap;letter-spacing:0.2px;}
   .app-header .tagline{margin:6px 0 0;font-size:13px;color:rgba(237,227,208,0.72);}
@@ -1375,40 +1376,33 @@ function planItemHtml(plan, r){
 function renderPlan(){
   const plans = Object.values(state.plans).sort((a,b)=>(b.created||0)-(a.created||0));
   const plan = activePlan();
-  if(!plan) return `<h2 class="plan-date">Menu of the Week</h2><div class="empty-state"><h3>No menu yet</h3><p>Choose your meals in the Planner. When you build the menu it moves here and your grocery list is made.</p><button class="secondary-btn" data-act="go-planner">Go to Planner</button></div>`;
+  if(!plan) return `<div class="empty-state"><h3>No menu yet</h3><p>Choose your meals in the Planner. When you build the menu it moves here and your grocery list is made.</p><button class="secondary-btn" data-act="go-planner">Go to Planner</button></div>`;
   let items = planRecipes(plan);
   // meals carried over from an earlier menu that are not cooked yet go first; cooked meals go last
   const isDone = r => !!(plan.done && plan.done[r.id]);
   const isCarryOpen = r => !!(plan.carried && plan.carried.includes(r.id) && !isDone(r));
   items = [...items.filter(isCarryOpen), ...items.filter(r => !isCarryOpen(r) && !isDone(r)), ...items.filter(isDone)];
 
-  const lockIcon = plan.locked
-    ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" fill="currentColor" fill-opacity=".15"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>`
-    : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 7.5-2"/></svg>`;
-  const lockAct = plan.locked ? 'plan-edit' : 'plan-lock';
-  let html = `
-    <div class="plan-headrow">
-      <div class="plan-title-line">
-        <h2 class="plan-date">Menu of the Week</h2>
-        <button type="button" class="lock-btn ${plan.locked?'locked':''}" data-act="${items.length || plan.locked ? lockAct : 'noop'}" aria-label="${plan.locked ? 'Plan locked. Tap to edit' : 'Plan unlocked'}">${lockIcon}</button>
-      </div>
-    </div>
-    <div class="plan-count" style="margin-top:6px;">${items.length} meal${items.length===1?'':'s'} chosen${plan.locked ? '' : ` · <span class="plan-add-link" data-act="edit-plan">edit</span>`}</div>
-  `;
+  const PENCIL = '<svg class="share-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>';
+  const CART = '<svg class="share-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2.5l2.2 10.5h10.6L20.5 7H6.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/><circle cx="9.5" cy="19" r="1.5" fill="currentColor"/><circle cx="17" cy="19" r="1.5" fill="currentColor"/></svg>';
+  // the pencil opens the menu in the Planner to change it; Done there locks it again
+  const editBtn = `<button class="secondary-btn share-btn" data-act="plan-pencil" aria-label="Edit menu">${PENCIL}</button>`;
+  let html = '';
 
   if(items.length === 0){
-    html += `<div class="empty-state"><h3>No meals chosen yet</h3><p>Tap "edit" above to change the meals in this plan. Your grocery list is built from the current plan.</p></div>`;
+    html += `<div class="empty-state"><h3>No meals chosen yet</h3><p>Tap the pencil below to add meals.</p></div>`;
   } else {
     items.forEach(r=>{ html += planItemHtml(plan, r); });
   }
 
   if(plan.locked){
-    html += `<div class="btn-row" style="margin-top:12px;"><button class="secondary-btn" data-act="go-list">See grocery list</button>${items.length ? `<button class="secondary-btn share-btn" data-act="share-plan" aria-label="Share as image"><svg class="share-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg></button>` : ''}</div>`;
+    html += `<div class="btn-row" style="margin-top:12px;"><button class="secondary-btn share-btn" data-act="go-list" aria-label="See shopping list">${CART}</button>${items.length ? `<button class="secondary-btn share-btn" data-act="share-plan" aria-label="Share as image"><svg class="share-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg></button>` : ''}${editBtn}</div>`;
   } else {
+    if(!items.length) html += `<div class="btn-row" style="margin-top:12px;">${editBtn}</div>`;
     if(items.length){
       html += `<button class="add-btn" data-act="plan-lock" style="margin-top:12px;background:var(--tomato);">Save changes and lock plan</button>`;
       html += `<p class="plan-hint">Your grocery list is already built and updates as you change the meals.</p>`;
-      html += `<div class="btn-row"><button class="secondary-btn" data-act="plan-clear">Clear all meals</button><button class="secondary-btn share-btn" data-act="share-plan" aria-label="Share as image"><svg class="share-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg></button></div>`;
+      html += `<div class="btn-row"><button class="secondary-btn" data-act="plan-clear">Clear all meals</button><button class="secondary-btn share-btn" data-act="share-plan" aria-label="Share as image"><svg class="share-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg></button>${editBtn}</div>`;
     }
   }
 
@@ -3374,6 +3368,16 @@ mainEl.addEventListener('click', async (e)=>{
       const plan = activePlan(); if(!plan) break;
       plan.groceryDone = false; state.checks = {};
       render(); await savePlan(plan); await saveChecks(); break;
+    }
+    case 'plan-pencil': {
+      const plan = activePlan();
+      if(!plan) break;
+      const was = plan.locked;
+      plan.locked = false;
+      state.editPlanId = plan.id;
+      goTab('planner', true);
+      if(was) await savePlan(plan);
+      break;
     }
     case 'plan-edit': {
       const plan = activePlan();

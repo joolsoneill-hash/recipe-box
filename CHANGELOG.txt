@@ -235,3 +235,7 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.46
 - Groceries: removed the "Built from" line at the top; tighter spacing around Add your own item. The Groceries tab is now called Shopping. Each page's name (Menu, Planner or Edit menu, Recipes, Shopping) shows under Tavola in the banner; the Planner's own heading is gone as it repeated it. Less space above the add box and beside the pencil.
+
+0.47
+- Menu: no "Menu of the Week" heading, padlock or "N meals chosen" line. At the bottom: a shopping cart (opens the shopping list), share, and a pencil that opens the menu in the Planner to edit (Done locks it again).
+- Banner: the page name under Tavola now lines up with the bottom of the logo.
