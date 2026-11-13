@@ -161,6 +161,16 @@
   .prev-del{color:var(--tomato);}
   .locked-note{background:var(--card);border:1px solid var(--line-strong);border-radius:2px;padding:11px 12px;font-size:13px;color:var(--brown);margin-bottom:10px;line-height:1.4;}
   .plan-hint{font-size:12px;color:var(--brown);margin:8px 0 0;}
+  .gro-bar{display:flex;align-items:center;gap:10px;margin:0 0 8px;padding:4px 0 8px;border-bottom:1px solid var(--line);}
+  .all-box{display:flex;align-items:center;gap:12px;flex:1;min-width:0;background:none;border:none;padding:6px 0;font:inherit;font-size:14px;color:var(--ink);text-align:left;cursor:pointer;}
+  .all-box .box{width:20px;height:20px;flex-shrink:0;border:1.5px solid var(--ink);border-radius:2px;background:var(--card);display:inline-grid;place-content:center;}
+  .all-box .box::after{content:"";opacity:0;}
+  .all-box.on .box{background:var(--ink);}
+  .all-box.on .box::after{width:10px;height:5px;border-left:2px solid var(--paper);border-bottom:2px solid var(--paper);transform:rotate(-45deg) translate(1px,-1px);opacity:1;}
+  .all-box.some .box::after{width:10px;height:2px;background:var(--ink);opacity:1;}
+  .gro-hide{height:40px;flex-shrink:0;padding:0 12px;background:none;border:1px solid var(--line-strong);border-radius:2px;font:inherit;font-size:13px;font-weight:600;color:var(--brown);white-space:nowrap;cursor:pointer;}
+  .icon-btn{width:40px;height:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:none;border:1px solid var(--line-strong);border-radius:2px;color:var(--ink);padding:0;cursor:pointer;}
+  .icon-btn .share-ico{width:20px;height:20px;}
   .gro-total{display:flex;justify-content:space-between;align-items:baseline;font-size:15px;margin:0 0 12px;padding:10px 12px;background:var(--card);border:1px solid var(--line);border-radius:2px;}
   .gro-total span{font-size:12px;color:var(--brown);}
   .thumb{width:64px;height:64px;border-radius:3px;object-fit:cover;flex-shrink:0;display:block;cursor:pointer;}
@@ -354,8 +364,17 @@
   .extra-row input,.extra-row select{padding:9px 10px;font-size:14px;border:1px solid var(--line-strong);border-radius:2px;background:var(--paper);color:var(--ink);min-width:0;}
   .extra-row input:first-child{flex:2;} .extra-row input:last-child{flex:1;}
   .extra-row select{flex:1;}
-  .extra-row #extra-qty{flex:1;}
-  .extra-add{flex:1;padding:11px 14px;background:var(--tomato);color:#fff;border:none;border-radius:2px;font-size:15px;font-weight:700;}
+  .extra-add{flex:0 0 44px;height:44px;padding:0;display:flex;align-items:center;justify-content:center;background:var(--tomato);color:#fff;border:none;border-radius:2px;}
+  .extra-add svg{width:22px;height:22px;}
+  .extra-row #extra-name{flex:1 1 auto;}
+  .extra-row #extra-qty{flex:0 0 72px;width:72px;}
+  .extra-shops{flex-wrap:wrap;align-items:center;margin-bottom:0;}
+  .gro-pills{margin-bottom:12px;}
+  .shop-edit{width:36px;height:36px;flex:0 0 36px;padding:0;margin-left:-6px;display:flex;align-items:center;justify-content:center;background:none;border:none;color:var(--brown);cursor:pointer;}
+  .shop-edit svg{width:24px;height:24px;}
+  .shop-note{font-size:12px;color:var(--brown);}
+  .shop-del{width:auto;margin:0 0 0 auto;padding:6px 12px;font-size:13px;}
+  #sheet .ss-row .extra-add{margin-left:auto;}
   .extra-lbl{flex:0 0 auto;align-self:center;font-size:13px;font-weight:600;color:var(--brown);}
   .gro-show{font-size:12px;font-weight:600;color:var(--brown);margin:0 0 6px;}
   .grocery-item.extra .gi-name,.grocery-item.extra .gi-qty{font-style:italic;}
@@ -501,7 +520,7 @@
 <body>
 <div id="app" class="booting">
   <header class="app-header">
-    <div class="header-right"><button type="button" class="header-btn" id="menu-header-btn" aria-label="More options" aria-haspopup="true" aria-expanded="false">⋯</button><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button><span class="app-version" id="app-version">v0.44</span></div>
+    <div class="header-right"><button type="button" class="header-btn" id="menu-header-btn" aria-label="More options" aria-haspopup="true" aria-expanded="false">⋯</button><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button><span class="app-version" id="app-version">v0.45</span></div>
     <div class="app-menu" id="app-menu" hidden></div>
     <div class="brand"><svg viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#2B2620"/><defs><clipPath id="rr"><rect width="512" height="512" rx="112"/></clipPath> <pattern id="gh" width="64" height="64" patternUnits="userSpaceOnUse"><rect width="64" height="64" fill="#F6EEDC"/><rect width="32" height="64" fill="#C8452D" opacity=".5"/><rect width="64" height="32" fill="#C8452D" opacity=".5"/></pattern></defs><g clip-path="url(#rr)"><path d="M0 408 Q256 388 512 408 V512 H0Z" fill="url(#gh)"/><path d="M0 408 Q256 388 512 408" fill="none" stroke="#2B2620" stroke-opacity=".25" stroke-width="3"/></g><g transform="translate(256 262) scale(.9) translate(-256 -256)"> <!-- steam --> <g fill="none" stroke="#EDE3D0" stroke-width="12" stroke-linecap="round" opacity=".85"> <path d="M206 120c-18-22 18-34 0-58"/><path d="M256 108c-18-22 18-34 0-58"/><path d="M306 120c-18-22 18-34 0-58"/> </g> <!-- shallow pasta bowl: underside, rim, well --> <path d="M52 322c4 52 84 86 204 86s200-34 204-86z" fill="#EFE6D0"/> <path d="M52 322c4 52 84 86 204 86s200-34 204-86c-30 20-100 32-204 32S82 342 52 322z" fill="#E4D8BC" opacity=".6"/> <rect x="190" y="402" width="132" height="18" rx="9" fill="#EFE6D0"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="#FAF6EC"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="none" stroke="#D9CDB4" stroke-width="5"/> <!-- painted rim --> <ellipse cx="256" cy="322" rx="186" ry="55" fill="none" stroke="#2F5D8C" stroke-width="7"/> <ellipse cx="256" cy="322" rx="164" ry="46" fill="none" stroke="#2F5D8C" stroke-width="3"/> <circle cx="432" cy="330" r="5" fill="#E9B949"/><circle cx="408" cy="354" r="5" fill="#E9B949"/><circle cx="344" cy="373" r="5" fill="#E9B949"/><circle cx="256" cy="379" r="5" fill="#E9B949"/><circle cx="168" cy="373" r="5" fill="#E9B949"/><circle cx="103" cy="355" r="5" fill="#E9B949"/><circle cx="80" cy="330" r="5" fill="#E9B949"/><circle cx="103" cy="305" r="5" fill="#E9B949"/><circle cx="167" cy="286" r="5" fill="#E9B949"/><circle cx="255" cy="280" r="5" fill="#E9B949"/><circle cx="343" cy="286" r="5" fill="#E9B949"/><circle cx="408" cy="304" r="5" fill="#E9B949"/> <!-- well --> <ellipse cx="256" cy="324" rx="138" ry="36" fill="#F1E8D2"/> <!-- spaghetti nest --> <g fill="none" stroke="#F0CF6E" stroke-width="18" stroke-linecap="round"> <path d="M130 318c26-30 50 18 76-4s50 22 76-4 50 18 76-4"/> <ellipse cx="256" cy="302" rx="104" ry="30"/> <ellipse cx="256" cy="278" rx="80" ry="24"/> <ellipse cx="256" cy="256" rx="56" ry="17"/> <ellipse cx="256" cy="238" rx="32" ry="10"/> <path d="M360 326c20 6 36 14 40 24" /> </g> <g fill="none" stroke="#C8962A" stroke-width="4" stroke-linecap="round" opacity=".5"> <ellipse cx="256" cy="310" rx="104" ry="30"/><ellipse cx="256" cy="286" rx="80" ry="24"/><ellipse cx="256" cy="264" rx="56" ry="17"/> </g> <!-- sauce and basil --> <ellipse cx="256" cy="226" rx="30" ry="12" fill="#B94A2F"/> <ellipse cx="248" cy="222" rx="11" ry="4" fill="#D8674A" opacity=".8"/> <path d="M262 218c8-24 32-26 40-12-10 18-30 22-40 12z" fill="#4D7A5A"/> <path d="M268 216c10-6 20-8 30-4" stroke="#2F5A3C" stroke-width="3.5" fill="none" stroke-linecap="round"/> <!-- fork --> <g stroke-linecap="round" stroke-linejoin="round" fill="none"> <line x1="410" y1="150" x2="306" y2="238" stroke="#9AA3AB" stroke-width="16"/> <line x1="410" y1="150" x2="306" y2="238" stroke="#DDE2E6" stroke-width="9"/> <g stroke="#9AA3AB" stroke-width="14"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> <g stroke="#DDE2E6" stroke-width="7"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> </g> </g> <g><circle cx="74" cy="446" r="28" fill="#D2452E"/><ellipse cx="64" cy="436" rx="9" ry="6" fill="#fff" opacity=".35"/> <path d="M74 418c-4-8-14-10-20-6 6 6 12 8 20 6z M74 418c4-8 14-10 20-6-6 6-12 8-20 6z M74 418l0-10" fill="#4D7A5A" stroke="#2F5A3C" stroke-width="3" stroke-linejoin="round"/></g> <g><path d="M438 452c10-26 40-30 54-14-12 22-40 28-54 14z" fill="#4D7A5A"/><path d="M446 450c14-8 28-10 42-6" stroke="#2F5A3C" stroke-width="4" fill="none" stroke-linecap="round"/></g></svg><h1>Tavola</h1></div>
   </header>
@@ -583,6 +602,7 @@ let state = {
   npGone: [],            // meals taken off the plan this session: Suggest meals does not bring them back
   npFavGone: 0,          // favourite suggestions taken off the plan: they still count towards the two favourites
   checks: {},
+  shops: [],
   searchTerm: '',
   openPlans: {},
   activeFilter: 'all',
@@ -891,12 +911,14 @@ async function loadState(){
     // fetch everything at once; photos are stored apart from the recipes and load afterwards
     const failed = [];
     const grab = (path) => dbGet(path).catch(e => { console.error('load failed', path, e); failed.push(path); return null; });
-    const got = await Promise.all([grab('recipes'), grab('plans'), grab('activePlanId'), grab('checks'), grab('customCuisines'), grab('storePrefs'), grab('draftPlan'), grab('seasonal')]);
+    const got = await Promise.all([grab('recipes'), grab('plans'), grab('activePlanId'), grab('checks'), grab('customCuisines'), grab('storePrefs'), grab('draftPlan'), grab('seasonal'), grab('shops')]);
     if(failed.includes('recipes') || failed.includes('plans')){ showLoadError(); return; }   // never carry on with an empty picture of the data
     hideLoadError();
     const [recData, plansData, apData, checksData] = got;
     state.customCuisines = got[4] || {}; state.storePrefs = got[5] || {}; state.draftPlan = got[6] || {};
     state.seasonal = got[7] || null; seasonTokCache = null;
+    // your own shops: {name, on}; on:false means removed but remembered. Nothing saved yet means the starting list.
+    state.shops = got[8] ? Object.values(got[8]).filter(x => x && typeof x.name === 'string' && x.name.trim()) : SHOPS_DEFAULT.map(name => ({name, on: true}));
     state.recipes = recData || {};
     applyCustomCuisines();
 
@@ -1979,6 +2001,60 @@ function allGroceryItems(){
 }
 
 const hideTimers = {};
+/* shops: Coles is the default (no entry in storePrefs); any other value is a shop id. 'aldi' and custom names typed in by the user. */
+const STORE_LABELS = {coles: 'Coles', aldi: 'Aldi'};
+const SHOPS_DEFAULT = ['Bunnings', 'Spotlight', 'Petbarn', 'Woolies'];   // shown until you change the list in Shops
+function storeLabel(id){ return STORE_LABELS[id] || id; }
+function storeOfKey(key){ const v = state.storePrefs && state.storePrefs[key]; return (typeof v === 'string' && v.trim()) ? v : 'coles'; }
+function knownStores(){
+  const list = ['coles', 'aldi'];
+  (state.shops || []).forEach(x => { if(x.on && !list.includes(x.name)) list.push(x.name); });
+  Object.values(state.storePrefs || {}).forEach(v => { if(typeof v === 'string' && v.trim() && !list.includes(v)) list.push(v); });
+  return list;
+}
+// a typed shop name becomes an existing id when it matches one (any case), so "aldi" and "ALDI" are the same shop
+function storeIdFromName(name){
+  const n = String(name || '').trim().slice(0, 30);
+  if(!n) return 'coles';
+  const old = knownStores().concat(state.shops.map(x => x.name)).find(id => storeLabel(id).toLowerCase() === n.toLowerCase());
+  return old || (n[0].toUpperCase() + n.slice(1));
+}
+
+async function saveShops(){
+  try{ if(state.shops.length) await dbSet('shops', state.shops); else await dbDelete('shops'); }
+  catch(err){ console.error(err); showToast("Couldn't save your shops. Check your connection and try again."); }
+}
+function openShopsSheet(){
+  const mine = state.shops.filter(x => x.on), past = state.shops.filter(x => !x.on);
+  const uses = name => Object.values(state.storePrefs || {}).filter(v => v === name).length;
+  openSheet(`<div class="sheet-handle"></div><h2>Shops</h2>
+    <div class="ss-row"><span class="ss-n">Coles</span><span class="shop-note">default</span></div>
+    <div class="ss-row"><span class="ss-n">Aldi</span></div>
+    ${mine.map(x => `<div class="ss-row"><span class="ss-n">${esc(x.name)}</span><button type="button" class="secondary-btn shop-del" data-shop-del="${esc(x.name)}">Remove</button></div>`).join('')}
+    <div class="ss-row"><input type="text" id="shop-new" placeholder="Add a shop" maxlength="30" style="flex:1;min-width:0;"><button type="button" class="extra-add" id="shop-add" aria-label="Add shop"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button></div>
+    ${past.length ? `<h3>Used before</h3><div class="chip-row">${past.map(x => `<button type="button" class="chip" data-shop-back="${esc(x.name)}">+ ${esc(x.name)}</button>`).join('')}</div>` : ''}
+    <button type="button" class="secondary-btn" id="shop-close">Done</button>`);
+  const reopen = () => { openShopsSheet(); render(); };
+  document.querySelectorAll('#sheet [data-shop-del]').forEach(el => el.onclick = async () => {
+    const name = el.dataset.shopDel, n = uses(name);
+    if(n && !(await appConfirm(`Remove ${name}? ${n} item${n===1?'':'s'} set to ${name} will go back to Coles.`, 'Remove', true))) return;
+    Object.keys(state.storePrefs || {}).forEach(k => { if(state.storePrefs[k] === name) delete state.storePrefs[k]; });
+    const hit = state.shops.find(x => x.name === name); if(hit) hit.on = false;
+    if(state.storeView === name) state.storeView = 'all';
+    reopen();
+    await saveShops();
+    if(n){ try{ if(Object.keys(state.storePrefs).length) await dbSet('storePrefs', state.storePrefs); else await dbDelete('storePrefs'); }catch(err){ console.error(err); } }
+  });
+  document.querySelectorAll('#sheet [data-shop-back]').forEach(el => el.onclick = async () => { const h = state.shops.find(x => x.name === el.dataset.shopBack); if(h) h.on = true; reopen(); await saveShops(); });
+  document.getElementById('shop-add').onclick = async () => {
+    const f = document.getElementById('shop-new'), id = storeIdFromName(f.value);
+    if(!f.value.trim()) return;
+    if(id !== 'coles' && id !== 'aldi'){ const h = state.shops.find(x => x.name.toLowerCase() === id.toLowerCase()); if(h) h.on = true; else state.shops.push({name: id, on: true}); }
+    reopen(); await saveShops();
+  };
+  document.getElementById('shop-close').onclick = closeSheet;
+}
+
 function renderGrocery(){
   const plan = activePlan();
   let items = allGroceryItems();
@@ -1987,15 +2063,12 @@ function renderGrocery(){
     <form id="extra-form" class="extra-form" autocomplete="off">
       <div class="extra-row">
         <input id="extra-name" placeholder="Add your own item" aria-label="Item name">
-        <button type="submit" class="extra-add">Add</button>
-      </div>
-      <div class="extra-row">
         <input id="extra-qty" placeholder="Qty" aria-label="Quantity">
-        <select id="extra-cat" aria-label="Category"><option value="auto" selected>Category: automatic</option>${catOptionsHtml('')}</select>
+        <button type="submit" class="extra-add" aria-label="Add item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
       </div>
-      <div class="extra-row">
-        <span class="extra-lbl">Buy at</span>
-        <div class="store-seg extra-seg" id="extra-store"><button type="button" class="on" data-act="extra-store" data-id="coles">Coles</button><button type="button" data-act="extra-store" data-id="aldi">Aldi</button></div>
+      <div class="extra-row extra-shops" id="extra-store">
+        <button type="button" class="shop-edit" data-act="edit-shops" aria-label="Edit shops (where to buy)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg></button>
+        ${knownStores().map(id => `<button type="button" class="chip ${id==='coles'?'active':''}" data-act="extra-store" data-id="${esc(id)}">${esc(storeLabel(id))}</button>`).join('')}
       </div>
     </form>`;
   if(plan && plan.built && plan.groceryDone && items.length === 0){
@@ -2009,21 +2082,22 @@ function renderGrocery(){
     html += `<div class="empty-state"><h3>Your list is empty</h3><p>Add your own items above, or choose some meals in "Menu".</p></div>`;
     return html;
   }
-  const actualStore = it => (state.storePrefs && state.storePrefs[it.key] === 'aldi') ? 'aldi' : 'coles';
+  const actualStore = it => storeOfKey(it.key);
   state.storeHold = state.storeHold || {};
   const storeOf = it => state.storeHold[it.key] || actualStore(it);   // an item that was just moved stays put for a moment
-  const cnt = {coles: items.filter(it => storeOf(it)==='coles').length, aldi: items.filter(it => storeOf(it)==='aldi').length};
-  if(!state.storeView) state.storeView = 'all';
-  html += `<div class="gro-show">Show items from</div><div class="store-seg" role="tablist"><button type="button" class="${state.storeView==='all'?'on':''}" data-act="store-view" data-id="all">All (${items.length})</button><button type="button" class="${state.storeView==='coles'?'on':''}" data-act="store-view" data-id="coles">Coles (${cnt.coles})</button><button type="button" class="${state.storeView==='aldi'?'on':''}" data-act="store-view" data-id="aldi">Aldi (${cnt.aldi})</button></div>`;
-  const storeName = state.storeView==='aldi' ? 'Aldi' : (state.storeView==='coles' ? 'Coles' : '');
+  // only shops that have something on the list get a pill
+  const shops = knownStores().map(id => ({id, n: items.filter(it => storeOf(it) === id).length})).filter(x => x.n > 0);
+  if(!state.storeView || (state.storeView !== 'all' && !shops.some(x => x.id === state.storeView))) state.storeView = 'all';
+  if(shops.length > 1) html += `<div class="chip-row gro-pills"><button type="button" class="chip ${state.storeView==='all'?'active':''}" data-act="store-view" data-id="all">All ${items.length}</button>${shops.map(x => `<button type="button" class="chip ${state.storeView===x.id?'active':''}" data-act="store-view" data-id="${esc(x.id)}">${esc(storeLabel(x.id))} ${x.n}</button>`).join('')}</div>`;
+  const storeName = state.storeView === 'all' ? '' : storeLabel(state.storeView);
   if(state.storeView !== 'all') items = items.filter(it => storeOf(it) === state.storeView);
   if(!items.length){ html += `<div class="empty-state"><p>Nothing to buy at ${storeName}. Tap the small shop tag on an item to move it between shops.</p></div>`; return html; }
   const ticked = items.filter(it => state.checks[it.key]).length;
   const hiddenCount = items.filter(it => state.checks[it.key] === 'hidden').length;   // ticked items tuck themselves away after 2 seconds
-  html += `<div class="gro-total"><div><strong>${items.length}</strong> item${items.length===1?'':'s'}${storeName ? ' at ' + storeName : ' in total'}</div><span>${ticked} of ${items.length} ticked</span></div>`;
-  html += `<div class="check-actions"><button class="secondary-btn" data-act="check-all">Check all</button><button class="secondary-btn" data-act="clear-checks">Uncheck all</button></div>`;
-  html += `<button class="secondary-btn" data-act="share-list" style="margin:0 0 4px;">Share list</button>`;
-  if(ticked) html += `<div class="check-actions"><button class="secondary-btn" data-act="unhide-checked" ${hiddenCount ? '' : 'disabled'}>Unhide checked items</button><button class="secondary-btn" data-act="hide-checked" ${ticked > hiddenCount ? '' : 'disabled'}>Hide all checked items</button></div>`;
+  // one slim bar: a select-all box (ticks everything, or clears when all are ticked), one hide/show button for ticked items, and a share icon
+  const allOn = groceryAllChecked();
+  const someOn = !allOn && allGroceryItems().some(it => state.checks[it.key]);
+  html += `<div class="gro-bar"><button type="button" class="all-box ${allOn?'on':(someOn?'some':'')}" data-act="${allOn?'clear-checks':'check-all'}" role="checkbox" aria-checked="${allOn?'true':(someOn?'mixed':'false')}" aria-label="${allOn?'Uncheck all':'Check all'}"><span class="box"></span><span><strong>${items.length}</strong> item${items.length===1?'':'s'}${storeName ? ' at ' + storeName : ''}</span></button>${ticked ? `<button type="button" class="gro-hide" data-act="${ticked > hiddenCount ? 'hide-checked' : 'unhide-checked'}">${ticked > hiddenCount ? 'Hide' : 'Show'} ${ticked} ticked</button>` : ''}<button type="button" class="icon-btn" data-act="share-list" aria-label="Share list"><svg class="share-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg></button></div>`;
   CATEGORIES.forEach(c=>{
     const list = items.filter(it => it.cat === c.key && state.checks[it.key] !== 'hidden').sort((a,b)=>a.name.localeCompare(b.name));
     if(!list.length) return;
@@ -2035,7 +2109,7 @@ function renderGrocery(){
           <input type="checkbox" data-check-key="${esc(it.key)}" ${checked?'checked':''}>
           <span class="gi-name"><span class="gi-link" data-act="where-used" data-id="${esc(it.key)}">${esc(it.name)}</span>${it.note ? `<span class="gi-note">${esc(it.note)}</span>` : ''}${it.uses && it.uses.length ? `<span class="gi-where" data-act="where-used" data-id="${esc(it.key)}">where used (${it.uses.length}) ›</span>` : ''}</span>
           <span class="gi-qty">${esc(it.qtyText)}</span>
-          <button type="button" class="store-tag ${actualStore(it)}" data-act="store-swap" data-id="${esc(it.key)}" aria-label="Move to ${actualStore(it)==='aldi'?'Coles':'Aldi'}">${actualStore(it)==='aldi'?'Aldi':'Coles'}</button>
+          <button type="button" class="store-tag ${actualStore(it)==='coles'?'':'aldi'}" data-act="store-swap" data-id="${esc(it.key)}" aria-label="Shop: ${esc(storeLabel(actualStore(it)))}. Tap to change">${esc(storeLabel(actualStore(it)))}</button>
           ${it.extra ? `<button type="button" class="gi-del" data-act="extra-del" data-id="${esc(it.id)}" aria-label="Remove item">×</button>` : ''}
         </label>`;
     });
@@ -2193,7 +2267,7 @@ async function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '0.44';
+const APP_VERSION = '0.45';
 // Reports are also sent here (a small relay that opens a GitHub issue, which Claude then works on). Empty = reports are only saved to the shared list.
 const BUG_RELAY_URL = 'https://tavola-relay.jools-oneill.workers.dev/';
 async function sendToRelay(bugs){   // bugs: an array of reports. Returns {why:'' when all were sent, otherwise the reason, sent:[ids of those that were]}
@@ -3168,17 +3242,23 @@ mainEl.addEventListener('click', async (e)=>{
     }
     case 'noop': break;
     case 'ideas-planner': ideasState.fromPlanner = true; openIdeasSheet(id, !state.editPlanId); break;
-    case 'extra-store': document.querySelectorAll('#extra-store button').forEach(b=>b.classList.toggle('on', b.dataset.id===id)); break;
+    case 'extra-store': {
+      document.querySelectorAll('#extra-store [data-act="extra-store"]').forEach(b=>b.classList.toggle('active', b.dataset.id===id));
+      break;
+    }
     case 'ideas': openIdeasSheet(id); break;
     case 'draft-toggle': e.stopPropagation(); await toggleDraft(id); break;
     case 'store-view': state.storeView = id; render(); break;
+    case 'edit-shops': openShopsSheet(); break;
     case 'store-swap': {
       e.preventDefault();
       state.storePrefs = state.storePrefs || {};
-      const nowAldi = state.storePrefs[id] === 'aldi';
+      // tapping the shop tag steps to the next shop: Coles, Aldi, then any shops you have added
+      const cur = storeOfKey(id), stores = knownStores();
+      const next = stores[(stores.indexOf(cur) + 1) % stores.length];
       state.storeHold = state.storeHold || {}; state.storeHoldTimers = state.storeHoldTimers || {};
-      if(!state.storeHold[id]) state.storeHold[id] = nowAldi ? 'aldi' : 'coles';
-      if(nowAldi) delete state.storePrefs[id]; else state.storePrefs[id] = 'aldi';
+      if(!state.storeHold[id]) state.storeHold[id] = cur;
+      if(next === 'coles') delete state.storePrefs[id]; else state.storePrefs[id] = next;
       clearTimeout(state.storeHoldTimers[id]);
       state.storeHoldTimers[id] = setTimeout(()=>{ delete state.storeHold[id]; render(); }, 2000);   // pause so the change is seen before the item moves
       render();
@@ -3396,13 +3476,12 @@ mainEl.addEventListener('submit', async (e)=>{
   const plan = activePlan();
   const name = document.getElementById('extra-name').value.trim();
   if(!plan || !name) return;
-  let cat = document.getElementById('extra-cat').value;
-  if(!CAT_KEYS.includes(cat)) cat = guessCategory(name);
+  const cat = guessCategory(name);
   const newId = uid();
-  const onBtn = document.querySelector('#extra-store button.on');
+  const onBtn = document.querySelector('#extra-store button.active');
   const shop = onBtn ? onBtn.dataset.id : 'coles';
   plan.extras = (plan.extras || []).concat([{id: newId, name, qty: document.getElementById('extra-qty').value.trim(), category: cat}]);
-  if(shop === 'aldi'){ state.storePrefs = state.storePrefs || {}; state.storePrefs['extra-' + newId] = 'aldi'; try{ await dbSet('storePrefs', state.storePrefs); }catch(err){ console.error(err); } }
+  if(shop !== 'coles'){ state.storePrefs = state.storePrefs || {}; state.storePrefs['extra-' + newId] = shop; try{ await dbSet('storePrefs', state.storePrefs); }catch(err){ console.error(err); } }
   render();
   const nm = document.getElementById('extra-name'); if(nm) nm.focus();
   await savePlan(plan);
@@ -3606,7 +3685,7 @@ async function sharePlanImage(){
 
 /* grocery list as an image, with a link (#list) that opens the list in the app. Follows the Coles / Aldi filter on screen. */
 function listShareItems(){
-  const storeOf = it => (state.storePrefs && state.storePrefs[it.key] === 'aldi') ? 'aldi' : 'coles';
+  const storeOf = it => storeOfKey(it.key);
   const view = state.storeView || 'all';
   return allGroceryItems().filter(it => view === 'all' || storeOf(it) === view).map(it => Object.assign({}, it, {shop: storeOf(it)}));
 }
@@ -3629,7 +3708,7 @@ async function renderListImage(items, storeName){
     c.list.forEach(it => {
       const done = !!state.checks[it.key];
       ctx.font = '700 28px ' + SHARE_FONT; const q = it.qtyText || '', qw = q ? ctx.measureText(q).width : 0;
-      ctx.font = '600 22px ' + SHARE_FONT; const tag = it.shop === 'aldi' ? 'Aldi' : 'Coles', tw = ctx.measureText(tag).width + 20;
+      ctx.font = '600 22px ' + SHARE_FONT; const tag = storeLabel(it.shop), tw = ctx.measureText(tag).width + 20;
       const right = W - PAD - (storeName ? 0 : tw + 16);
       ctx.fillStyle = done ? '#9c8f77' : C.ink; ctx.font = '500 30px ' + SHARE_FONT;
       const name = shareWrap(ctx, it.name, right - PAD - qw - 30)[0];
@@ -3638,7 +3717,7 @@ async function renderListImage(items, storeName){
       if(q){ ctx.font = '700 28px ' + SHARE_FONT; ctx.fillStyle = C.brown; ctx.textAlign = 'right'; ctx.fillText(q, right, y + 42); ctx.textAlign = 'left'; }
       if(!storeName){
         const tx = W - PAD - tw; ctx.font = '600 22px ' + SHARE_FONT;
-        if(it.shop === 'aldi'){ ctx.fillStyle = C.ink; ctx.fillRect(tx, y + 14, tw, 38); ctx.fillStyle = C.paper; }
+        if(it.shop !== 'coles'){ ctx.fillStyle = C.ink; ctx.fillRect(tx, y + 14, tw, 38); ctx.fillStyle = C.paper; }
         else { ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.strokeRect(tx, y + 14, tw, 38); ctx.fillStyle = C.ink; }
         ctx.fillText(tag, tx + 10, y + 41);
       }
@@ -3652,7 +3731,7 @@ async function renderListImage(items, storeName){
 async function shareListImage(){
   const items = listShareItems(); if(!items.length || shareBusy) return;
   shareBusy = true; showToast('Preparing image…');
-  const storeName = state.storeView === 'aldi' ? 'Aldi' : (state.storeView === 'coles' ? 'Coles' : '');
+  const storeName = (state.storeView && state.storeView !== 'all') ? storeLabel(state.storeView) : '';
   const title = storeName ? 'Groceries at ' + storeName : 'Grocery List';
   try { const blob = await shareBlob(await renderListImage(items, storeName), 'image/png'); await deliverShareFile(blob, 'tavola-' + shareSlug(title) + '.png', title, title + '\n' + location.origin + location.pathname + '#list'); }
   catch(e){ console.error('share list failed', e); appAlert("Couldn't make the image. Please try again."); }

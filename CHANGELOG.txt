@@ -229,3 +229,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.44
 - Auto: issue #21, Bug: Add share button to grocery list with link and screenshot.
+
+0.45
+- Groceries: Check all / Uncheck all is now one tick box at the top of the list (tap to tick everything, tap again to clear). Hide and Unhide checked items are one button on the same row (Hide N ticked / Show N ticked). Share list is a small share icon on that row. Add your own item: name, qty and a + button on one line; category is worked out automatically. Buy at and Show items from are pills, and only shops with items on the list get a pill. Tapping a shop tag on an item steps through your shops. The pencil before the shop pills opens Shops: add a shop, remove one (its items go back to Coles), or bring back one you used before. Starting shops: Coles (default), Aldi, Bunnings, Spotlight, Petbarn, Woolies.
