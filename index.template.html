@@ -3237,6 +3237,23 @@ function openRecipeForm(existingId, draft){
 /* ---------- MAIN-AREA EVENTS (delegated, attached once) ---------- */
 const mainEl = document.getElementById('main');
 
+// redraw without the page jumping: a meal card stays where it was on screen (the banner and tab bar come and go with selecting)
+function renderKeepingPlace(prefer){
+  const cards = [...document.querySelectorAll('.np-chosen .np-ch')];
+  const pl = plannerPlan(), stays = c => pl && pl.recipeIds.includes(c.dataset.id);   // anchor on a meal that is still there after the redraw
+  const pick = (prefer && cards.find(c => c.dataset.id === prefer && stays(c))) || cards.find(c => c.getBoundingClientRect().bottom > 0 && stays(c));
+  const id = pick && pick.dataset.id, top = pick && pick.getBoundingClientRect().top;
+  const main = document.getElementById('main');
+  main.style.paddingBottom = '';
+  render();
+  if(!id) return;
+  const find = () => [...document.querySelectorAll('.np-chosen .np-ch')].find(c => c.dataset.id === id);
+  let again = find(); if(!again) return;
+  window.scrollBy(0, again.getBoundingClientRect().top - top);
+  // near the end of the page there may not be enough page left to scroll; add a little room while selecting so nothing jumps
+  const short = find().getBoundingClientRect().top - top;
+  if(short > 1 && state.npSel){ main.style.paddingBottom = (parseFloat(getComputedStyle(main).paddingBottom) + short) + 'px'; window.scrollBy(0, short); }
+}
 // Planner: hold a meal to start choosing meals to remove; then taps tick and untick
 (function(){
   let timer = null, sx = 0, sy = 0, swallow = false;
@@ -3244,7 +3261,8 @@ const mainEl = document.getElementById('main');
     swallow = false;   // a new press: nothing left to ignore
     const card = e.target.closest('.np-chosen .np-ch'); if(!card || state.npSel) return;
     sx = x; sy = y;
-    timer = setTimeout(() => { timer = null; swallow = true; state.npSel = [card.dataset.id]; if(navigator.vibrate) try{ navigator.vibrate(15); }catch(err){} render(); }, 500);
+    // the phone gives its own long-press buzz, so no extra vibrate here
+    timer = setTimeout(() => { timer = null; swallow = true; state.npSel = [card.dataset.id]; renderKeepingPlace(card.dataset.id); }, 500);
   };
   const stop = () => { if(timer){ clearTimeout(timer); timer = null; } };
   const move = (x, y) => { if(timer && (Math.abs(x - sx) > 10 || Math.abs(y - sy) > 10)) stop(); };
@@ -3264,7 +3282,7 @@ const mainEl = document.getElementById('main');
     const id = card.dataset.id;
     state.npSel = state.npSel.includes(id) ? state.npSel.filter(x => x !== id) : state.npSel.concat(id);
     if(!state.npSel.length) state.npSel = null;
-    render();
+    renderKeepingPlace(id);
   }, true);
 })();
 
@@ -3507,7 +3525,7 @@ mainEl.addEventListener('click', async (e)=>{
       if(n.cu && !state.npUsed.includes(n.cu)) state.npUsed.push(n.cu);
       render(); await savePlan(pl); break;
     }
-    case 'np-sel-cancel': state.npSel = null; render(); break;
+    case 'np-sel-cancel': state.npSel = null; renderKeepingPlace(); break;
     case 'np-sel-del': {
       const pl = plannerPlan(), sel = (state.npSel || []).filter(x => pl && pl.recipeIds.includes(x));
       if(!pl || !sel.length){ state.npSel = null; render(); break; }
@@ -3519,7 +3537,7 @@ mainEl.addEventListener('click', async (e)=>{
         if(!state.npGone.includes(x)) state.npGone.push(x);
         pl.recipeIds = pl.recipeIds.filter(y => y !== x); if(pl.servings) delete pl.servings[x];
       });
-      state.npSel = null; render(); await savePlan(pl); break;
+      state.npSel = null; renderKeepingPlace(); await savePlan(pl); break;
     }
     case 'plan-remove': {
       const pl = viewPlan(), r = state.recipes[id];
