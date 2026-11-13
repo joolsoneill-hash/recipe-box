@@ -457,6 +457,7 @@
   .gi-name{min-width:0}
   .np-sec{border-top:1px solid var(--line-strong);padding:12px 0 4px;margin-top:10px;}
   .np-sec h3{font-size:14px;margin:0 0 8px;}
+  .np-sec h3.np-cui-h{font-size:17px;margin:4px 0 10px;}
   .np-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0;font-size:14px;}
   .np-row .stepper{flex-shrink:0}
   .ooseason{color:var(--tomato);font-weight:700;white-space:nowrap;}
@@ -1687,15 +1688,16 @@ function renderPlanner(){
 
   const rowHtml = (r, sugg) => { const on = ids.has(r.id); return `<div class="np-recipe ${on?'on':''}">${thumbHtml(r, true)}<span class="np-rt" data-act="open-recipe" data-id="${esc(r.id)}"><strong>${sugg.includes(r.id)?'🎲 ':''}${esc(r.title)}${seasonMark(r)}</strong>${r.subtitle?`<em class="pick-sub">${esc(r.subtitle)}</em>`:''}<small>${esc(TAG_LABELS[r.tag]||r.tag)}${r.time?' · '+esc(r.time)+' min':''}</small></span><button type="button" class="np-add ${on?'on':''}" data-act="np-pick" data-id="${esc(r.id)}" aria-label="${on?'Remove from':'Add to'} the plan">${on?'✓':'+'}</button></div>`; };
   const nq = (state.npSearch || '').trim().toLowerCase();
-  const searchBox = `<div class="search-row" style="margin-top:14px;"><input type="text" id="np-search" placeholder="Search recipes to add…" value="${esc(state.npSearch || '')}"></div>`;
+  const cuiHead = `<h3 class="np-cui-h">Choose meals by cuisine</h3>`;
+  const searchBox = `<div class="search-row" style="margin:0 0 8px;"><input type="text" id="np-search" placeholder="Search recipes to add…" value="${esc(state.npSearch || '')}"></div>`;
   if(nq){
     const found = recipes.filter(r => fullTitle(r).toLowerCase().includes(nq)).sort((a,b) => (ids.has(b.id)?1:0) - (ids.has(a.id)?1:0) || a.title.localeCompare(b.title));
-    h += searchBox + (found.length ? `<div class="np-list">${found.map(r => rowHtml(r, [])).join('')}</div>` : `<div class="np-empty">No recipes match that search.</div>`);
+    h += `<div class="np-sec">${cuiHead}${searchBox}${found.length ? `<div class="np-list">${found.map(r => rowHtml(r, [])).join('')}</div>` : `<div class="np-empty">No recipes match that search.</div>`}</div>`;
     return h;
   }
-  h += searchBox;
+  if(!tags.length) return h + `<div class="np-sec">${cuiHead}${searchBox}</div>`;
   if(tags.length){
-    h += `<div class="np-sec"><h3>Choose meals by cuisine</h3><div style="font-size:12px;color:var(--brown);margin-bottom:4px;">Tap a cuisine to open it. Tap a meal to see its recipe, and + to add it. Use the + beside a cuisine for a random one. The number is how many meals you have from that cuisine.</div>`;
+    h += `<div class="np-sec">${cuiHead}${searchBox}`;
     tags.forEach(t => {
       const list = recipes.filter(r => recipeCuisines(r).includes(t));
       const nSel = list.filter(r => ids.has(r.id)).length;

@@ -257,3 +257,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.52
 - Planner: the build button just says Build menu, with a menu-card icon. Discard draft is a bin icon next to share.
+
+0.53
+- Planner: Choose meals by cuisine is a bigger heading with the recipe search right under it; the instructions under it are gone.
