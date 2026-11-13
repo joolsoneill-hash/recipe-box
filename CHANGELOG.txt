@@ -242,3 +242,7 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.48
 - Planner: no intro text; fridge ideas, cook again and in-season fruit and veg are icon buttons at the top; "Include the N not yet cooked meals?"; Suggest meals has an (i) for how it works; no "Meals planned" line; chosen meals show a small photo and long names wrap. The not yet cooked meals are listed in an (i) popup; no Meal/Serves headers, a small plate icon marks serves; smaller (i) circles. The remove × sits on the corner of each meal's photo, so the Suggest meals −/+ lines up with the serves −/+.
+
+0.49
+- Every popup has an X at the top right. Bottom sheets can also be dragged down to close (when scrolled to the top).
+- Fix: the remove buttons in the In-season fruit and veg list were drawn in the wrong place since 0.48.

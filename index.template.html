@@ -92,7 +92,13 @@
   .sheet-overlay{position:fixed;inset:0;background:rgba(43,38,32,0.5);display:flex;align-items:flex-end;justify-content:center;z-index:50;}
   .sheet-overlay.hidden{display:none;}
   .hidden{display:none;}
-  .sheet{background:var(--paper);width:100%;max-width:520px;max-height:88vh;overflow-y:auto;border-radius:10px 10px 0 0;padding:18px 18px 28px;position:relative;}
+  .sheet-wrap{position:relative;width:100%;max-width:520px;}
+  .pop-x{position:absolute;top:8px;right:8px;z-index:2;width:36px;height:36px;padding:0;border:none;background:none;color:var(--brown);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+  .pop-x svg{width:20px;height:20px;}
+  .sheet > h2:first-of-type{padding-right:34px;}
+  .dlg-title{padding-right:30px;}
+  .dlg{position:relative;}
+  .sheet{background:var(--paper);width:100%;max-height:88vh;box-sizing:border-box;overflow-y:auto;border-radius:10px 10px 0 0;padding:18px 18px 28px;position:relative;}
   .sheet-handle{width:36px;height:4px;background:var(--line-strong);border-radius:2px;margin:0 auto 14px;}
   .sheet h2{font-size:19px;margin:0 0 14px;}
   .field{margin-bottom:14px;}
@@ -278,7 +284,8 @@
   .np-suggest .stepper{flex-shrink:0;margin-right:-4px;}   /* lines up with the serves steppers in the list below */
   .np-ch-t{flex:1;min-width:0;font-size:14px;font-weight:600;line-height:1.3;overflow-wrap:anywhere;cursor:pointer;}
   .np-th{position:relative;flex-shrink:0;display:block;}
-  .np-x{position:absolute;top:-7px;left:-7px;width:20px;height:20px;border-radius:50%;border:none;background:var(--ink);color:var(--paper);font-size:14px;line-height:1;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;}   /* remove sits on the photo's corner so the steppers line up */
+  .np-x{border:none;background:none;font-size:20px;line-height:1;color:var(--brown);padding:2px 6px;cursor:pointer;}
+  .np-th .np-x{position:absolute;top:-7px;left:-7px;width:20px;height:20px;border-radius:50%;border:none;background:var(--ink);color:var(--paper);font-size:14px;line-height:1;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;}   /* remove sits on the photo's corner so the steppers line up */
   .np-empty{height:100%;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--brown);}
   .is-off{opacity:.45;}
   .np-add{flex-shrink:0;width:34px;height:34px;border:1px solid var(--herb);background:transparent;color:var(--herb);font-size:18px;font-weight:700;border-radius:2px;margin-left:auto;cursor:pointer;}
@@ -543,9 +550,9 @@
     <button data-tab="list" class="tab">Shopping</button>
   </nav>
 </div>
-<div id="dlg-overlay" class="dlg-overlay hidden"><div class="dlg" role="dialog" aria-modal="true"><div class="dlg-title">Tavola</div><div class="dlg-msg" id="dlg-msg"></div><div class="dlg-actions" id="dlg-actions"></div></div></div>
+<div id="dlg-overlay" class="dlg-overlay hidden"><div class="dlg" role="dialog" aria-modal="true"><button type="button" class="pop-x" id="dlg-x" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><div class="dlg-title">Tavola</div><div class="dlg-msg" id="dlg-msg"></div><div class="dlg-actions" id="dlg-actions"></div></div></div>
 <div id="sheet-overlay" class="sheet-overlay hidden">
-  <div id="sheet" class="sheet"></div>
+  <div class="sheet-wrap" id="sheet-wrap"><button type="button" class="pop-x" id="sheet-x" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><div id="sheet" class="sheet"></div></div>
 </div>
 
 <!-- Setup / sign-in overlay: hidden until we know it is actually needed (prevents a flash on start-up) -->
@@ -2913,6 +2920,7 @@ function appDialog(message, buttons){
       el.onclick = () => finish(b.value);
       box.appendChild(el);
     });
+    document.getElementById('dlg-x').onclick = () => finish(false);
     ov.classList.remove('hidden');
     document.addEventListener('keydown', onKey);
     const first = box.querySelector('.ok, .danger') || box.lastChild;
@@ -3835,6 +3843,25 @@ document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && !appMenu.hi
 document.getElementById('sheet-overlay').addEventListener('click', (e)=>{
   if(e.target.id === 'sheet-overlay') closeSheet();
 });
+document.getElementById('sheet-x').addEventListener('click', ()=> closeSheet());
+// drag a popup down from the top to close it (only when it is scrolled to the top, so normal scrolling still works)
+(function(){
+  const wrap = document.getElementById('sheet-wrap'), sh = document.getElementById('sheet');
+  let y0 = null, dy = 0;
+  wrap.addEventListener('touchstart', e => { y0 = (sh.scrollTop <= 0 && e.touches.length === 1) ? e.touches[0].clientY : null; dy = 0; }, {passive: true});
+  wrap.addEventListener('touchmove', e => {
+    if(y0 === null) return;
+    dy = e.touches[0].clientY - y0;
+    if(dy < 0){ y0 = null; dy = 0; wrap.style.transform = ''; return; }
+    wrap.style.transition = 'none'; wrap.style.transform = `translateY(${dy}px)`;
+  }, {passive: true});
+  wrap.addEventListener('touchend', () => {
+    if(y0 === null) return;
+    y0 = null;
+    if(dy > 100){ wrap.style.transform = ''; closeSheet(); }
+    else { wrap.style.transition = 'transform .15s'; wrap.style.transform = ''; }
+  });
+})();
 
 window.addEventListener('beforeinstallprompt', (e)=>{
   e.preventDefault();

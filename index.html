@@ -92,7 +92,13 @@
   .sheet-overlay{position:fixed;inset:0;background:rgba(43,38,32,0.5);display:flex;align-items:flex-end;justify-content:center;z-index:50;}
   .sheet-overlay.hidden{display:none;}
   .hidden{display:none;}
-  .sheet{background:var(--paper);width:100%;max-width:520px;max-height:88vh;overflow-y:auto;border-radius:10px 10px 0 0;padding:18px 18px 28px;position:relative;}
+  .sheet-wrap{position:relative;width:100%;max-width:520px;}
+  .pop-x{position:absolute;top:8px;right:8px;z-index:2;width:36px;height:36px;padding:0;border:none;background:none;color:var(--brown);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+  .pop-x svg{width:20px;height:20px;}
+  .sheet > h2:first-of-type{padding-right:34px;}
+  .dlg-title{padding-right:30px;}
+  .dlg{position:relative;}
+  .sheet{background:var(--paper);width:100%;max-height:88vh;box-sizing:border-box;overflow-y:auto;border-radius:10px 10px 0 0;padding:18px 18px 28px;position:relative;}
   .sheet-handle{width:36px;height:4px;background:var(--line-strong);border-radius:2px;margin:0 auto 14px;}
   .sheet h2{font-size:19px;margin:0 0 14px;}
   .field{margin-bottom:14px;}
@@ -278,7 +284,8 @@
   .np-suggest .stepper{flex-shrink:0;margin-right:-4px;}   /* lines up with the serves steppers in the list below */
   .np-ch-t{flex:1;min-width:0;font-size:14px;font-weight:600;line-height:1.3;overflow-wrap:anywhere;cursor:pointer;}
   .np-th{position:relative;flex-shrink:0;display:block;}
-  .np-x{position:absolute;top:-7px;left:-7px;width:20px;height:20px;border-radius:50%;border:none;background:var(--ink);color:var(--paper);font-size:14px;line-height:1;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;}   /* remove sits on the photo's corner so the steppers line up */
+  .np-x{border:none;background:none;font-size:20px;line-height:1;color:var(--brown);padding:2px 6px;cursor:pointer;}
+  .np-th .np-x{position:absolute;top:-7px;left:-7px;width:20px;height:20px;border-radius:50%;border:none;background:var(--ink);color:var(--paper);font-size:14px;line-height:1;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;}   /* remove sits on the photo's corner so the steppers line up */
   .np-empty{height:100%;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--brown);}
   .is-off{opacity:.45;}
   .np-add{flex-shrink:0;width:34px;height:34px;border:1px solid var(--herb);background:transparent;color:var(--herb);font-size:18px;font-weight:700;border-radius:2px;margin-left:auto;cursor:pointer;}
@@ -530,7 +537,7 @@
 <body>
 <div id="app" class="booting">
   <header class="app-header">
-    <div class="header-right"><button type="button" class="header-btn" id="menu-header-btn" aria-label="More options" aria-haspopup="true" aria-expanded="false">⋯</button><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button><span class="app-version" id="app-version">v0.48</span></div>
+    <div class="header-right"><button type="button" class="header-btn" id="menu-header-btn" aria-label="More options" aria-haspopup="true" aria-expanded="false">⋯</button><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button><span class="app-version" id="app-version">v0.49</span></div>
     <div class="app-menu" id="app-menu" hidden></div>
     <div class="brand"><svg viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#2B2620"/><defs><clipPath id="rr"><rect width="512" height="512" rx="112"/></clipPath> <pattern id="gh" width="64" height="64" patternUnits="userSpaceOnUse"><rect width="64" height="64" fill="#F6EEDC"/><rect width="32" height="64" fill="#C8452D" opacity=".5"/><rect width="64" height="32" fill="#C8452D" opacity=".5"/></pattern></defs><g clip-path="url(#rr)"><path d="M0 408 Q256 388 512 408 V512 H0Z" fill="url(#gh)"/><path d="M0 408 Q256 388 512 408" fill="none" stroke="#2B2620" stroke-opacity=".25" stroke-width="3"/></g><g transform="translate(256 262) scale(.9) translate(-256 -256)"> <!-- steam --> <g fill="none" stroke="#EDE3D0" stroke-width="12" stroke-linecap="round" opacity=".85"> <path d="M206 120c-18-22 18-34 0-58"/><path d="M256 108c-18-22 18-34 0-58"/><path d="M306 120c-18-22 18-34 0-58"/> </g> <!-- shallow pasta bowl: underside, rim, well --> <path d="M52 322c4 52 84 86 204 86s200-34 204-86z" fill="#EFE6D0"/> <path d="M52 322c4 52 84 86 204 86s200-34 204-86c-30 20-100 32-204 32S82 342 52 322z" fill="#E4D8BC" opacity=".6"/> <rect x="190" y="402" width="132" height="18" rx="9" fill="#EFE6D0"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="#FAF6EC"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="none" stroke="#D9CDB4" stroke-width="5"/> <!-- painted rim --> <ellipse cx="256" cy="322" rx="186" ry="55" fill="none" stroke="#2F5D8C" stroke-width="7"/> <ellipse cx="256" cy="322" rx="164" ry="46" fill="none" stroke="#2F5D8C" stroke-width="3"/> <circle cx="432" cy="330" r="5" fill="#E9B949"/><circle cx="408" cy="354" r="5" fill="#E9B949"/><circle cx="344" cy="373" r="5" fill="#E9B949"/><circle cx="256" cy="379" r="5" fill="#E9B949"/><circle cx="168" cy="373" r="5" fill="#E9B949"/><circle cx="103" cy="355" r="5" fill="#E9B949"/><circle cx="80" cy="330" r="5" fill="#E9B949"/><circle cx="103" cy="305" r="5" fill="#E9B949"/><circle cx="167" cy="286" r="5" fill="#E9B949"/><circle cx="255" cy="280" r="5" fill="#E9B949"/><circle cx="343" cy="286" r="5" fill="#E9B949"/><circle cx="408" cy="304" r="5" fill="#E9B949"/> <!-- well --> <ellipse cx="256" cy="324" rx="138" ry="36" fill="#F1E8D2"/> <!-- spaghetti nest --> <g fill="none" stroke="#F0CF6E" stroke-width="18" stroke-linecap="round"> <path d="M130 318c26-30 50 18 76-4s50 22 76-4 50 18 76-4"/> <ellipse cx="256" cy="302" rx="104" ry="30"/> <ellipse cx="256" cy="278" rx="80" ry="24"/> <ellipse cx="256" cy="256" rx="56" ry="17"/> <ellipse cx="256" cy="238" rx="32" ry="10"/> <path d="M360 326c20 6 36 14 40 24" /> </g> <g fill="none" stroke="#C8962A" stroke-width="4" stroke-linecap="round" opacity=".5"> <ellipse cx="256" cy="310" rx="104" ry="30"/><ellipse cx="256" cy="286" rx="80" ry="24"/><ellipse cx="256" cy="264" rx="56" ry="17"/> </g> <!-- sauce and basil --> <ellipse cx="256" cy="226" rx="30" ry="12" fill="#B94A2F"/> <ellipse cx="248" cy="222" rx="11" ry="4" fill="#D8674A" opacity=".8"/> <path d="M262 218c8-24 32-26 40-12-10 18-30 22-40 12z" fill="#4D7A5A"/> <path d="M268 216c10-6 20-8 30-4" stroke="#2F5A3C" stroke-width="3.5" fill="none" stroke-linecap="round"/> <!-- fork --> <g stroke-linecap="round" stroke-linejoin="round" fill="none"> <line x1="410" y1="150" x2="306" y2="238" stroke="#9AA3AB" stroke-width="16"/> <line x1="410" y1="150" x2="306" y2="238" stroke="#DDE2E6" stroke-width="9"/> <g stroke="#9AA3AB" stroke-width="14"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> <g stroke="#DDE2E6" stroke-width="7"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> </g> </g> <g><circle cx="74" cy="446" r="28" fill="#D2452E"/><ellipse cx="64" cy="436" rx="9" ry="6" fill="#fff" opacity=".35"/> <path d="M74 418c-4-8-14-10-20-6 6 6 12 8 20 6z M74 418c4-8 14-10 20-6-6 6-12 8-20 6z M74 418l0-10" fill="#4D7A5A" stroke="#2F5A3C" stroke-width="3" stroke-linejoin="round"/></g> <g><path d="M438 452c10-26 40-30 54-14-12 22-40 28-54 14z" fill="#4D7A5A"/><path d="M446 450c14-8 28-10 42-6" stroke="#2F5A3C" stroke-width="4" fill="none" stroke-linecap="round"/></g></svg><div class="brand-text"><h1>Tavola</h1><div class="brand-sub" id="brand-sub" hidden></div></div></div>
   </header>
@@ -543,9 +550,9 @@
     <button data-tab="list" class="tab">Shopping</button>
   </nav>
 </div>
-<div id="dlg-overlay" class="dlg-overlay hidden"><div class="dlg" role="dialog" aria-modal="true"><div class="dlg-title">Tavola</div><div class="dlg-msg" id="dlg-msg"></div><div class="dlg-actions" id="dlg-actions"></div></div></div>
+<div id="dlg-overlay" class="dlg-overlay hidden"><div class="dlg" role="dialog" aria-modal="true"><button type="button" class="pop-x" id="dlg-x" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><div class="dlg-title">Tavola</div><div class="dlg-msg" id="dlg-msg"></div><div class="dlg-actions" id="dlg-actions"></div></div></div>
 <div id="sheet-overlay" class="sheet-overlay hidden">
-  <div id="sheet" class="sheet"></div>
+  <div class="sheet-wrap" id="sheet-wrap"><button type="button" class="pop-x" id="sheet-x" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><div id="sheet" class="sheet"></div></div>
 </div>
 
 <!-- Setup / sign-in overlay: hidden until we know it is actually needed (prevents a flash on start-up) -->
@@ -2270,7 +2277,7 @@ async function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '0.48';
+const APP_VERSION = '0.49';
 // Reports are also sent here (a small relay that opens a GitHub issue, which Claude then works on). Empty = reports are only saved to the shared list.
 const BUG_RELAY_URL = 'https://tavola-relay.jools-oneill.workers.dev/';
 async function sendToRelay(bugs){   // bugs: an array of reports. Returns {why:'' when all were sent, otherwise the reason, sent:[ids of those that were]}
@@ -2913,6 +2920,7 @@ function appDialog(message, buttons){
       el.onclick = () => finish(b.value);
       box.appendChild(el);
     });
+    document.getElementById('dlg-x').onclick = () => finish(false);
     ov.classList.remove('hidden');
     document.addEventListener('keydown', onKey);
     const first = box.querySelector('.ok, .danger') || box.lastChild;
@@ -3835,6 +3843,25 @@ document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && !appMenu.hi
 document.getElementById('sheet-overlay').addEventListener('click', (e)=>{
   if(e.target.id === 'sheet-overlay') closeSheet();
 });
+document.getElementById('sheet-x').addEventListener('click', ()=> closeSheet());
+// drag a popup down from the top to close it (only when it is scrolled to the top, so normal scrolling still works)
+(function(){
+  const wrap = document.getElementById('sheet-wrap'), sh = document.getElementById('sheet');
+  let y0 = null, dy = 0;
+  wrap.addEventListener('touchstart', e => { y0 = (sh.scrollTop <= 0 && e.touches.length === 1) ? e.touches[0].clientY : null; dy = 0; }, {passive: true});
+  wrap.addEventListener('touchmove', e => {
+    if(y0 === null) return;
+    dy = e.touches[0].clientY - y0;
+    if(dy < 0){ y0 = null; dy = 0; wrap.style.transform = ''; return; }
+    wrap.style.transition = 'none'; wrap.style.transform = `translateY(${dy}px)`;
+  }, {passive: true});
+  wrap.addEventListener('touchend', () => {
+    if(y0 === null) return;
+    y0 = null;
+    if(dy > 100){ wrap.style.transform = ''; closeSheet(); }
+    else { wrap.style.transition = 'transform .15s'; wrap.style.transform = ''; }
+  });
+})();
 
 window.addEventListener('beforeinstallprompt', (e)=>{
   e.preventDefault();
