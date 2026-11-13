@@ -254,3 +254,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 0.51
 - Planner: the list of chosen meals grows as you add meals instead of scrolling inside a box.
 - Planner: a gold star on the bottom-right corner of the photo marks favourite meals in the chosen list.
+
+0.52
+- Planner: the build button just says Build menu, with a menu-card icon. Discard draft is a bin icon next to share.
