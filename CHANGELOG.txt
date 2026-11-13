@@ -273,5 +273,8 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 - Banner: even space above and below the logo; the ⋯ button and version are centred top to bottom.
 
 0.57
-- Planner: bigger photos; on the right of each meal a remove × sits above its serves (tap the serves to change it in a popup), leaving more room for the name. The single Serves counter is gone. Meals carried from the last menu show their serves with the cook-again arrow (not changeable).
+- Planner: bigger photos; on the right of each meal a remove × sits above its serves (tap the serves to change it in a popup), leaving more room for the name. The single Serves counter is gone. Meals carried from the last menu sit in one box labelled Uncooked, with their serves shown but not changeable.
 - Planner: Choose meals by cuisine is folded away; tap it to open. Add specific recipes from the Recipes tab.
+
+0.58
+- Planner: the box of meals not cooked from the last menu has an Uncooked label at its top left; the cook-again arrows on those meals are gone. Each meal is its own card, with its remove × in a dark circle on the card's top-right corner.

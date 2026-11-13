@@ -272,22 +272,21 @@
   .done-col input:checked{background:var(--herb);border-color:var(--herb);}
   .done-col input:checked::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:700;}
   .np-total{font-size:14px;color:var(--ink);margin:14px 0 6px;}
-  .np-chosen{box-sizing:border-box;margin-top:10px;min-height:60px;border:1px solid var(--line-strong);border-radius:2px;background:var(--card);}
-  .np-ch{display:flex;align-items:center;gap:10px;min-height:50px;box-sizing:border-box;padding:8px 8px 8px 8px;border-top:1px solid var(--line);}
+  .np-chosen{box-sizing:border-box;margin-top:14px;display:flex;flex-direction:column;gap:12px;}   /* each meal is its own card */
+  .np-ch{display:flex;align-items:center;gap:10px;min-height:50px;box-sizing:border-box;padding:8px;border:1px solid var(--line-strong);border-radius:2px;background:var(--card);}
   .np-tools{margin-top:0;}
   .np-tools .share-btn{flex-direction:column;gap:4px;padding:10px 4px 8px;}
   .btn-ico-row{display:inline-flex;align-items:center;justify-content:center;gap:8px;}
   .btn-ico-row .share-ico{width:20px;height:20px;}
   .tool-l{font-size:12px;font-weight:600;line-height:1.1;color:var(--brown);}
-  .np-carried{outline:2px solid #E07B22;outline-offset:-2px;}
-  .np-carried + .np-ch{border-top:none;}
+  .np-carried{position:relative;display:flex;flex-direction:column;gap:12px;margin:0 -10px;padding:24px 10px 12px;outline:2px solid #E07B22;outline-offset:-2px;}   /* the box sits outside the cards so they are as wide as the others */
+  .np-carried-l{position:absolute;top:0;left:0;padding:2px 7px 3px;background:#E07B22;color:#fff;font-size:10.5px;font-weight:700;line-height:1.2;}
   .np-sg-l{display:flex;align-items:center;gap:8px;}
   .info-btn{width:20px;height:20px;flex-shrink:0;border:none;background:none;color:var(--brown);padding:0;display:inline-flex;align-items:center;justify-content:center;vertical-align:-4px;cursor:pointer;}
   .info-btn svg{width:20px;height:20px;display:block;}
   .np-ch .thumb{width:72px;height:72px;}
   .np-fav{position:absolute;right:-5px;bottom:-5px;width:20px;height:20px;padding:3px;box-sizing:border-box;border-radius:50%;background:var(--card);color:var(--gold);}
 
-  .np-ch:first-child{border-top:none;}
   .np-xsp{width:30px;flex-shrink:0;}
   .np-suggest{position:relative;margin-top:14px;padding:14px 12px;border:1px solid var(--line-strong);border-radius:2px;background:var(--card);}
   .np-sg-col{display:flex;flex-direction:column;align-items:center;gap:10px;}
@@ -305,6 +304,12 @@
   .np-th{position:relative;flex-shrink:0;display:block;}
   .np-side{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}   /* × above the serves so the name gets more room */
   .np-x{border:none;background:none;font-size:22px;line-height:1;color:var(--brown);padding:2px 6px 4px;margin-right:-2px;cursor:pointer;flex-shrink:0;}
+  .np-ch{position:relative;}
+  /* remove sits in a circle over the right edge of the list */
+  .np-ch .np-x{position:absolute;top:-9px;right:-9px;z-index:2;width:20px;height:20px;margin:0;padding:0;border-radius:50%;background:var(--ink);color:var(--paper);font-size:0;}
+  /* the × is drawn so it sits exactly in the middle of the circle */
+  .np-ch .np-x::before, .np-ch .np-x::after{content:"";position:absolute;left:50%;top:50%;width:9px;height:1.8px;background:currentColor;border-radius:1px;transform:translate(-50%,-50%) rotate(45deg);}
+  .np-ch .np-x::after{transform:translate(-50%,-50%) rotate(-45deg);}
   .np-srv{display:inline-flex;align-items:center;gap:5px;flex-shrink:0;padding:5px 8px;border:1px solid var(--line-strong);border-radius:2px;background:var(--card);color:var(--ink);font:inherit;font-size:15px;cursor:pointer;}
   .np-srv strong{font-weight:700;}
   .np-srv.fixed{border-color:transparent;background:none;cursor:default;padding-right:2px;}
@@ -319,7 +324,7 @@
   .srv-pick .np-big strong{min-width:60px;font-size:22px;}
   .srv-l{font-size:13px;color:var(--brown);}
   .np-cui-h{cursor:pointer;}
-  .np-empty{height:100%;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--brown);}
+  .np-empty{min-height:60px;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--brown);border:1px dashed var(--line-strong);}
   .is-off{opacity:.45;}
   .np-add{flex-shrink:0;width:34px;height:34px;border:1px solid var(--herb);background:transparent;color:var(--herb);font-size:18px;font-weight:700;border-radius:2px;margin-left:auto;cursor:pointer;}
   .np-add.on{background:var(--herb);color:#fff;}
@@ -571,7 +576,7 @@
 <body>
 <div id="app" class="booting">
   <header class="app-header">
-    <div class="header-right"><button type="button" class="header-btn" id="menu-header-btn" aria-label="More options" aria-haspopup="true" aria-expanded="false">⋯</button><span class="app-version" id="app-version">v0.57</span></div>
+    <div class="header-right"><button type="button" class="header-btn" id="menu-header-btn" aria-label="More options" aria-haspopup="true" aria-expanded="false">⋯</button><span class="app-version" id="app-version">v0.58</span></div>
     <div class="app-menu" id="app-menu" hidden></div>
     <div class="brand"><svg viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#2B2620"/><defs><clipPath id="rr"><rect width="512" height="512" rx="112"/></clipPath> <pattern id="gh" width="64" height="64" patternUnits="userSpaceOnUse"><rect width="64" height="64" fill="#F6EEDC"/><rect width="32" height="64" fill="#C8452D" opacity=".5"/><rect width="64" height="32" fill="#C8452D" opacity=".5"/></pattern></defs><g clip-path="url(#rr)"><path d="M0 408 Q256 388 512 408 V512 H0Z" fill="url(#gh)"/><path d="M0 408 Q256 388 512 408" fill="none" stroke="#2B2620" stroke-opacity=".25" stroke-width="3"/></g><g transform="translate(256 262) scale(.9) translate(-256 -256)"> <!-- steam --> <g fill="none" stroke="#EDE3D0" stroke-width="12" stroke-linecap="round" opacity=".85"> <path d="M206 120c-18-22 18-34 0-58"/><path d="M256 108c-18-22 18-34 0-58"/><path d="M306 120c-18-22 18-34 0-58"/> </g> <!-- shallow pasta bowl: underside, rim, well --> <path d="M52 322c4 52 84 86 204 86s200-34 204-86z" fill="#EFE6D0"/> <path d="M52 322c4 52 84 86 204 86s200-34 204-86c-30 20-100 32-204 32S82 342 52 322z" fill="#E4D8BC" opacity=".6"/> <rect x="190" y="402" width="132" height="18" rx="9" fill="#EFE6D0"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="#FAF6EC"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="none" stroke="#D9CDB4" stroke-width="5"/> <!-- painted rim --> <ellipse cx="256" cy="322" rx="186" ry="55" fill="none" stroke="#2F5D8C" stroke-width="7"/> <ellipse cx="256" cy="322" rx="164" ry="46" fill="none" stroke="#2F5D8C" stroke-width="3"/> <circle cx="432" cy="330" r="5" fill="#E9B949"/><circle cx="408" cy="354" r="5" fill="#E9B949"/><circle cx="344" cy="373" r="5" fill="#E9B949"/><circle cx="256" cy="379" r="5" fill="#E9B949"/><circle cx="168" cy="373" r="5" fill="#E9B949"/><circle cx="103" cy="355" r="5" fill="#E9B949"/><circle cx="80" cy="330" r="5" fill="#E9B949"/><circle cx="103" cy="305" r="5" fill="#E9B949"/><circle cx="167" cy="286" r="5" fill="#E9B949"/><circle cx="255" cy="280" r="5" fill="#E9B949"/><circle cx="343" cy="286" r="5" fill="#E9B949"/><circle cx="408" cy="304" r="5" fill="#E9B949"/> <!-- well --> <ellipse cx="256" cy="324" rx="138" ry="36" fill="#F1E8D2"/> <!-- spaghetti nest --> <g fill="none" stroke="#F0CF6E" stroke-width="18" stroke-linecap="round"> <path d="M130 318c26-30 50 18 76-4s50 22 76-4 50 18 76-4"/> <ellipse cx="256" cy="302" rx="104" ry="30"/> <ellipse cx="256" cy="278" rx="80" ry="24"/> <ellipse cx="256" cy="256" rx="56" ry="17"/> <ellipse cx="256" cy="238" rx="32" ry="10"/> <path d="M360 326c20 6 36 14 40 24" /> </g> <g fill="none" stroke="#C8962A" stroke-width="4" stroke-linecap="round" opacity=".5"> <ellipse cx="256" cy="310" rx="104" ry="30"/><ellipse cx="256" cy="286" rx="80" ry="24"/><ellipse cx="256" cy="264" rx="56" ry="17"/> </g> <!-- sauce and basil --> <ellipse cx="256" cy="226" rx="30" ry="12" fill="#B94A2F"/> <ellipse cx="248" cy="222" rx="11" ry="4" fill="#D8674A" opacity=".8"/> <path d="M262 218c8-24 32-26 40-12-10 18-30 22-40 12z" fill="#4D7A5A"/> <path d="M268 216c10-6 20-8 30-4" stroke="#2F5A3C" stroke-width="3.5" fill="none" stroke-linecap="round"/> <!-- fork --> <g stroke-linecap="round" stroke-linejoin="round" fill="none"> <line x1="410" y1="150" x2="306" y2="238" stroke="#9AA3AB" stroke-width="16"/> <line x1="410" y1="150" x2="306" y2="238" stroke="#DDE2E6" stroke-width="9"/> <g stroke="#9AA3AB" stroke-width="14"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> <g stroke="#DDE2E6" stroke-width="7"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> </g> </g> <g><circle cx="74" cy="446" r="28" fill="#D2452E"/><ellipse cx="64" cy="436" rx="9" ry="6" fill="#fff" opacity=".35"/> <path d="M74 418c-4-8-14-10-20-6 6 6 12 8 20 6z M74 418c4-8 14-10 20-6-6 6-12 8-20 6z M74 418l0-10" fill="#4D7A5A" stroke="#2F5A3C" stroke-width="3" stroke-linejoin="round"/></g> <g><path d="M438 452c10-26 40-30 54-14-12 22-40 28-54 14z" fill="#4D7A5A"/><path d="M446 450c14-8 28-10 42-6" stroke="#2F5A3C" stroke-width="4" fill="none" stroke-linecap="round"/></g></svg><div class="brand-text"><h1>Tavola</h1><div class="brand-sub" id="brand-sub" hidden></div></div></div>
   </header>
@@ -1709,11 +1714,11 @@ function renderPlanner(){
   // meals not cooked from the last menu sit together at the top inside one outline
   const isCarried = r => !!(pl && pl.carried && pl.carried.includes(r.id));
   const carriedRows = items.filter(isCarried), otherRows = items.filter(r => !isCarried(r));
-  const chRow = r => `<div class="np-ch"><span class="np-th">${thumbHtml(r, true)}${r.fav ? '<svg class="np-fav" viewBox="0 0 24 24" role="img" aria-label="Favourite"><path d="M12 3.2l2.6 5.5 6 .7-4.4 4.1 1.2 5.9L12 16.5l-5.4 2.9 1.2-5.9L3.4 9.4l6-.7z" fill="currentColor"/></svg>' : ''}</span><span class="np-ch-t" data-act="open-recipe" data-id="${esc(r.id)}">${esc(r.title)}${seasonMark(r)}</span><span class="np-side"><button type="button" class="np-x" data-act="plan-remove" data-id="${esc(r.id)}" aria-label="Remove">×</button>${isCarried(r) ? `<span class="np-srv fixed" title="From the last menu, serves ${planServings(pl, r)}"><strong>${planServings(pl, r)}</strong><svg class="np-again" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12a7 7 0 1 1-2.05-4.95M19 4v4h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>` : `<button type="button" class="np-srv" data-act="serv-pick" data-id="${esc(r.id)}" aria-label="Serves ${planServings(pl, r)}. Change"><svg class="np-plate" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg><strong>${planServings(pl, r)}</strong></button>`}</span></div>`;
+  const chRow = r => `<div class="np-ch"><span class="np-th">${thumbHtml(r, true)}${r.fav ? '<svg class="np-fav" viewBox="0 0 24 24" role="img" aria-label="Favourite"><path d="M12 3.2l2.6 5.5 6 .7-4.4 4.1 1.2 5.9L12 16.5l-5.4 2.9 1.2-5.9L3.4 9.4l6-.7z" fill="currentColor"/></svg>' : ''}</span><span class="np-ch-t" data-act="open-recipe" data-id="${esc(r.id)}">${esc(r.title)}${seasonMark(r)}</span><span class="np-side"><button type="button" class="np-x" data-act="plan-remove" data-id="${esc(r.id)}" aria-label="Remove">×</button>${isCarried(r) ? `<span class="np-srv fixed" title="Serves ${planServings(pl, r)}"><svg class="np-plate" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg><strong>${planServings(pl, r)}</strong></span>` : `<button type="button" class="np-srv" data-act="serv-pick" data-id="${esc(r.id)}" aria-label="Serves ${planServings(pl, r)}. Change"><svg class="np-plate" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg><strong>${planServings(pl, r)}</strong></button>`}</span></div>`;
   let h = `
     ${topIdeas}
     <div class="np-suggest"><div class="np-sg-col"><span class="np-sg-l"><strong>Meals</strong><button type="button" class="info-btn" data-act="sg-info" aria-label="How suggestions work"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.6" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="10" cy="6.2" r="1.15" fill="currentColor"/><path d="M10 9v5.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button></span><span class="stepper np-big"><button type="button" data-act="sg-dec" aria-label="Remove the last suggested meal">−</button><strong>${sgCount}</strong><button type="button" data-act="sg-inc" aria-label="Suggest another meal">+</button></span></div></div>
-    <div class="np-chosen" id="np-chosen">${has ? `${carriedRows.length ? `<div class="np-carried" title="Not cooked from the last menu">${carriedRows.map(chRow).join('')}</div>` : ''}${otherRows.map(chRow).join('')}` : `<div class="np-empty">Nothing chosen yet. Pick meals below.</div>`}</div>`;
+    <div class="np-chosen" id="np-chosen">${has ? `${carriedRows.length ? `<div class="np-carried"><span class="np-carried-l">Uncooked</span>${carriedRows.map(chRow).join('')}</div>` : ''}${otherRows.map(chRow).join('')}` : `<div class="np-empty">Nothing chosen yet. Pick meals below.</div>`}</div>`;
   if(editing){
     h += `<button class="add-btn" data-act="edit-done" style="margin-top:12px;background:var(--tomato);">Done editing</button>
       <div class="btn-row"><button class="secondary-btn share-btn${has?'':off}" data-act="${has?'share-plan':'noop'}" aria-label="Share as image"><svg class="share-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg></button><button class="secondary-btn${has?'':off}" data-act="${has?'plan-clear':'noop'}">Clear all meals</button></div>`;
@@ -2336,7 +2341,7 @@ async function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '0.57';
+const APP_VERSION = '0.58';
 // Reports are also sent here (a small relay that opens a GitHub issue, which Claude then works on). Empty = reports are only saved to the shared list.
 const BUG_RELAY_URL = 'https://tavola-relay.jools-oneill.workers.dev/';
 async function sendToRelay(bugs){   // bugs: an array of reports. Returns {why:'' when all were sent, otherwise the reason, sent:[ids of those that were]}
