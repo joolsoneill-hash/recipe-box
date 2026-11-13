@@ -354,6 +354,10 @@
   .extra-row input,.extra-row select{padding:9px 10px;font-size:14px;border:1px solid var(--line-strong);border-radius:2px;background:var(--paper);color:var(--ink);min-width:0;}
   .extra-row input:first-child{flex:2;} .extra-row input:last-child{flex:1;}
   .extra-row select{flex:1;}
+  .extra-row #extra-qty{flex:1;}
+  .extra-add{flex:1;padding:11px 14px;background:var(--tomato);color:#fff;border:none;border-radius:2px;font-size:15px;font-weight:700;}
+  .extra-lbl{flex:0 0 auto;align-self:center;font-size:13px;font-weight:600;color:var(--brown);}
+  .gro-show{font-size:12px;font-weight:600;color:var(--brown);margin:0 0 6px;}
   .grocery-item.extra .gi-name,.grocery-item.extra .gi-qty{font-style:italic;}
   .gi-del{border:none;background:none;color:var(--tomato);font-size:20px;line-height:1;padding:0 2px;flex-shrink:0;}
   #app.booting .app-header,#app.booting .tabbar,#app.booting #main{display:none;}
@@ -1983,14 +1987,15 @@ function renderGrocery(){
     <form id="extra-form" class="extra-form" autocomplete="off">
       <div class="extra-row">
         <input id="extra-name" placeholder="Add your own item" aria-label="Item name">
+        <button type="submit" class="extra-add">Add</button>
+      </div>
+      <div class="extra-row">
         <input id="extra-qty" placeholder="Qty" aria-label="Quantity">
-      </div>
-      <div class="extra-row">
-        <div class="store-seg extra-seg" id="extra-store"><button type="button" class="on" data-act="extra-store" data-id="coles">Coles</button><button type="button" data-act="extra-store" data-id="aldi">Aldi</button></div>
-      </div>
-      <div class="extra-row">
         <select id="extra-cat" aria-label="Category"><option value="auto" selected>Category: automatic</option>${catOptionsHtml('')}</select>
-        <button type="submit" class="small-btn">Add</button>
+      </div>
+      <div class="extra-row">
+        <span class="extra-lbl">Buy at</span>
+        <div class="store-seg extra-seg" id="extra-store"><button type="button" class="on" data-act="extra-store" data-id="coles">Coles</button><button type="button" data-act="extra-store" data-id="aldi">Aldi</button></div>
       </div>
     </form>`;
   if(plan && plan.built && plan.groceryDone && items.length === 0){
@@ -2009,7 +2014,7 @@ function renderGrocery(){
   const storeOf = it => state.storeHold[it.key] || actualStore(it);   // an item that was just moved stays put for a moment
   const cnt = {coles: items.filter(it => storeOf(it)==='coles').length, aldi: items.filter(it => storeOf(it)==='aldi').length};
   if(!state.storeView) state.storeView = 'all';
-  html += `<div class="store-seg" role="tablist"><button type="button" class="${state.storeView==='all'?'on':''}" data-act="store-view" data-id="all">All (${items.length})</button><button type="button" class="${state.storeView==='coles'?'on':''}" data-act="store-view" data-id="coles">Coles (${cnt.coles})</button><button type="button" class="${state.storeView==='aldi'?'on':''}" data-act="store-view" data-id="aldi">Aldi (${cnt.aldi})</button></div>`;
+  html += `<div class="gro-show">Show items from</div><div class="store-seg" role="tablist"><button type="button" class="${state.storeView==='all'?'on':''}" data-act="store-view" data-id="all">All (${items.length})</button><button type="button" class="${state.storeView==='coles'?'on':''}" data-act="store-view" data-id="coles">Coles (${cnt.coles})</button><button type="button" class="${state.storeView==='aldi'?'on':''}" data-act="store-view" data-id="aldi">Aldi (${cnt.aldi})</button></div>`;
   const storeName = state.storeView==='aldi' ? 'Aldi' : (state.storeView==='coles' ? 'Coles' : '');
   if(state.storeView !== 'all') items = items.filter(it => storeOf(it) === state.storeView);
   if(!items.length){ html += `<div class="empty-state"><p>Nothing to buy at ${storeName}. Tap the small shop tag on an item to move it between shops.</p></div>`; return html; }
@@ -2017,6 +2022,7 @@ function renderGrocery(){
   const hiddenCount = items.filter(it => state.checks[it.key] === 'hidden').length;   // ticked items tuck themselves away after 2 seconds
   html += `<div class="gro-total"><div><strong>${items.length}</strong> item${items.length===1?'':'s'}${storeName ? ' at ' + storeName : ' in total'}</div><span>${ticked} of ${items.length} ticked</span></div>`;
   html += `<div class="check-actions"><button class="secondary-btn" data-act="check-all">Check all</button><button class="secondary-btn" data-act="clear-checks">Uncheck all</button></div>`;
+  html += `<button class="secondary-btn" data-act="share-list" style="margin:0 0 4px;">Share list</button>`;
   if(ticked) html += `<div class="check-actions"><button class="secondary-btn" data-act="unhide-checked" ${hiddenCount ? '' : 'disabled'}>Unhide checked items</button><button class="secondary-btn" data-act="hide-checked" ${ticked > hiddenCount ? '' : 'disabled'}>Hide all checked items</button></div>`;
   CATEGORIES.forEach(c=>{
     const list = items.filter(it => it.cat === c.key && state.checks[it.key] !== 'hidden').sort((a,b)=>a.name.localeCompare(b.name));
@@ -3135,6 +3141,7 @@ mainEl.addEventListener('click', async (e)=>{
     }
     case 'share-recipe': shareRecipePdf(id); break;
     case 'share-plan': sharePlanImage(); break;
+    case 'share-list': shareListImage(); break;
     case 'recipe-cooked': { const r = state.recipes[id]; if(r) await toggleCooked(r); break; }
     case 'add-recipe': openAddChoiceSheet(); break;
     case 'import-recipe': openImportSheet(); break;
@@ -3597,6 +3604,61 @@ async function sharePlanImage(){
   finally { shareBusy = false; }
 }
 
+/* grocery list as an image, with a link (#list) that opens the list in the app. Follows the Coles / Aldi filter on screen. */
+function listShareItems(){
+  const storeOf = it => (state.storePrefs && state.storePrefs[it.key] === 'aldi') ? 'aldi' : 'coles';
+  const view = state.storeView || 'all';
+  return allGroceryItems().filter(it => view === 'all' || storeOf(it) === view).map(it => Object.assign({}, it, {shop: storeOf(it)}));
+}
+async function renderListImage(items, storeName){
+  await shareFontsReady();
+  const C = shareColors(), W = 1080, PAD = 48, HEAD = 250, FOOT = 110, ROW = 64, CATH = 76;
+  const cats = CATEGORIES.map(c => ({label: c.label, list: items.filter(it => it.cat === c.key).sort((a,b) => a.name.localeCompare(b.name))})).filter(c => c.list.length);
+  const H = HEAD + 20 + cats.reduce((t, c) => t + CATH + c.list.length * ROW, 0) + FOOT;
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const ctx = cv.getContext('2d');
+  ctx.fillStyle = C.paper; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = C.ink; ctx.fillRect(0, 0, W, HEAD);
+  ctx.fillStyle = C.paper; ctx.font = '400 56px ' + SHARE_TITLE_FONT; ctx.fillText('Tavola', PAD, 92);
+  ctx.font = '700 62px ' + SHARE_FONT; ctx.fillText(storeName ? 'Groceries at ' + storeName : 'Grocery List', PAD, 176);
+  const plan = activePlan();
+  ctx.fillStyle = 'rgba(237,227,208,0.7)'; ctx.font = '400 30px ' + SHARE_FONT; ctx.fillText((plan ? planLabel(plan) + '  ·  ' : '') + items.length + ' item' + (items.length === 1 ? '' : 's'), PAD, 222);
+  let y = HEAD + 20;
+  cats.forEach(c => {
+    ctx.fillStyle = C.herb; ctx.font = '700 26px ' + SHARE_FONT; ctx.fillText(c.label.toUpperCase(), PAD, y + 50);
+    ctx.fillStyle = C.line; ctx.fillRect(PAD, y + 64, W - 2 * PAD, 3); y += CATH;
+    c.list.forEach(it => {
+      const done = !!state.checks[it.key];
+      ctx.font = '700 28px ' + SHARE_FONT; const q = it.qtyText || '', qw = q ? ctx.measureText(q).width : 0;
+      ctx.font = '600 22px ' + SHARE_FONT; const tag = it.shop === 'aldi' ? 'Aldi' : 'Coles', tw = ctx.measureText(tag).width + 20;
+      const right = W - PAD - (storeName ? 0 : tw + 16);
+      ctx.fillStyle = done ? '#9c8f77' : C.ink; ctx.font = '500 30px ' + SHARE_FONT;
+      const name = shareWrap(ctx, it.name, right - PAD - qw - 30)[0];
+      ctx.fillText(name, PAD, y + 42);
+      if(done) ctx.fillRect(PAD, y + 32, ctx.measureText(name).width, 2);
+      if(q){ ctx.font = '700 28px ' + SHARE_FONT; ctx.fillStyle = C.brown; ctx.textAlign = 'right'; ctx.fillText(q, right, y + 42); ctx.textAlign = 'left'; }
+      if(!storeName){
+        const tx = W - PAD - tw; ctx.font = '600 22px ' + SHARE_FONT;
+        if(it.shop === 'aldi'){ ctx.fillStyle = C.ink; ctx.fillRect(tx, y + 14, tw, 38); ctx.fillStyle = C.paper; }
+        else { ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.strokeRect(tx, y + 14, tw, 38); ctx.fillStyle = C.ink; }
+        ctx.fillText(tag, tx + 10, y + 41);
+      }
+      ctx.fillStyle = 'rgba(43,38,32,0.12)'; ctx.fillRect(PAD, y + ROW - 2, W - 2 * PAD, 2);
+      y += ROW;
+    });
+  });
+  ctx.fillStyle = '#8a7d68'; ctx.font = '400 26px ' + SHARE_FONT; ctx.textAlign = 'center'; ctx.fillText('Shared from Tavola', W / 2, H - 46); ctx.textAlign = 'left';
+  return cv;
+}
+async function shareListImage(){
+  const items = listShareItems(); if(!items.length || shareBusy) return;
+  shareBusy = true; showToast('Preparing image…');
+  const storeName = state.storeView === 'aldi' ? 'Aldi' : (state.storeView === 'coles' ? 'Coles' : '');
+  const title = storeName ? 'Groceries at ' + storeName : 'Grocery List';
+  try { const blob = await shareBlob(await renderListImage(items, storeName), 'image/png'); await deliverShareFile(blob, 'tavola-' + shareSlug(title) + '.png', title, title + '\n' + location.origin + location.pathname + '#list'); }
+  catch(e){ console.error('share list failed', e); appAlert("Couldn't make the image. Please try again."); }
+  finally { shareBusy = false; }
+}
+
 /* a shared link (#plan=<id>) opens that menu: a draft on the Planner, a built menu on the Menu tab */
 /* ---------- FIX LOG: tells you when a sent report has been fixed, and what the fix cost ----------
    The GitHub workflow appends to fix-log.json (published with the app) after each fix. */
@@ -3641,6 +3703,7 @@ async function checkForUpdate(){
   }catch(e){ /* offline */ }
 }
 function handlePlanLink(){
+  if(location.hash === '#list'){ try{ history.replaceState(null, '', location.pathname + location.search); }catch(e){} goTab('list'); return; }
   const m = /^#plan=([^&]+)/.exec(location.hash || ''); if(!m) return;
   let id = ''; try{ id = decodeURIComponent(m[1]); }catch(e){}
   try{ history.replaceState(null, '', location.pathname + location.search); }catch(e){}

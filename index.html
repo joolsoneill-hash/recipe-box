@@ -354,6 +354,10 @@
   .extra-row input,.extra-row select{padding:9px 10px;font-size:14px;border:1px solid var(--line-strong);border-radius:2px;background:var(--paper);color:var(--ink);min-width:0;}
   .extra-row input:first-child{flex:2;} .extra-row input:last-child{flex:1;}
   .extra-row select{flex:1;}
+  .extra-row #extra-qty{flex:1;}
+  .extra-add{flex:1;padding:11px 14px;background:var(--tomato);color:#fff;border:none;border-radius:2px;font-size:15px;font-weight:700;}
+  .extra-lbl{flex:0 0 auto;align-self:center;font-size:13px;font-weight:600;color:var(--brown);}
+  .gro-show{font-size:12px;font-weight:600;color:var(--brown);margin:0 0 6px;}
   .grocery-item.extra .gi-name,.grocery-item.extra .gi-qty{font-style:italic;}
   .gi-del{border:none;background:none;color:var(--tomato);font-size:20px;line-height:1;padding:0 2px;flex-shrink:0;}
   #app.booting .app-header,#app.booting .tabbar,#app.booting #main{display:none;}
@@ -497,7 +501,7 @@
 <body>
 <div id="app" class="booting">
   <header class="app-header">
-    <div class="header-right"><button type="button" class="header-btn" id="menu-header-btn" aria-label="More options" aria-haspopup="true" aria-expanded="false">⋯</button><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button><span class="app-version" id="app-version">v0.43</span></div>
+    <div class="header-right"><button type="button" class="header-btn" id="menu-header-btn" aria-label="More options" aria-haspopup="true" aria-expanded="false">⋯</button><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button><span class="app-version" id="app-version">v0.44</span></div>
     <div class="app-menu" id="app-menu" hidden></div>
     <div class="brand"><svg viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#2B2620"/><defs><clipPath id="rr"><rect width="512" height="512" rx="112"/></clipPath> <pattern id="gh" width="64" height="64" patternUnits="userSpaceOnUse"><rect width="64" height="64" fill="#F6EEDC"/><rect width="32" height="64" fill="#C8452D" opacity=".5"/><rect width="64" height="32" fill="#C8452D" opacity=".5"/></pattern></defs><g clip-path="url(#rr)"><path d="M0 408 Q256 388 512 408 V512 H0Z" fill="url(#gh)"/><path d="M0 408 Q256 388 512 408" fill="none" stroke="#2B2620" stroke-opacity=".25" stroke-width="3"/></g><g transform="translate(256 262) scale(.9) translate(-256 -256)"> <!-- steam --> <g fill="none" stroke="#EDE3D0" stroke-width="12" stroke-linecap="round" opacity=".85"> <path d="M206 120c-18-22 18-34 0-58"/><path d="M256 108c-18-22 18-34 0-58"/><path d="M306 120c-18-22 18-34 0-58"/> </g> <!-- shallow pasta bowl: underside, rim, well --> <path d="M52 322c4 52 84 86 204 86s200-34 204-86z" fill="#EFE6D0"/> <path d="M52 322c4 52 84 86 204 86s200-34 204-86c-30 20-100 32-204 32S82 342 52 322z" fill="#E4D8BC" opacity=".6"/> <rect x="190" y="402" width="132" height="18" rx="9" fill="#EFE6D0"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="#FAF6EC"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="none" stroke="#D9CDB4" stroke-width="5"/> <!-- painted rim --> <ellipse cx="256" cy="322" rx="186" ry="55" fill="none" stroke="#2F5D8C" stroke-width="7"/> <ellipse cx="256" cy="322" rx="164" ry="46" fill="none" stroke="#2F5D8C" stroke-width="3"/> <circle cx="432" cy="330" r="5" fill="#E9B949"/><circle cx="408" cy="354" r="5" fill="#E9B949"/><circle cx="344" cy="373" r="5" fill="#E9B949"/><circle cx="256" cy="379" r="5" fill="#E9B949"/><circle cx="168" cy="373" r="5" fill="#E9B949"/><circle cx="103" cy="355" r="5" fill="#E9B949"/><circle cx="80" cy="330" r="5" fill="#E9B949"/><circle cx="103" cy="305" r="5" fill="#E9B949"/><circle cx="167" cy="286" r="5" fill="#E9B949"/><circle cx="255" cy="280" r="5" fill="#E9B949"/><circle cx="343" cy="286" r="5" fill="#E9B949"/><circle cx="408" cy="304" r="5" fill="#E9B949"/> <!-- well --> <ellipse cx="256" cy="324" rx="138" ry="36" fill="#F1E8D2"/> <!-- spaghetti nest --> <g fill="none" stroke="#F0CF6E" stroke-width="18" stroke-linecap="round"> <path d="M130 318c26-30 50 18 76-4s50 22 76-4 50 18 76-4"/> <ellipse cx="256" cy="302" rx="104" ry="30"/> <ellipse cx="256" cy="278" rx="80" ry="24"/> <ellipse cx="256" cy="256" rx="56" ry="17"/> <ellipse cx="256" cy="238" rx="32" ry="10"/> <path d="M360 326c20 6 36 14 40 24" /> </g> <g fill="none" stroke="#C8962A" stroke-width="4" stroke-linecap="round" opacity=".5"> <ellipse cx="256" cy="310" rx="104" ry="30"/><ellipse cx="256" cy="286" rx="80" ry="24"/><ellipse cx="256" cy="264" rx="56" ry="17"/> </g> <!-- sauce and basil --> <ellipse cx="256" cy="226" rx="30" ry="12" fill="#B94A2F"/> <ellipse cx="248" cy="222" rx="11" ry="4" fill="#D8674A" opacity=".8"/> <path d="M262 218c8-24 32-26 40-12-10 18-30 22-40 12z" fill="#4D7A5A"/> <path d="M268 216c10-6 20-8 30-4" stroke="#2F5A3C" stroke-width="3.5" fill="none" stroke-linecap="round"/> <!-- fork --> <g stroke-linecap="round" stroke-linejoin="round" fill="none"> <line x1="410" y1="150" x2="306" y2="238" stroke="#9AA3AB" stroke-width="16"/> <line x1="410" y1="150" x2="306" y2="238" stroke="#DDE2E6" stroke-width="9"/> <g stroke="#9AA3AB" stroke-width="14"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> <g stroke="#DDE2E6" stroke-width="7"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> </g> </g> <g><circle cx="74" cy="446" r="28" fill="#D2452E"/><ellipse cx="64" cy="436" rx="9" ry="6" fill="#fff" opacity=".35"/> <path d="M74 418c-4-8-14-10-20-6 6 6 12 8 20 6z M74 418c4-8 14-10 20-6-6 6-12 8-20 6z M74 418l0-10" fill="#4D7A5A" stroke="#2F5A3C" stroke-width="3" stroke-linejoin="round"/></g> <g><path d="M438 452c10-26 40-30 54-14-12 22-40 28-54 14z" fill="#4D7A5A"/><path d="M446 450c14-8 28-10 42-6" stroke="#2F5A3C" stroke-width="4" fill="none" stroke-linecap="round"/></g></svg><h1>Tavola</h1></div>
   </header>
@@ -1983,14 +1987,15 @@ function renderGrocery(){
     <form id="extra-form" class="extra-form" autocomplete="off">
       <div class="extra-row">
         <input id="extra-name" placeholder="Add your own item" aria-label="Item name">
+        <button type="submit" class="extra-add">Add</button>
+      </div>
+      <div class="extra-row">
         <input id="extra-qty" placeholder="Qty" aria-label="Quantity">
-      </div>
-      <div class="extra-row">
-        <div class="store-seg extra-seg" id="extra-store"><button type="button" class="on" data-act="extra-store" data-id="coles">Coles</button><button type="button" data-act="extra-store" data-id="aldi">Aldi</button></div>
-      </div>
-      <div class="extra-row">
         <select id="extra-cat" aria-label="Category"><option value="auto" selected>Category: automatic</option>${catOptionsHtml('')}</select>
-        <button type="submit" class="small-btn">Add</button>
+      </div>
+      <div class="extra-row">
+        <span class="extra-lbl">Buy at</span>
+        <div class="store-seg extra-seg" id="extra-store"><button type="button" class="on" data-act="extra-store" data-id="coles">Coles</button><button type="button" data-act="extra-store" data-id="aldi">Aldi</button></div>
       </div>
     </form>`;
   if(plan && plan.built && plan.groceryDone && items.length === 0){
@@ -2009,7 +2014,7 @@ function renderGrocery(){
   const storeOf = it => state.storeHold[it.key] || actualStore(it);   // an item that was just moved stays put for a moment
   const cnt = {coles: items.filter(it => storeOf(it)==='coles').length, aldi: items.filter(it => storeOf(it)==='aldi').length};
   if(!state.storeView) state.storeView = 'all';
-  html += `<div class="store-seg" role="tablist"><button type="button" class="${state.storeView==='all'?'on':''}" data-act="store-view" data-id="all">All (${items.length})</button><button type="button" class="${state.storeView==='coles'?'on':''}" data-act="store-view" data-id="coles">Coles (${cnt.coles})</button><button type="button" class="${state.storeView==='aldi'?'on':''}" data-act="store-view" data-id="aldi">Aldi (${cnt.aldi})</button></div>`;
+  html += `<div class="gro-show">Show items from</div><div class="store-seg" role="tablist"><button type="button" class="${state.storeView==='all'?'on':''}" data-act="store-view" data-id="all">All (${items.length})</button><button type="button" class="${state.storeView==='coles'?'on':''}" data-act="store-view" data-id="coles">Coles (${cnt.coles})</button><button type="button" class="${state.storeView==='aldi'?'on':''}" data-act="store-view" data-id="aldi">Aldi (${cnt.aldi})</button></div>`;
   const storeName = state.storeView==='aldi' ? 'Aldi' : (state.storeView==='coles' ? 'Coles' : '');
   if(state.storeView !== 'all') items = items.filter(it => storeOf(it) === state.storeView);
   if(!items.length){ html += `<div class="empty-state"><p>Nothing to buy at ${storeName}. Tap the small shop tag on an item to move it between shops.</p></div>`; return html; }
@@ -2017,6 +2022,7 @@ function renderGrocery(){
   const hiddenCount = items.filter(it => state.checks[it.key] === 'hidden').length;   // ticked items tuck themselves away after 2 seconds
   html += `<div class="gro-total"><div><strong>${items.length}</strong> item${items.length===1?'':'s'}${storeName ? ' at ' + storeName : ' in total'}</div><span>${ticked} of ${items.length} ticked</span></div>`;
   html += `<div class="check-actions"><button class="secondary-btn" data-act="check-all">Check all</button><button class="secondary-btn" data-act="clear-checks">Uncheck all</button></div>`;
+  html += `<button class="secondary-btn" data-act="share-list" style="margin:0 0 4px;">Share list</button>`;
   if(ticked) html += `<div class="check-actions"><button class="secondary-btn" data-act="unhide-checked" ${hiddenCount ? '' : 'disabled'}>Unhide checked items</button><button class="secondary-btn" data-act="hide-checked" ${ticked > hiddenCount ? '' : 'disabled'}>Hide all checked items</button></div>`;
   CATEGORIES.forEach(c=>{
     const list = items.filter(it => it.cat === c.key && state.checks[it.key] !== 'hidden').sort((a,b)=>a.name.localeCompare(b.name));
@@ -2187,7 +2193,7 @@ async function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '0.43';
+const APP_VERSION = '0.44';
 // Reports are also sent here (a small relay that opens a GitHub issue, which Claude then works on). Empty = reports are only saved to the shared list.
 const BUG_RELAY_URL = 'https://tavola-relay.jools-oneill.workers.dev/';
 async function sendToRelay(bugs){   // bugs: an array of reports. Returns {why:'' when all were sent, otherwise the reason, sent:[ids of those that were]}
@@ -3135,6 +3141,7 @@ mainEl.addEventListener('click', async (e)=>{
     }
     case 'share-recipe': shareRecipePdf(id); break;
     case 'share-plan': sharePlanImage(); break;
+    case 'share-list': shareListImage(); break;
     case 'recipe-cooked': { const r = state.recipes[id]; if(r) await toggleCooked(r); break; }
     case 'add-recipe': openAddChoiceSheet(); break;
     case 'import-recipe': openImportSheet(); break;
@@ -3597,6 +3604,61 @@ async function sharePlanImage(){
   finally { shareBusy = false; }
 }
 
+/* grocery list as an image, with a link (#list) that opens the list in the app. Follows the Coles / Aldi filter on screen. */
+function listShareItems(){
+  const storeOf = it => (state.storePrefs && state.storePrefs[it.key] === 'aldi') ? 'aldi' : 'coles';
+  const view = state.storeView || 'all';
+  return allGroceryItems().filter(it => view === 'all' || storeOf(it) === view).map(it => Object.assign({}, it, {shop: storeOf(it)}));
+}
+async function renderListImage(items, storeName){
+  await shareFontsReady();
+  const C = shareColors(), W = 1080, PAD = 48, HEAD = 250, FOOT = 110, ROW = 64, CATH = 76;
+  const cats = CATEGORIES.map(c => ({label: c.label, list: items.filter(it => it.cat === c.key).sort((a,b) => a.name.localeCompare(b.name))})).filter(c => c.list.length);
+  const H = HEAD + 20 + cats.reduce((t, c) => t + CATH + c.list.length * ROW, 0) + FOOT;
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const ctx = cv.getContext('2d');
+  ctx.fillStyle = C.paper; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = C.ink; ctx.fillRect(0, 0, W, HEAD);
+  ctx.fillStyle = C.paper; ctx.font = '400 56px ' + SHARE_TITLE_FONT; ctx.fillText('Tavola', PAD, 92);
+  ctx.font = '700 62px ' + SHARE_FONT; ctx.fillText(storeName ? 'Groceries at ' + storeName : 'Grocery List', PAD, 176);
+  const plan = activePlan();
+  ctx.fillStyle = 'rgba(237,227,208,0.7)'; ctx.font = '400 30px ' + SHARE_FONT; ctx.fillText((plan ? planLabel(plan) + '  ·  ' : '') + items.length + ' item' + (items.length === 1 ? '' : 's'), PAD, 222);
+  let y = HEAD + 20;
+  cats.forEach(c => {
+    ctx.fillStyle = C.herb; ctx.font = '700 26px ' + SHARE_FONT; ctx.fillText(c.label.toUpperCase(), PAD, y + 50);
+    ctx.fillStyle = C.line; ctx.fillRect(PAD, y + 64, W - 2 * PAD, 3); y += CATH;
+    c.list.forEach(it => {
+      const done = !!state.checks[it.key];
+      ctx.font = '700 28px ' + SHARE_FONT; const q = it.qtyText || '', qw = q ? ctx.measureText(q).width : 0;
+      ctx.font = '600 22px ' + SHARE_FONT; const tag = it.shop === 'aldi' ? 'Aldi' : 'Coles', tw = ctx.measureText(tag).width + 20;
+      const right = W - PAD - (storeName ? 0 : tw + 16);
+      ctx.fillStyle = done ? '#9c8f77' : C.ink; ctx.font = '500 30px ' + SHARE_FONT;
+      const name = shareWrap(ctx, it.name, right - PAD - qw - 30)[0];
+      ctx.fillText(name, PAD, y + 42);
+      if(done) ctx.fillRect(PAD, y + 32, ctx.measureText(name).width, 2);
+      if(q){ ctx.font = '700 28px ' + SHARE_FONT; ctx.fillStyle = C.brown; ctx.textAlign = 'right'; ctx.fillText(q, right, y + 42); ctx.textAlign = 'left'; }
+      if(!storeName){
+        const tx = W - PAD - tw; ctx.font = '600 22px ' + SHARE_FONT;
+        if(it.shop === 'aldi'){ ctx.fillStyle = C.ink; ctx.fillRect(tx, y + 14, tw, 38); ctx.fillStyle = C.paper; }
+        else { ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.strokeRect(tx, y + 14, tw, 38); ctx.fillStyle = C.ink; }
+        ctx.fillText(tag, tx + 10, y + 41);
+      }
+      ctx.fillStyle = 'rgba(43,38,32,0.12)'; ctx.fillRect(PAD, y + ROW - 2, W - 2 * PAD, 2);
+      y += ROW;
+    });
+  });
+  ctx.fillStyle = '#8a7d68'; ctx.font = '400 26px ' + SHARE_FONT; ctx.textAlign = 'center'; ctx.fillText('Shared from Tavola', W / 2, H - 46); ctx.textAlign = 'left';
+  return cv;
+}
+async function shareListImage(){
+  const items = listShareItems(); if(!items.length || shareBusy) return;
+  shareBusy = true; showToast('Preparing image…');
+  const storeName = state.storeView === 'aldi' ? 'Aldi' : (state.storeView === 'coles' ? 'Coles' : '');
+  const title = storeName ? 'Groceries at ' + storeName : 'Grocery List';
+  try { const blob = await shareBlob(await renderListImage(items, storeName), 'image/png'); await deliverShareFile(blob, 'tavola-' + shareSlug(title) + '.png', title, title + '\n' + location.origin + location.pathname + '#list'); }
+  catch(e){ console.error('share list failed', e); appAlert("Couldn't make the image. Please try again."); }
+  finally { shareBusy = false; }
+}
+
 /* a shared link (#plan=<id>) opens that menu: a draft on the Planner, a built menu on the Menu tab */
 /* ---------- FIX LOG: tells you when a sent report has been fixed, and what the fix cost ----------
    The GitHub workflow appends to fix-log.json (published with the app) after each fix. */
@@ -3641,6 +3703,7 @@ async function checkForUpdate(){
   }catch(e){ /* offline */ }
 }
 function handlePlanLink(){
+  if(location.hash === '#list'){ try{ history.replaceState(null, '', location.pathname + location.search); }catch(e){} goTab('list'); return; }
   const m = /^#plan=([^&]+)/.exec(location.hash || ''); if(!m) return;
   let id = ''; try{ id = decodeURIComponent(m[1]); }catch(e){}
   try{ history.replaceState(null, '', location.pathname + location.search); }catch(e){}
