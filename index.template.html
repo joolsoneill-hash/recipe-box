@@ -41,6 +41,8 @@
   input,textarea,select{font-family:'Work Sans',sans-serif;}
 
   .app-header{background:var(--ink);color:var(--paper);padding:10px 16px 10px;position:relative;margin-bottom:0;}
+  .brand-sub{font-size:15px;font-weight:600;color:var(--paper);opacity:0.75;margin-top:2px;letter-spacing:0.2px;}
+  .brand-sub[hidden]{display:none;}
   .app-header h1{margin:0;font-family:"Marcellus",Georgia,serif;font-weight:400;letter-spacing:0.5px;font-size:32.8px;white-space:nowrap;letter-spacing:0.2px;}
   .app-header .tagline{margin:6px 0 0;font-size:13px;color:rgba(237,227,208,0.72);}
 
@@ -358,8 +360,8 @@
   .share-btn{display:flex;align-items:center;justify-content:center;}
   .share-btn .share-ico{width:22px;height:22px;}
   .check-actions .secondary-btn:disabled{opacity:0.4;}
-  .extra-form{margin:0 0 16px;padding:12px;border:1px solid var(--line);background:var(--card);border-radius:2px;}
-  .extra-row{display:flex;gap:8px;margin-bottom:8px;}
+  .extra-form{margin:-14px 0 12px;padding:8px;border:1px solid var(--line);background:var(--card);border-radius:2px;}
+  .extra-row{display:flex;gap:6px;margin-bottom:6px;}
   .extra-row:last-child{margin-bottom:0;}
   .extra-row input,.extra-row select{padding:9px 10px;font-size:14px;border:1px solid var(--line-strong);border-radius:2px;background:var(--paper);color:var(--ink);min-width:0;}
   .extra-row input:first-child{flex:2;} .extra-row input:last-child{flex:1;}
@@ -368,9 +370,9 @@
   .extra-add svg{width:22px;height:22px;}
   .extra-row #extra-name{flex:1 1 auto;}
   .extra-row #extra-qty{flex:0 0 72px;width:72px;}
-  .extra-shops{flex-wrap:wrap;align-items:center;margin-bottom:0;}
+  .extra-shops{flex-wrap:wrap;align-items:center;margin-bottom:0;gap:6px;}
   .gro-pills{margin-bottom:12px;}
-  .shop-edit{width:36px;height:36px;flex:0 0 36px;padding:0;margin-left:-6px;display:flex;align-items:center;justify-content:center;background:none;border:none;color:var(--brown);cursor:pointer;}
+  .shop-edit{width:30px;height:36px;flex:0 0 30px;padding:0;margin:0 -2px 0 -3px;display:flex;align-items:center;justify-content:center;background:none;border:none;color:var(--brown);cursor:pointer;}
   .shop-edit svg{width:24px;height:24px;}
   .shop-note{font-size:12px;color:var(--brown);}
   .shop-del{width:auto;margin:0 0 0 auto;padding:6px 12px;font-size:13px;}
@@ -522,7 +524,7 @@
   <header class="app-header">
     <div class="header-right"><button type="button" class="header-btn" id="menu-header-btn" aria-label="More options" aria-haspopup="true" aria-expanded="false">⋯</button><button type="button" class="header-btn" id="bug-header-btn" aria-label="Report a bug or idea">🐞</button><span class="app-version" id="app-version">v__APP_VERSION__</span></div>
     <div class="app-menu" id="app-menu" hidden></div>
-    <div class="brand">__LOGO_SVG__<h1>Tavola</h1></div>
+    <div class="brand">__LOGO_SVG__<div class="brand-text"><h1>Tavola</h1><div class="brand-sub" id="brand-sub" hidden></div></div></div>
   </header>
   <div class="boot-splash" id="boot-splash">__LOGO_SVG__</div>
   <main id="main"></main>
@@ -530,7 +532,7 @@
     <button data-tab="plan" class="tab active">Menu</button>
     <button data-tab="planner" class="tab">Planner</button>
     <button data-tab="box" class="tab">Recipes</button>
-    <button data-tab="list" class="tab">Groceries</button>
+    <button data-tab="list" class="tab">Shopping</button>
   </nav>
 </div>
 <div id="dlg-overlay" class="dlg-overlay hidden"><div class="dlg" role="dialog" aria-modal="true"><div class="dlg-title">Tavola</div><div class="dlg-msg" id="dlg-msg"></div><div class="dlg-actions" id="dlg-actions"></div></div></div>
@@ -1105,7 +1107,11 @@ function render(){
   else main.innerHTML = renderGrocery();
   setActiveTabButton(v.tab);
   updateGroceryBadge();
+  // the page name sits under Tavola in the banner
+  const sub = document.getElementById('brand-sub');
+  if(sub){ const t = v.tab === 'planner' && state.editPlanId ? 'Edit menu' : (PAGE_NAMES[v.tab] || ''); sub.textContent = t; sub.hidden = !t; }
 }
+const PAGE_NAMES = {plan: 'Menu', planner: 'Planner', box: 'Recipes', list: 'Shopping'};
 function updateGroceryBadge(){ /* the tab just says Groceries */ }
 
 function goTo(view){ currentView().scrollY = window.scrollY; viewStack.push(view); render(); window.scrollTo(0, 0); }   // the screen we leave remembers where it was scrolled to
@@ -1641,7 +1647,7 @@ function renderPlanner(){
     ch += `</div>`;
   }
 
-  let h = `<h2 class="planner-title">${editing ? 'Edit menu' : 'Planner'}</h2>
+  let h = `
     <p class="planner-lead">${editing ? 'Change the meals in your menu. Your grocery list updates as you go.' : 'Line up meals for your next menu. It stays here as a draft until you build it. Then it moves to the Menu tab and your grocery list is made.'}</p>
     ${ch}${topIdeas}
     <div class="np-suggest"><span><strong>Suggest meals</strong><small>Two favourites, then a different cuisine each time. Meals with in-season vegetables come first; (!) marks an out-of-season one.</small></span><span class="stepper"><button type="button" data-act="sg-dec" aria-label="Remove the last suggestion">−</button><strong>${sgCount}</strong><button type="button" data-act="sg-inc" aria-label="Suggest another meal">+</button></span></div>
@@ -2058,8 +2064,7 @@ function openShopsSheet(){
 function renderGrocery(){
   const plan = activePlan();
   let items = allGroceryItems();
-  let html = `<h3 style="font-size:14px;color:var(--brown);margin:0 0 14px;">Built from: ${plan ? esc(planLabel(plan)) : 'your meal plan'}</h3>`;
-  html += `
+  let html = `
     <form id="extra-form" class="extra-form" autocomplete="off">
       <div class="extra-row">
         <input id="extra-name" placeholder="Add your own item" aria-label="Item name">

@@ -232,3 +232,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.45
 - Groceries: Check all / Uncheck all is now one tick box at the top of the list (tap to tick everything, tap again to clear). Hide and Unhide checked items are one button on the same row (Hide N ticked / Show N ticked). Share list is a small share icon on that row. Add your own item: name, qty and a + button on one line; category is worked out automatically. Buy at and Show items from are pills, and only shops with items on the list get a pill. Tapping a shop tag on an item steps through your shops. The pencil before the shop pills opens Shops: add a shop, remove one (its items go back to Coles), or bring back one you used before. Starting shops: Coles (default), Aldi, Bunnings, Spotlight, Petbarn, Woolies.
+
+0.46
+- Groceries: removed the "Built from" line at the top; tighter spacing around Add your own item. The Groceries tab is now called Shopping. Each page's name (Menu, Planner or Edit menu, Recipes, Shopping) shows under Tavola in the banner; the Planner's own heading is gone as it repeated it. Less space above the add box and beside the pencil.
