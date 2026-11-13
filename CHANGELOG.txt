@@ -266,3 +266,8 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.55
 - Planner: recipes inside each cuisine are in a random order (suggested and chosen ones still first). The order stays put while the app is open and changes next time.
+
+0.56
+- Planner: a big centred Meals counter (adds suggested meals) with a small Serves counter centred under it (the word Serves sits just below its counter). Serves applies to every meal in the menu (meals carried from the last menu keep theirs). The list has bigger names and photos and no per-meal serves.
+- The bug button has moved from the banner into the ⋯ menu (Report a bug or idea).
+- Banner: even space above and below the logo; the ⋯ button and version are centred top to bottom.

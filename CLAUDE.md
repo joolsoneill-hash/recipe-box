@@ -13,6 +13,6 @@ A shared household recipe, menu and grocery app for two people. One HTML file of
 - No icons on buttons (the calendar is the only exception). Square corners (2px radius). Olive green is `--herb`, primary buttons are solid tomato, secondary buttons are outlined. Two buttons per row where there are two.
 - Keep the app fast on a phone. No new libraries or outside requests.
 - Do not touch the Firebase config, sign-in, or the database rules.
-- Database paths in use: `recipes`, `photos`, `plans`, `activePlanId`, `checks`, `bugs`, `customCuisines`, `storePrefs`, `shops` (your own shops as `{name, on}`; `on:false` is a removed shop kept for "Used before"). Never rename or remove a field. Old data must keep loading; add a migration if the shape changes.
+- Database paths in use: `recipes`, `photos`, `plans`, `activePlanId`, `checks`, `bugs`, `customCuisines`, `storePrefs`, `shops` (your own shops as `{name, on}`; `on:false` is a removed shop kept for "Used before"). A plan may have `people` (the one serves number set in the Planner; each meal's `servings` entry is still written so older versions work). Never rename or remove a field. Old data must keep loading; add a migration if the shape changes.
 - The Menu tab shows only the built plan. The Planner tab holds the draft and edits. Do not change that flow unless the issue asks.
 - Keep changes small and in the style of the surrounding code. Fix the cause, not the symptom. Do not refactor unrelated code.
