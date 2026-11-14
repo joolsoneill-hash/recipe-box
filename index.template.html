@@ -582,6 +582,37 @@
   .btn-row{display:flex;gap:8px;margin-top:8px;}
   .btn-row > button{flex:1;min-width:0;width:auto;margin-top:0;}
   .idea-btns{margin:8px 0 0;}
+
+  /* Recipes tab: compact rows and clearer section headers */
+  .search-add{flex:0 0 44px;height:44px;padding:0;border:none;border-radius:2px;background:var(--tomato);color:#fff;font:inherit;font-size:26px;font-weight:400;line-height:1;cursor:pointer;}
+  .recipe-grid{gap:10px;}
+  .recipe-card.rc-row{display:flex;align-items:center;gap:12px;padding:8px;box-shadow:none;border-color:var(--line-strong);}
+  .rc-th{flex-shrink:0;}
+  .rc-row .thumb, .rc-row .thumb-sm{width:72px;height:72px;}
+  .rc-row .thumb-sm.thumb-empty{font-size:26px;}
+  .rc-body{flex:1;min-width:0;}
+  .recipe-card.rc-row h3{margin:0 0 3px;font-size:16px;line-height:1.25;}
+  .rc-row .recipe-meta{font-size:12.5px;margin:0;}
+  .rc-tag{display:block;margin-top:3px;font-size:11.5px;font-weight:700;}
+  .rc-side{display:flex;flex-direction:column;align-items:center;gap:8px;flex-shrink:0;}
+  .recipe-card.rc-row .fav-btn{position:static;width:32px;height:32px;font-size:15px;box-shadow:none;}
+  .rc-draft{width:32px;height:32px;padding:0;border-radius:50%;border:1px solid var(--line-strong);background:none;color:var(--ink);font:inherit;font-size:18px;line-height:1;cursor:pointer;}
+  .rc-draft.on{background:var(--herb);border-color:var(--herb);color:#fff;font-size:15px;}
+  .fold-head{padding:12px 14px;margin-top:10px;border:1px solid var(--ink);border-left:5px solid var(--herb);background:var(--card);font-size:15px;}
+  .fold-head b{font-size:16px;color:var(--ink);}
+  .fold-head em{font-weight:600;}
+  .recipe-sub-head{display:flex;align-items:center;gap:8px;margin:20px 0 10px;padding:10px 14px;border-left:5px solid var(--brown);background:var(--paper-dark);font-size:15px;color:var(--ink);}
+  .recipe-sub-head em{font-style:normal;font-weight:600;color:var(--brown);}
+
+  /* Recipes filters: two swipeable rows, type in olive and cuisine in brown */
+  .filt-row{flex-wrap:nowrap;overflow-x:auto;gap:6px;margin:0 -16px 8px;padding:2px 16px;scrollbar-width:none;}
+  .filt-row::-webkit-scrollbar{display:none;}
+  .filt-row .chip{flex-shrink:0;white-space:nowrap;padding:6px 12px;font-size:13px;}
+  .filt-type .chip{border-color:color-mix(in srgb, var(--herb) 55%, transparent);color:var(--herb);}
+  .filt-type .chip.active{background:var(--herb);border-color:var(--herb);color:#fff;}
+  .filt-cui .chip{border-color:color-mix(in srgb, var(--brown) 45%, transparent);color:var(--brown);}
+  .filt-clear{display:block;margin:2px 0 0 auto;padding:4px 0;border:none;background:none;font:inherit;font-size:13px;font-weight:600;color:var(--brown);text-decoration:underline;cursor:pointer;}
+  .filt-cui .chip.active{background:var(--brown);border-color:var(--brown);color:#fff;}
 </style>
 </head>
 <body>
@@ -673,7 +704,8 @@ let state = {
   npSel: null,
   searchTerm: '',
   openPlans: {},
-  activeFilter: 'all',
+  activeFilter: 'fav',   // the Recipes tab opens on favourites
+  openFilters: {cuisine: true},   // Cuisine pills open, Type folded
   activeCuisine: 'all',
   customCuisines: {},
   storePrefs: {},
@@ -1284,40 +1316,34 @@ function renderBox(){
   const tagCount = f => recipes.filter(r => okTag(r, f) && okCui(r, state.activeCuisine) && okSearch(r)).length;
   const cuiCount = c => recipes.filter(r => okTag(r, state.activeFilter) && okCui(r, c) && okSearch(r)).length;
   const tags = [...new Set(recipes.map(r=>r.tag))];
-  const filtersOn = state.activeFilter !== 'all' || state.activeCuisine !== 'all' || !!q;
+  // favourites is the starting filter; if there are none yet, show everything
+  if(state.activeFilter === 'fav' && !recipes.some(r => r.fav)) state.activeFilter = 'all';
+  const filtersOn = state.activeFilter !== 'fav' || state.activeCuisine !== 'all' || !!q;
 
   let html = `
     <div class="search-row">
       <input type="text" id="search-input" placeholder="Search recipes…" value="${esc(state.searchTerm)}">
+      <button type="button" class="search-add" data-act="add-recipe" aria-label="Add a recipe">+</button>
     </div>
-    <button type="button" class="fold-head" data-act="fold" data-id="show"><span>Type</span><em>${esc(state.activeFilter==='all'?'All':state.activeFilter==='fav'?'Favourites':(TAG_LABELS[state.activeFilter]||state.activeFilter))}</em><b>${state.openFilters&&state.openFilters.show?'▾':'▸'}</b></button>
-    <div class="chip-row" ${state.openFilters&&state.openFilters.show?'':'hidden'}>
+    <div class="chip-row filt-row filt-type" aria-label="Type">
       <button class="chip ${state.activeFilter==='all'?'active':''}" data-act="filter" data-id="all">All (${tagCount('all')})</button>
       <button class="chip ${state.activeFilter==='fav'?'active':''}" data-act="filter" data-id="fav">Favourites (${tagCount('fav')})</button>
       ${tags.map(t=>`<button class="chip ${state.activeFilter===t?'active':''}" data-act="filter" data-id="${esc(t)}">${esc(TAG_LABELS[t]||t)} (${tagCount(t)})</button>`).join('')}
     </div>
-    <button type="button" class="fold-head" data-act="fold" data-id="cuisine"><span>Cuisine</span><em>${esc(state.activeCuisine==='all'?'Any':((CUISINES.find(c=>c.key===state.activeCuisine)||{label:state.activeCuisine}).label))}</em><b>${state.openFilters&&state.openFilters.cuisine?'▾':'▸'}</b></button>
-    <div class="chip-row" ${state.openFilters&&state.openFilters.cuisine?'':'hidden'}>
-      <button class="chip ${state.activeCuisine==='all'?'active':''}" data-act="cfilter" data-id="all">Any (${cuiCount('all')})</button>
+    <div class="chip-row filt-row filt-cui" aria-label="Cuisine">
+      <button class="chip ${state.activeCuisine==='all'?'active':''}" data-act="cfilter" data-id="all">Any cuisine</button>
       ${CUISINES.filter(c => cuiCount(c.key) > 0 || state.activeCuisine === c.key).map(c=>`<button class="chip ${state.activeCuisine===c.key?'active':''}" data-act="cfilter" data-id="${c.key}">${esc(c.label)} (${cuiCount(c.key)})</button>`).join('')}
     </div>
-    ${filtersOn ? `<button class="secondary-btn" data-act="clear-filters" style="margin-top:10px;">Clear filters and search</button>` : ''}
-    <button class="add-btn" data-act="add-recipe" style="margin-top:20px;margin-bottom:18px;">+ Add a recipe</button>
+    ${filtersOn ? `<button class="filt-clear" data-act="clear-filters">Reset filters</button>` : ''}
+    <div style="height:14px;"></div>
   `;
 
   if(filtered.length===0){
     html += `<div class="empty-state"><h3>No recipes here yet</h3><p>${recipes.length===0 ? 'Add your first recipe to start building your box.' : 'Nothing matches that search or filter.' + (state.activeFilter==='fav' ? ' Tap the ☆ on a recipe to make it a favourite.' : '')}</p></div>`;
   } else {
-    // favourites get their own foldable section (open by default), in a random order that holds for the session
+    // one list: favourites first in a random order that holds for the session, then the rest
     const favs = filtered.filter(r => r.fav).sort((a,b) => favShuffleKey(a.id) - favShuffleKey(b.id));
-    const rest = filtered.filter(r => !r.fav);
-    const favsClosed = !!(state.openFilters && state.openFilters.favsClosed);
-    if(favs.length){
-      html += `<button type="button" class="fold-head" data-act="fold" data-id="favsClosed" style="margin:0 0 12px;"><span>Favourites</span><em>${favs.length}</em><b>${favsClosed?'▸':'▾'}</b></button>`;
-      if(!favsClosed) html += `<div class="recipe-grid">${favs.map(recipeCardHtml).join('')}</div>`;
-      if(rest.length) html += `<div class="recipe-sub-head">All recipes</div>`;
-    }
-    if(rest.length) html += `<div class="recipe-grid">${rest.map(recipeCardHtml).join('')}</div>`;
+    html += `<div class="recipe-grid">${favs.concat(filtered.filter(r => !r.fav)).map(recipeCardHtml).join('')}</div>`;
   }
 
   return html;
@@ -1330,18 +1356,20 @@ function favShuffleKey(id){
 }
 
 function recipeCardHtml(r){
-  const ingPreview = r.ingredients.slice(0,3).map(i=>i.name).join(', ') + (r.ingredients.length>3?'…':'');
+  // a compact row: photo the same size as the Planner's, name, time and serves, favourite and add-to-draft on the right
+  const inDraft = draftIds().includes(r.id);
   return `
-        <div class="recipe-card" data-act="open-recipe" data-id="${esc(r.id)}">
-          ${favBtnHtml(r)}
-          ${r.photo ? `<img src="${r.photo}" alt="" style="width:100%;height:133px;object-fit:cover;display:block;border-radius:2px 2px 0 0;margin:-16px -14px 12px;width:calc(100% + 28px);max-width:none;">` : placeholderHtml(r, 93, '2px 2px 0 0', 'margin:-16px -14px 12px;width:calc(100% + 28px);')}
-          <span class="card-tag" style="background:${TAG_COLORS[r.tag]||'var(--brown)'};top:8px;">${esc(TAG_LABELS[r.tag]||r.tag)}</span>
-          <h3>${esc(r.title)}</h3>
-          ${r.subtitle ? `<div class="recipe-sub">${esc(r.subtitle)}</div>` : ''}
-          <div class="recipe-meta">${esc(r.time)} min · serves ${esc(r.servings)}</div>
-          <div class="cook-stat">${esc(cookStatText(r.id))}</div>
-          <div class="recipe-ing-preview">${esc(ingPreview)}</div>
-          <button type="button" class="card-next ${draftIds().includes(r.id)?'on':''}" data-act="draft-toggle" data-id="${esc(r.id)}">${draftIds().includes(r.id) ? 'In draft menu' : '+ Add to draft menu'}</button>
+        <div class="recipe-card rc-row" data-act="open-recipe" data-id="${esc(r.id)}">
+          <span class="rc-th">${thumbHtml(r, true)}</span>
+          <div class="rc-body">
+            <h3>${esc(r.title)}</h3>
+            <div class="recipe-meta">${esc(r.time)} min · serves ${esc(r.servings)}</div>
+            <span class="rc-tag" style="color:${TAG_COLORS[r.tag]||'var(--brown)'};">${esc(TAG_LABELS[r.tag]||r.tag)}</span>
+          </div>
+          <div class="rc-side">
+            ${favBtnHtml(r)}
+            <button type="button" class="rc-draft ${inDraft?'on':''}" data-act="draft-toggle" data-id="${esc(r.id)}" aria-label="${inDraft ? 'In the draft menu. Tap to take it out' : 'Add to the draft menu'}">${inDraft ? '✓' : '+'}</button>
+          </div>
         </div>`;
 }
 
@@ -3297,7 +3325,7 @@ mainEl.addEventListener('click', async (e)=>{
   switch(act){
     case 'fold': state.openFilters = state.openFilters || {}; state.openFilters[id] = !state.openFilters[id]; render(); break;
     case 'filter': state.activeFilter = id; render(); break;
-    case 'clear-filters': state.activeFilter = 'all'; state.activeCuisine = 'all'; state.searchTerm = ''; render(); break;
+    case 'clear-filters': state.activeFilter = 'fav'; state.activeCuisine = 'all'; state.searchTerm = ''; render(); break;
     case 'cfilter': state.activeCuisine = id; render(); break;
     case 'fav': await setFavourite(id); render(); break;
     case 'dislike': await setDislike(id); render(); break;
