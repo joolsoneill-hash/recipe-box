@@ -615,7 +615,8 @@
   .filt-type{border-left:4px solid var(--herb);padding-left:8px;}
   .filt-cui{border-left:4px solid var(--brown);padding-left:8px;}
   .filt-scroll{flex:1;min-width:0;display:flex;gap:6px;overflow-x:auto;padding:2px 16px 2px 0;scrollbar-width:none;}
-  .filt-scroll.two{display:grid;grid-auto-flow:column;grid-template-rows:auto auto;grid-auto-columns:max-content;justify-items:start;}
+  .filt-scroll.two{flex-direction:column;gap:6px;}
+  .filt-r{display:flex;gap:6px;width:max-content;}
   .filt-scroll::-webkit-scrollbar{display:none;}
   .filt-line .chip, .filt-active .chip{flex-shrink:0;white-space:nowrap;padding:6px 11px;font-size:13px;}
   .filt-line .chip span{opacity:.7;font-weight:500;}
@@ -1355,7 +1356,10 @@ function renderBox(){
   const pill = (act, [id, label, n]) => `<button class="chip" data-act="${act}" data-id="${esc(id)}" aria-pressed="false">${esc(label)}${n === null ? '' : ` <span>${n}</span>`}</button>`;
   const filterLine = (name, cls, opts, sel, act, rows) => {
     const off = opts.filter(o => !sel.includes(o[0]));
-    return `<div class="filt-line ${cls}" role="group" aria-label="${name}"><div class="filt-scroll${rows === 2 && off.length > 3 ? ' two' : ''}">${off.length ? off.map(o => pill(act, o)).join('') : '<span class="filt-none">All chosen</span>'}</div></div>`;
+    // two lines of pills side by side (not in columns): each pill goes on whichever line is shorter so far
+    const two = rows === 2 && off.length > 3, lines = [[], []], len = [0, 0];
+    if(two) off.forEach(o => { const k = len[0] <= len[1] ? 0 : 1; lines[k].push(o); len[k] += String(o[1]).length + 5; });
+    return `<div class="filt-line ${cls}" role="group" aria-label="${name}"><div class="filt-scroll${two ? ' two' : ''}">${!off.length ? '<span class="filt-none">All chosen</span>' : two ? lines.map(l => `<div class="filt-r">${l.map(o => pill(act, o)).join('')}</div>`).join('') : off.map(o => pill(act, o)).join('')}</div></div>`;
   };
   const onChip = (cls, act, [id, label]) => `<button class="chip active ${cls}" data-act="${act}" data-id="${esc(id)}" aria-label="Remove filter ${esc(label)}">${esc(label)} <b aria-hidden="true">×</b></button>`;
   const activeOn = typeOpts.filter(o => state.typeSel.includes(o[0])).map(o => onChip('on-type', 'filter', o))

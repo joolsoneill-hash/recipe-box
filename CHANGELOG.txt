@@ -306,3 +306,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.68
 - Recipes search also looks through ingredients, the same way What's in my fridge matches them (plurals, words in any order, the last word can be part-typed). Name matches come first; a recipe found by an ingredient shows "Has …". Australian names also find UK ones (zucchini/courgette, eggplant/aubergine, capsicum/pepper, coriander/cilantro, rocket/arugula).
+
+0.69
+- Recipes filters: the two lines of cuisine pills now sit snugly side by side instead of lining up in columns.
