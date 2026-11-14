@@ -222,12 +222,11 @@
   /* the ⋯ button sits in the vertical middle of the banner; the version is tucked just above it */
   .header-right{position:absolute;top:50%;transform:translateY(-50%);right:12px;}
   .header-btn#menu-header-btn svg{width:20px;height:20px;display:block;}
-  .header-right .app-version{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);margin-bottom:4px;white-space:nowrap;}
   .app-menu{position:absolute;top:calc(100% - 4px);right:14px;min-width:210px;background:var(--paper);border:none;border-radius:var(--r-lg);overflow:hidden;box-shadow:0 8px 30px rgba(43,38,32,.35);z-index:60;}
   .app-menu button{display:block;width:100%;text-align:left;padding:14px 16px;font:inherit;font-size:15px;font-weight:600;color:var(--ink);background:none;border:none;border-top:1px solid var(--line);border-radius:0;}
   .app-menu button:first-child{border-top:none;}
+  .app-menu-ver{padding:10px 16px 12px;border-top:1px solid var(--line);font-size:12px;color:var(--brown);opacity:.75;}
   .app-menu button:active{background:var(--paper-dark);}
-  .app-version{font-size:10px;font-weight:500;letter-spacing:0.3px;color:rgba(237,227,208,0.4);}
   .header-btn{background:rgba(237,227,208,0.12);color:var(--paper);border:1px solid rgba(237,227,208,0.32);border-radius:50%;width:34px;height:34px;padding:0;font-size:18px;line-height:1;display:flex;align-items:center;justify-content:center;}
   .sheet-note{font-size:13px;color:var(--brown);line-height:1.5;margin:0 0 12px;}
   .sheet-status{font-size:13px;color:var(--brown);min-height:18px;margin:8px 0;line-height:1.4;}
@@ -452,7 +451,14 @@
   .gi-del{border:none;background:none;color:var(--tomato);font-size:20px;line-height:1;padding:0 2px;flex-shrink:0;}
   #app.booting .app-header,#app.booting .tabbar,#app.booting #main{display:none;}
   .boot-splash{display:none;}
-  #app.booting .boot-splash{display:flex;align-items:center;justify-content:center;min-height:100vh;min-height:100dvh;}
+  #app.booting .boot-splash{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:100vh;min-height:100dvh;}
+  .boot-ver{font-size:12px;font-weight:500;letter-spacing:0.3px;color:var(--brown);opacity:.7;}
+  /* steam rises off the bowl on the opening screen: each wisp drifts up and fades, one after another */
+  #boot-splash svg [stroke="#EDE3D0"] path{transform-box:fill-box;transform-origin:50% 100%;animation:steam-rise 2.4s ease-in-out infinite;}
+  #boot-splash svg [stroke="#EDE3D0"] path:nth-child(2){animation-delay:.8s;}
+  #boot-splash svg [stroke="#EDE3D0"] path:nth-child(3){animation-delay:1.6s;}
+  @keyframes steam-rise{0%{opacity:0;transform:translateY(14px) scaleY(.85);}25%{opacity:1;}70%{opacity:.8;}100%{opacity:0;transform:translateY(-26px) scaleY(1.1);}}
+  @media (prefers-reduced-motion: reduce){ #boot-splash svg [stroke="#EDE3D0"] path{animation:none;} }
   .boot-splash svg{width:130px;height:130px;}
   .loading{text-align:center;padding:40px;color:var(--brown);font-size:13px;}
 
@@ -638,11 +644,11 @@
 <body>
 <div id="app" class="booting">
   <header class="app-header">
-    <div class="header-right"><button type="button" class="header-btn" id="menu-header-btn" aria-label="More options" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="12" r="1.8" fill="currentColor"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><circle cx="18" cy="12" r="1.8" fill="currentColor"/></svg></button><span class="app-version" id="app-version">v__APP_VERSION__</span></div>
+    <div class="header-right"><button type="button" class="header-btn" id="menu-header-btn" aria-label="More options" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="12" r="1.8" fill="currentColor"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><circle cx="18" cy="12" r="1.8" fill="currentColor"/></svg></button></div>
     <div class="app-menu" id="app-menu" hidden></div>
     <div class="brand">__LOGO_SVG__<div class="brand-text"><h1>Tavola</h1><div class="brand-sub" id="brand-sub" hidden></div></div></div>
   </header>
-  <div class="boot-splash" id="boot-splash">__LOGO_SVG__</div>
+  <div class="boot-splash" id="boot-splash">__LOGO_SVG__<div class="boot-ver">v__APP_VERSION__</div></div>
   <main id="main"></main>
   <nav class="tabbar">
     <button data-tab="plan" class="tab active">Menu</button>
@@ -4043,7 +4049,7 @@ menuBtn.addEventListener('click', (e)=>{
   const items = [];
   if(deferredInstall) items.push(['install-app', 'Install app on this device']);
   items.push(['report-bug', 'Report a bug or idea'], ['view-bugs', 'View reports'], ['export-data', 'Export data'], ['change-db', 'Change database'], ['sign-out', 'Sign out']);
-  appMenu.innerHTML = items.map(([a, l]) => `<button type="button" data-menu="${a}">${l}</button>`).join('');
+  appMenu.innerHTML = items.map(([a, l]) => `<button type="button" data-menu="${a}">${l}</button>`).join('') + `<div class="app-menu-ver">Tavola v${APP_VERSION}</div>`;
   appMenu.hidden = false; menuBtn.setAttribute('aria-expanded', 'true');
 });
 appMenu.addEventListener('click', async (e)=>{
