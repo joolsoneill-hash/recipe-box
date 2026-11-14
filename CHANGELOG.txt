@@ -296,3 +296,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.65
 - Recipes tab: a + button beside the search adds a recipe; recipes are compact rows with a Planner-sized photo, name, time, serves and type, with favourite and add-to-draft (+) on the right; the Type, Cuisine, Favourites and All recipes headings stand out more. Filters are two swipeable rows with no headings: type pills in olive (starting on Favourites, or All if there are none) and cuisine pills in brown. One list of recipes, favourites first. A small Reset filters link appears when a filter or search is on.
+
+0.66
+- Recipes filters: the chosen type and cuisine are pinned on the left of their rows; the other choices scroll beside them, cuisines in two lines. Types with no recipes to show are left out.

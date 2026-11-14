@@ -604,15 +604,19 @@
   .recipe-sub-head{display:flex;align-items:center;gap:8px;margin:20px 0 10px;padding:10px 14px;border-left:5px solid var(--brown);background:var(--paper-dark);font-size:15px;color:var(--ink);}
   .recipe-sub-head em{font-style:normal;font-weight:600;color:var(--brown);}
 
-  /* Recipes filters: two swipeable rows, type in olive and cuisine in brown */
-  .filt-row{flex-wrap:nowrap;overflow-x:auto;gap:6px;margin:0 -16px 8px;padding:2px 16px;scrollbar-width:none;}
-  .filt-row::-webkit-scrollbar{display:none;}
-  .filt-row .chip{flex-shrink:0;white-space:nowrap;padding:6px 12px;font-size:13px;}
+  /* Recipes filters: chosen pill pinned left, the others scroll beside it; type in olive, cuisine in brown */
+  .filt-line{display:flex;align-items:flex-start;gap:8px;margin:0 -16px 10px 0;}
+  .filt-pin{flex-shrink:0;padding:2px 8px 2px 0;border-right:1px solid var(--line-strong);}
+  .filt-scroll{flex:1;min-width:0;display:flex;gap:6px;overflow-x:auto;padding:2px 16px 2px 0;scrollbar-width:none;}
+  .filt-scroll.two{display:grid;grid-auto-flow:column;grid-template-rows:auto auto;grid-auto-columns:max-content;justify-items:start;}
+  .filt-scroll::-webkit-scrollbar{display:none;}
+  .filt-line .chip{flex-shrink:0;white-space:nowrap;padding:6px 11px;font-size:13px;}
+  .filt-line .chip span{opacity:.7;font-weight:500;}
   .filt-type .chip{border-color:color-mix(in srgb, var(--herb) 55%, transparent);color:var(--herb);}
   .filt-type .chip.active{background:var(--herb);border-color:var(--herb);color:#fff;}
   .filt-cui .chip{border-color:color-mix(in srgb, var(--brown) 45%, transparent);color:var(--brown);}
-  .filt-clear{display:block;margin:2px 0 0 auto;padding:4px 0;border:none;background:none;font:inherit;font-size:13px;font-weight:600;color:var(--brown);text-decoration:underline;cursor:pointer;}
   .filt-cui .chip.active{background:var(--brown);border-color:var(--brown);color:#fff;}
+  .filt-clear{display:block;margin:0 0 0 auto;padding:2px 0;border:none;background:none;font:inherit;font-size:13px;font-weight:600;color:var(--brown);text-decoration:underline;cursor:pointer;}
 </style>
 </head>
 <body>
@@ -1320,20 +1324,21 @@ function renderBox(){
   if(state.activeFilter === 'fav' && !recipes.some(r => r.fav)) state.activeFilter = 'all';
   const filtersOn = state.activeFilter !== 'fav' || state.activeCuisine !== 'all' || !!q;
 
+  // filters: the chosen one is pinned on the left, the rest scroll beside it (cuisines in two lines)
+  const typeOpts = [['all', 'All', tagCount('all')], ['fav', 'Favourites', tagCount('fav')]].concat(tags.filter(t => tagCount(t) > 0 || state.activeFilter === t).map(t => [t, TAG_LABELS[t] || t, tagCount(t)]));   // a type with nothing to show is left out
+  const cuiOpts = [['all', 'Any cuisine', null]].concat(CUISINES.filter(c => cuiCount(c.key) > 0 || state.activeCuisine === c.key).map(c => [c.key, c.label, cuiCount(c.key)]));
+  const pill = (act, [id, label, n], on) => `<button class="chip ${on ? 'active' : ''}" data-act="${act}" data-id="${esc(id)}">${esc(label)}${n === null ? '' : ` <span>${n}</span>`}</button>`;
+  const filterLine = (name, cls, opts, cur, act, rows) => {
+    const sel = opts.find(o => o[0] === cur) || opts[0];
+    return `<div class="filt-line ${cls}" role="group" aria-label="${name}"><div class="filt-pin">${pill(act, sel, true)}</div><div class="filt-scroll${rows === 2 ? ' two' : ''}">${opts.filter(o => o !== sel).map(o => pill(act, o, false)).join('')}</div></div>`;
+  };
   let html = `
     <div class="search-row">
       <input type="text" id="search-input" placeholder="Search recipes…" value="${esc(state.searchTerm)}">
       <button type="button" class="search-add" data-act="add-recipe" aria-label="Add a recipe">+</button>
     </div>
-    <div class="chip-row filt-row filt-type" aria-label="Type">
-      <button class="chip ${state.activeFilter==='all'?'active':''}" data-act="filter" data-id="all">All (${tagCount('all')})</button>
-      <button class="chip ${state.activeFilter==='fav'?'active':''}" data-act="filter" data-id="fav">Favourites (${tagCount('fav')})</button>
-      ${tags.map(t=>`<button class="chip ${state.activeFilter===t?'active':''}" data-act="filter" data-id="${esc(t)}">${esc(TAG_LABELS[t]||t)} (${tagCount(t)})</button>`).join('')}
-    </div>
-    <div class="chip-row filt-row filt-cui" aria-label="Cuisine">
-      <button class="chip ${state.activeCuisine==='all'?'active':''}" data-act="cfilter" data-id="all">Any cuisine</button>
-      ${CUISINES.filter(c => cuiCount(c.key) > 0 || state.activeCuisine === c.key).map(c=>`<button class="chip ${state.activeCuisine===c.key?'active':''}" data-act="cfilter" data-id="${c.key}">${esc(c.label)} (${cuiCount(c.key)})</button>`).join('')}
-    </div>
+    ${filterLine('Type', 'filt-type', typeOpts, state.activeFilter, 'filter', 1)}
+    ${filterLine('Cuisine', 'filt-cui', cuiOpts, state.activeCuisine, 'cfilter', 2)}
     ${filtersOn ? `<button class="filt-clear" data-act="clear-filters">Reset filters</button>` : ''}
     <div style="height:14px;"></div>
   `;
