@@ -309,3 +309,9 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.69
 - Recipes filters: the two lines of cuisine pills now sit snugly side by side instead of lining up in columns.
+
+0.70
+- Menu: uncooked meals are labelled "Uncooked from last".
+- Slightly rounded corners on boxes and buttons across the app.
+- Popups have no swipe-down bar: close them with the X or by tapping outside. All popups share one look: message popups and the ⋯ menu now match the slide-up panels (same background, rounded corners, soft shadow, bold heading, close X; tomato for the main button, outlined for the other).
+- In-season fruit and veg: the long explanation is now behind an (i) next to the heading.
