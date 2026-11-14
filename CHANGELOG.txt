@@ -303,3 +303,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 0.67
 - Recipes filters: several can be on at once. A type row (olive bar) and a cuisine row (brown bar) show the choices you can add; the filters that are on sit underneath under Showing, in their row's colour, with × to remove each and Reset to go back to Favourites. Favourites narrows to favourites; meal types and cuisines show recipes matching any of those picked.
 - Banner: the ⋯ button is in the vertical middle with its dots centred; the version sits small and faint just above it.
+
+0.68
+- Recipes search also looks through ingredients, the same way What's in my fridge matches them (plurals, words in any order, the last word can be part-typed). Name matches come first; a recipe found by an ingredient shows "Has …". Australian names also find UK ones (zucchini/courgette, eggplant/aubergine, capsicum/pepper, coriander/cilantro, rocket/arugula).

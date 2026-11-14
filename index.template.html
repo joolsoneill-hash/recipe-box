@@ -595,6 +595,7 @@
   .rc-body{flex:1;min-width:0;}
   .recipe-card.rc-row h3{margin:0 0 3px;font-size:16px;line-height:1.25;}
   .rc-row .recipe-meta{font-size:12.5px;margin:0;}
+  .rc-has{margin-top:3px;font-size:12.5px;font-weight:600;color:var(--herb);font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .rc-tag{display:block;margin-top:3px;font-size:11.5px;font-weight:700;}
   .rc-side{display:flex;flex-direction:column;align-items:center;gap:8px;flex-shrink:0;}
   .recipe-card.rc-row .fav-btn{position:static;width:32px;height:32px;font-size:15px;box-shadow:none;}
@@ -1320,16 +1321,27 @@ function favBtnHtml(r, withText){
 }
 
 /* ---------- RECIPE BOX ---------- */
+// UK names in imported recipes, so a search in Australian terms still finds them
+const SEARCH_ALT = {zucchini: 'courgette', courgette: 'zucchini', eggplant: 'aubergine', aubergine: 'eggplant', capsicum: 'pepper', coriander: 'cilantro', cilantro: 'coriander', rocket: 'arugula', arugula: 'rocket'};
 function renderBox(){
   const recipes = Object.values(state.recipes);
   const q = (state.searchTerm || '').toLowerCase();
   // several filters can be on: favourites narrows, meal types and cuisines each match any of those picked
   const okType = (r, sel) => (!sel.includes('fav') || !!r.fav) && (!sel.some(x => x !== 'fav') || sel.includes(r.tag));
   const okCuis = (r, sel) => !sel.length || sel.some(c => recipeCuisines(r).includes(c));
-  const okSearch = r => !q || fullTitle(r).toLowerCase().includes(q);
+  // search matches the name, or an ingredient the way What's in my fridge does (plurals and words in any order; the last word can be part-typed)
+  const qTok = q ? fridgeTokens(q) : [], qLast = q && !/\s$/.test(q) ? normIngName(q).split(/\s+/).filter(Boolean).pop() : '';
+  const titleHit = r => !!q && fullTitle(r).toLowerCase().includes(q);
+  const ingHit = r => {
+    if(!qTok.length) return '';
+    const hit = (r.ingredients || []).find(i => { const t = fridgeTokens(i.name || ''); return qTok.every((w, k) => t.includes(w) || t.includes(SEARCH_ALT[w]) || (k === qTok.length - 1 && qLast && t.some(x => x.startsWith(qLast)))); });
+    return hit ? hit.name : '';
+  };
+  const ingNote = {};
+  const okSearch = r => { if(!q || titleHit(r)) return true; const n = ingHit(r); if(n) ingNote[r.id] = n; return !!n; };
   // favourites is the starting filter; if there are none yet, show everything
   if(state.typeSel.includes('fav') && !recipes.some(r => r.fav)) state.typeSel = state.typeSel.filter(x => x !== 'fav');
-  const filtered = recipes.filter(r => okType(r, state.typeSel) && okCuis(r, state.cuiSel) && okSearch(r)).sort((a,b)=> (b.fav?1:0) - (a.fav?1:0));   // favourites first (stable sort keeps the rest in order)
+  const filtered = recipes.filter(r => okType(r, state.typeSel) && okCuis(r, state.cuiSel) && okSearch(r)).sort((a,b)=> (titleHit(b)?1:0) - (titleHit(a)?1:0) || (b.fav?1:0) - (a.fav?1:0));   // name matches first, then favourites (stable sort keeps the rest in order)
   // a pill's number is how many recipes it matches with the other row's filters on
   const tagCount = f => recipes.filter(r => (f === 'all' || okType(r, [f])) && okCuis(r, state.cuiSel) && okSearch(r)).length;
   const cuiCount = c => recipes.filter(r => okType(r, state.typeSel) && okCuis(r, [c]) && okSearch(r)).length;
@@ -1351,7 +1363,7 @@ function renderBox(){
   const activeBar = `<div class="filt-active"><span class="filt-lbl">Showing</span>${activeOn.length ? activeOn.join('') : '<span class="filt-none">All recipes</span>'}${filtersOn ? '<button class="filt-clear" data-act="clear-filters">Reset</button>' : ''}</div>`;
   let html = `
     <div class="search-row">
-      <input type="text" id="search-input" placeholder="Search recipes…" value="${esc(state.searchTerm)}">
+      <input type="text" id="search-input" placeholder="Search recipes or ingredients…" value="${esc(state.searchTerm)}">
       <button type="button" class="search-add" data-act="add-recipe" aria-label="Add a recipe">+</button>
     </div>
     ${filterLine('Type', 'filt-type', typeOpts, state.typeSel, 'filter', 1)}
@@ -1365,7 +1377,8 @@ function renderBox(){
   } else {
     // one list: favourites first in a random order that holds for the session, then the rest
     const favs = filtered.filter(r => r.fav).sort((a,b) => favShuffleKey(a.id) - favShuffleKey(b.id));
-    html += `<div class="recipe-grid">${favs.concat(filtered.filter(r => !r.fav)).map(recipeCardHtml).join('')}</div>`;
+    const order = q ? filtered : favs.concat(filtered.filter(r => !r.fav));   // while searching keep name matches on top
+    html += `<div class="recipe-grid">${order.map(r => recipeCardHtml(r, ingNote[r.id])).join('')}</div>`;
   }
 
   return html;
@@ -1377,7 +1390,7 @@ function favShuffleKey(id){
   return favShuffle[id];
 }
 
-function recipeCardHtml(r){
+function recipeCardHtml(r, hasIng){
   // a compact row: photo the same size as the Planner's, name, time and serves, favourite and add-to-draft on the right
   const inDraft = draftIds().includes(r.id);
   return `
@@ -1386,6 +1399,7 @@ function recipeCardHtml(r){
           <div class="rc-body">
             <h3>${esc(r.title)}</h3>
             <div class="recipe-meta">${esc(r.time)} min · serves ${esc(r.servings)}</div>
+            ${hasIng ? `<div class="rc-has">Has ${esc(hasIng)}</div>` : ''}
             <span class="rc-tag" style="color:${TAG_COLORS[r.tag]||'var(--brown)'};">${esc(TAG_LABELS[r.tag]||r.tag)}</span>
           </div>
           <div class="rc-side">
