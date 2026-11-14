@@ -217,13 +217,15 @@
   .picker-item button.on{background:var(--ink);}
 
 
-  .header-right{position:absolute;top:50%;transform:translateY(-50%);right:12px;display:flex;flex-direction:column;align-items:center;gap:5px;}
-  .header-btn#menu-header-btn{font-size:20px;padding-bottom:5px;}
+  /* the ⋯ button sits in the vertical middle of the banner; the version is tucked just above it */
+  .header-right{position:absolute;top:50%;transform:translateY(-50%);right:12px;}
+  .header-btn#menu-header-btn svg{width:20px;height:20px;display:block;}
+  .header-right .app-version{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);margin-bottom:4px;white-space:nowrap;}
   .app-menu{position:absolute;top:calc(100% - 4px);right:14px;min-width:210px;background:var(--card);border:1px solid var(--ink);border-radius:2px;box-shadow:0 6px 18px rgba(43,38,32,.35);z-index:60;}
   .app-menu button{display:block;width:100%;text-align:left;padding:14px 16px;font:inherit;font-size:15px;font-weight:600;color:var(--ink);background:none;border:none;border-top:1px solid var(--line);border-radius:0;}
   .app-menu button:first-child{border-top:none;}
   .app-menu button:active{background:var(--paper-dark);}
-  .app-version{font-size:12px;font-weight:600;letter-spacing:0.4px;color:rgba(237,227,208,0.6);}
+  .app-version{font-size:10px;font-weight:500;letter-spacing:0.3px;color:rgba(237,227,208,0.4);}
   .header-btn{background:rgba(237,227,208,0.12);color:var(--paper);border:1px solid rgba(237,227,208,0.32);border-radius:50%;width:34px;height:34px;padding:0;font-size:18px;line-height:1;display:flex;align-items:center;justify-content:center;}
   .sheet-note{font-size:13px;color:var(--brown);line-height:1.5;margin:0 0 12px;}
   .sheet-status{font-size:13px;color:var(--brown);min-height:18px;margin:8px 0;line-height:1.4;}
@@ -604,25 +606,34 @@
   .recipe-sub-head{display:flex;align-items:center;gap:8px;margin:20px 0 10px;padding:10px 14px;border-left:5px solid var(--brown);background:var(--paper-dark);font-size:15px;color:var(--ink);}
   .recipe-sub-head em{font-style:normal;font-weight:600;color:var(--brown);}
 
-  /* Recipes filters: chosen pill pinned left, the others scroll beside it; type in olive, cuisine in brown */
-  .filt-line{display:flex;align-items:flex-start;gap:8px;margin:0 -16px 10px 0;}
-  .filt-pin{flex-shrink:0;padding:2px 8px 2px 0;border-right:1px solid var(--line-strong);}
+  /* Recipes filters: a labelled row per kind (type olive, cuisine brown); the filters that are on sit underneath */
+  .filt-line{display:flex;align-items:flex-start;margin:0 -16px 8px 0;}
+  .filt-lbl{flex:0 0 58px;padding-top:8px;font-size:12px;font-weight:700;}
+  .filt-type .filt-lbl{color:var(--herb);}
+  .filt-cui .filt-lbl{color:var(--brown);}
+  .filt-type{border-left:4px solid var(--herb);padding-left:8px;}
+  .filt-cui{border-left:4px solid var(--brown);padding-left:8px;}
   .filt-scroll{flex:1;min-width:0;display:flex;gap:6px;overflow-x:auto;padding:2px 16px 2px 0;scrollbar-width:none;}
   .filt-scroll.two{display:grid;grid-auto-flow:column;grid-template-rows:auto auto;grid-auto-columns:max-content;justify-items:start;}
   .filt-scroll::-webkit-scrollbar{display:none;}
-  .filt-line .chip{flex-shrink:0;white-space:nowrap;padding:6px 11px;font-size:13px;}
+  .filt-line .chip, .filt-active .chip{flex-shrink:0;white-space:nowrap;padding:6px 11px;font-size:13px;}
   .filt-line .chip span{opacity:.7;font-weight:500;}
   .filt-type .chip{border-color:color-mix(in srgb, var(--herb) 55%, transparent);color:var(--herb);}
-  .filt-type .chip.active{background:var(--herb);border-color:var(--herb);color:#fff;}
   .filt-cui .chip{border-color:color-mix(in srgb, var(--brown) 45%, transparent);color:var(--brown);}
-  .filt-cui .chip.active{background:var(--brown);border-color:var(--brown);color:#fff;}
-  .filt-clear{display:block;margin:0 0 0 auto;padding:2px 0;border:none;background:none;font:inherit;font-size:13px;font-weight:600;color:var(--brown);text-decoration:underline;cursor:pointer;}
+  .filt-none{padding-top:7px;font-size:13px;color:var(--stone, var(--brown));}
+  .filt-active{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:4px;padding:10px 0 0;border-top:1px solid var(--line-strong);}
+  .filt-active .filt-lbl{flex:0 0 auto;padding:0 4px 0 0;color:var(--ink);}
+  .filt-active .filt-none{padding:0;}
+  .chip.on-type{background:var(--herb);border-color:var(--herb);color:#fff;}
+  .chip.on-cui{background:var(--brown);border-color:var(--brown);color:#fff;}
+  .filt-active .chip b{margin-left:4px;font-weight:700;opacity:.85;}
+  .filt-clear{margin-left:auto;padding:4px 0;border:none;background:none;font:inherit;font-size:13px;font-weight:600;color:var(--brown);text-decoration:underline;cursor:pointer;}
 </style>
 </head>
 <body>
 <div id="app" class="booting">
   <header class="app-header">
-    <div class="header-right"><button type="button" class="header-btn" id="menu-header-btn" aria-label="More options" aria-haspopup="true" aria-expanded="false">⋯</button><span class="app-version" id="app-version">v0.66</span></div>
+    <div class="header-right"><button type="button" class="header-btn" id="menu-header-btn" aria-label="More options" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="12" r="1.8" fill="currentColor"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><circle cx="18" cy="12" r="1.8" fill="currentColor"/></svg></button><span class="app-version" id="app-version">v0.67</span></div>
     <div class="app-menu" id="app-menu" hidden></div>
     <div class="brand"><svg viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#2B2620"/><defs><clipPath id="rr"><rect width="512" height="512" rx="112"/></clipPath> <pattern id="gh" width="64" height="64" patternUnits="userSpaceOnUse"><rect width="64" height="64" fill="#F6EEDC"/><rect width="32" height="64" fill="#C8452D" opacity=".5"/><rect width="64" height="32" fill="#C8452D" opacity=".5"/></pattern></defs><g clip-path="url(#rr)"><path d="M0 408 Q256 388 512 408 V512 H0Z" fill="url(#gh)"/><path d="M0 408 Q256 388 512 408" fill="none" stroke="#2B2620" stroke-opacity=".25" stroke-width="3"/></g><g transform="translate(256 262) scale(.9) translate(-256 -256)"> <!-- steam --> <g fill="none" stroke="#EDE3D0" stroke-width="12" stroke-linecap="round" opacity=".85"> <path d="M206 120c-18-22 18-34 0-58"/><path d="M256 108c-18-22 18-34 0-58"/><path d="M306 120c-18-22 18-34 0-58"/> </g> <!-- shallow pasta bowl: underside, rim, well --> <path d="M52 322c4 52 84 86 204 86s200-34 204-86z" fill="#EFE6D0"/> <path d="M52 322c4 52 84 86 204 86s200-34 204-86c-30 20-100 32-204 32S82 342 52 322z" fill="#E4D8BC" opacity=".6"/> <rect x="190" y="402" width="132" height="18" rx="9" fill="#EFE6D0"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="#FAF6EC"/> <ellipse cx="256" cy="322" rx="204" ry="66" fill="none" stroke="#D9CDB4" stroke-width="5"/> <!-- painted rim --> <ellipse cx="256" cy="322" rx="186" ry="55" fill="none" stroke="#2F5D8C" stroke-width="7"/> <ellipse cx="256" cy="322" rx="164" ry="46" fill="none" stroke="#2F5D8C" stroke-width="3"/> <circle cx="432" cy="330" r="5" fill="#E9B949"/><circle cx="408" cy="354" r="5" fill="#E9B949"/><circle cx="344" cy="373" r="5" fill="#E9B949"/><circle cx="256" cy="379" r="5" fill="#E9B949"/><circle cx="168" cy="373" r="5" fill="#E9B949"/><circle cx="103" cy="355" r="5" fill="#E9B949"/><circle cx="80" cy="330" r="5" fill="#E9B949"/><circle cx="103" cy="305" r="5" fill="#E9B949"/><circle cx="167" cy="286" r="5" fill="#E9B949"/><circle cx="255" cy="280" r="5" fill="#E9B949"/><circle cx="343" cy="286" r="5" fill="#E9B949"/><circle cx="408" cy="304" r="5" fill="#E9B949"/> <!-- well --> <ellipse cx="256" cy="324" rx="138" ry="36" fill="#F1E8D2"/> <!-- spaghetti nest --> <g fill="none" stroke="#F0CF6E" stroke-width="18" stroke-linecap="round"> <path d="M130 318c26-30 50 18 76-4s50 22 76-4 50 18 76-4"/> <ellipse cx="256" cy="302" rx="104" ry="30"/> <ellipse cx="256" cy="278" rx="80" ry="24"/> <ellipse cx="256" cy="256" rx="56" ry="17"/> <ellipse cx="256" cy="238" rx="32" ry="10"/> <path d="M360 326c20 6 36 14 40 24" /> </g> <g fill="none" stroke="#C8962A" stroke-width="4" stroke-linecap="round" opacity=".5"> <ellipse cx="256" cy="310" rx="104" ry="30"/><ellipse cx="256" cy="286" rx="80" ry="24"/><ellipse cx="256" cy="264" rx="56" ry="17"/> </g> <!-- sauce and basil --> <ellipse cx="256" cy="226" rx="30" ry="12" fill="#B94A2F"/> <ellipse cx="248" cy="222" rx="11" ry="4" fill="#D8674A" opacity=".8"/> <path d="M262 218c8-24 32-26 40-12-10 18-30 22-40 12z" fill="#4D7A5A"/> <path d="M268 216c10-6 20-8 30-4" stroke="#2F5A3C" stroke-width="3.5" fill="none" stroke-linecap="round"/> <!-- fork --> <g stroke-linecap="round" stroke-linejoin="round" fill="none"> <line x1="410" y1="150" x2="306" y2="238" stroke="#9AA3AB" stroke-width="16"/> <line x1="410" y1="150" x2="306" y2="238" stroke="#DDE2E6" stroke-width="9"/> <g stroke="#9AA3AB" stroke-width="14"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> <g stroke="#DDE2E6" stroke-width="7"><line x1="298" y1="226" x2="274" y2="246"/><line x1="306" y1="238" x2="282" y2="258"/><line x1="290" y1="216" x2="266" y2="236"/></g> </g> </g> <g><circle cx="74" cy="446" r="28" fill="#D2452E"/><ellipse cx="64" cy="436" rx="9" ry="6" fill="#fff" opacity=".35"/> <path d="M74 418c-4-8-14-10-20-6 6 6 12 8 20 6z M74 418c4-8 14-10 20-6-6 6-12 8-20 6z M74 418l0-10" fill="#4D7A5A" stroke="#2F5A3C" stroke-width="3" stroke-linejoin="round"/></g> <g><path d="M438 452c10-26 40-30 54-14-12 22-40 28-54 14z" fill="#4D7A5A"/><path d="M446 450c14-8 28-10 42-6" stroke="#2F5A3C" stroke-width="4" fill="none" stroke-linecap="round"/></g></svg><div class="brand-text"><h1>Tavola</h1><div class="brand-sub" id="brand-sub" hidden></div></div></div>
   </header>
@@ -708,9 +719,9 @@ let state = {
   npSel: null,
   searchTerm: '',
   openPlans: {},
-  activeFilter: 'fav',   // the Recipes tab opens on favourites
+  typeSel: ['fav'],   // Recipes tab type filters (several can be on); it opens on favourites
   openFilters: {cuisine: true},   // Cuisine pills open, Type folded
-  activeCuisine: 'all',
+  cuiSel: [],   // Recipes tab cuisine filters; none means any cuisine
   customCuisines: {},
   storePrefs: {},
   npSearch: '',          // search box on the Planner
@@ -1312,39 +1323,45 @@ function favBtnHtml(r, withText){
 function renderBox(){
   const recipes = Object.values(state.recipes);
   const q = (state.searchTerm || '').toLowerCase();
-  const okTag = (r, f) => f==='all' || (f==='fav' ? !!r.fav : r.tag===f);
-  const okCui = (r, c) => c==='all' || recipeCuisines(r).includes(c);
+  // several filters can be on: favourites narrows, meal types and cuisines each match any of those picked
+  const okType = (r, sel) => (!sel.includes('fav') || !!r.fav) && (!sel.some(x => x !== 'fav') || sel.includes(r.tag));
+  const okCuis = (r, sel) => !sel.length || sel.some(c => recipeCuisines(r).includes(c));
   const okSearch = r => !q || fullTitle(r).toLowerCase().includes(q);
-  const filtered = recipes.filter(r => okTag(r, state.activeFilter) && okCui(r, state.activeCuisine) && okSearch(r)).sort((a,b)=> (b.fav?1:0) - (a.fav?1:0));   // favourites first (stable sort keeps the rest in order)
-  // chip counts reflect the other filter that is on, so a number never promises recipes that won't show
-  const tagCount = f => recipes.filter(r => okTag(r, f) && okCui(r, state.activeCuisine) && okSearch(r)).length;
-  const cuiCount = c => recipes.filter(r => okTag(r, state.activeFilter) && okCui(r, c) && okSearch(r)).length;
-  const tags = [...new Set(recipes.map(r=>r.tag))];
   // favourites is the starting filter; if there are none yet, show everything
-  if(state.activeFilter === 'fav' && !recipes.some(r => r.fav)) state.activeFilter = 'all';
-  const filtersOn = state.activeFilter !== 'fav' || state.activeCuisine !== 'all' || !!q;
+  if(state.typeSel.includes('fav') && !recipes.some(r => r.fav)) state.typeSel = state.typeSel.filter(x => x !== 'fav');
+  const filtered = recipes.filter(r => okType(r, state.typeSel) && okCuis(r, state.cuiSel) && okSearch(r)).sort((a,b)=> (b.fav?1:0) - (a.fav?1:0));   // favourites first (stable sort keeps the rest in order)
+  // a pill's number is how many recipes it matches with the other row's filters on
+  const tagCount = f => recipes.filter(r => (f === 'all' || okType(r, [f])) && okCuis(r, state.cuiSel) && okSearch(r)).length;
+  const cuiCount = c => recipes.filter(r => okType(r, state.typeSel) && okCuis(r, [c]) && okSearch(r)).length;
+  const tags = [...new Set(recipes.map(r=>r.tag))];
+  const isDefault = state.typeSel.length === 1 && state.typeSel[0] === 'fav' && !state.cuiSel.length;
+  const filtersOn = !isDefault || !!q;
 
-  // filters: the chosen one is pinned on the left, the rest scroll beside it (cuisines in two lines)
-  const typeOpts = [['all', 'All', tagCount('all')], ['fav', 'Favourites', tagCount('fav')]].concat(tags.filter(t => tagCount(t) > 0 || state.activeFilter === t).map(t => [t, TAG_LABELS[t] || t, tagCount(t)]));   // a type with nothing to show is left out
-  const cuiOpts = [['all', 'Any cuisine', null]].concat(CUISINES.filter(c => cuiCount(c.key) > 0 || state.activeCuisine === c.key).map(c => [c.key, c.label, cuiCount(c.key)]));
-  const pill = (act, [id, label, n], on) => `<button class="chip ${on ? 'active' : ''}" data-act="${act}" data-id="${esc(id)}">${esc(label)}${n === null ? '' : ` <span>${n}</span>`}</button>`;
-  const filterLine = (name, cls, opts, cur, act, rows) => {
-    const sel = opts.find(o => o[0] === cur) || opts[0];
-    return `<div class="filt-line ${cls}" role="group" aria-label="${name}"><div class="filt-pin">${pill(act, sel, true)}</div><div class="filt-scroll${rows === 2 ? ' two' : ''}">${opts.filter(o => o !== sel).map(o => pill(act, o, false)).join('')}</div></div>`;
+  // filters: one labelled row per kind (type in olive, cuisine in brown) showing what can be added; what is on sits underneath
+  const typeOpts = [['fav', 'Favourites', tagCount('fav')]].concat(tags.filter(t => tagCount(t) > 0 || state.typeSel.includes(t)).map(t => [t, TAG_LABELS[t] || t, tagCount(t)]));   // a type with nothing to show is left out
+  const cuiOpts = CUISINES.filter(c => cuiCount(c.key) > 0 || state.cuiSel.includes(c.key)).map(c => [c.key, c.label, cuiCount(c.key)]);
+  const pill = (act, [id, label, n]) => `<button class="chip" data-act="${act}" data-id="${esc(id)}" aria-pressed="false">${esc(label)}${n === null ? '' : ` <span>${n}</span>`}</button>`;
+  const filterLine = (name, cls, opts, sel, act, rows) => {
+    const off = opts.filter(o => !sel.includes(o[0]));
+    return `<div class="filt-line ${cls}" role="group" aria-label="${name}"><div class="filt-scroll${rows === 2 && off.length > 3 ? ' two' : ''}">${off.length ? off.map(o => pill(act, o)).join('') : '<span class="filt-none">All chosen</span>'}</div></div>`;
   };
+  const onChip = (cls, act, [id, label]) => `<button class="chip active ${cls}" data-act="${act}" data-id="${esc(id)}" aria-label="Remove filter ${esc(label)}">${esc(label)} <b aria-hidden="true">×</b></button>`;
+  const activeOn = typeOpts.filter(o => state.typeSel.includes(o[0])).map(o => onChip('on-type', 'filter', o))
+    .concat(cuiOpts.filter(o => state.cuiSel.includes(o[0])).map(o => onChip('on-cui', 'cfilter', o)));
+  const activeBar = `<div class="filt-active"><span class="filt-lbl">Showing</span>${activeOn.length ? activeOn.join('') : '<span class="filt-none">All recipes</span>'}${filtersOn ? '<button class="filt-clear" data-act="clear-filters">Reset</button>' : ''}</div>`;
   let html = `
     <div class="search-row">
       <input type="text" id="search-input" placeholder="Search recipes…" value="${esc(state.searchTerm)}">
       <button type="button" class="search-add" data-act="add-recipe" aria-label="Add a recipe">+</button>
     </div>
-    ${filterLine('Type', 'filt-type', typeOpts, state.activeFilter, 'filter', 1)}
-    ${filterLine('Cuisine', 'filt-cui', cuiOpts, state.activeCuisine, 'cfilter', 2)}
-    ${filtersOn ? `<button class="filt-clear" data-act="clear-filters">Reset filters</button>` : ''}
+    ${filterLine('Type', 'filt-type', typeOpts, state.typeSel, 'filter', 1)}
+    ${filterLine('Cuisine', 'filt-cui', cuiOpts, state.cuiSel, 'cfilter', 2)}
+    ${activeBar}
     <div style="height:14px;"></div>
   `;
 
   if(filtered.length===0){
-    html += `<div class="empty-state"><h3>No recipes here yet</h3><p>${recipes.length===0 ? 'Add your first recipe to start building your box.' : 'Nothing matches that search or filter.' + (state.activeFilter==='fav' ? ' Tap the ☆ on a recipe to make it a favourite.' : '')}</p></div>`;
+    html += `<div class="empty-state"><h3>No recipes here yet</h3><p>${recipes.length===0 ? 'Add your first recipe to start building your box.' : 'Nothing matches that search or filter.' + (state.typeSel.includes('fav') ? ' Tap the ☆ on a recipe to make it a favourite.' : '')}</p></div>`;
   } else {
     // one list: favourites first in a random order that holds for the session, then the rest
     const favs = filtered.filter(r => r.fav).sort((a,b) => favShuffleKey(a.id) - favShuffleKey(b.id));
@@ -2393,7 +2410,7 @@ async function openExportSheet(){
 }
 
 /* ---------- BUG REPORTS ---------- */
-const APP_VERSION = '0.66';
+const APP_VERSION = '0.67';
 // Reports are also sent here (a small relay that opens a GitHub issue, which Claude then works on). Empty = reports are only saved to the shared list.
 const BUG_RELAY_URL = 'https://tavola-relay.jools-oneill.workers.dev/';
 async function sendToRelay(bugs){   // bugs: an array of reports. Returns {why:'' when all were sent, otherwise the reason, sent:[ids of those that were]}
@@ -3329,9 +3346,10 @@ mainEl.addEventListener('click', async (e)=>{
   const act = el.dataset.act, id = el.dataset.id;
   switch(act){
     case 'fold': state.openFilters = state.openFilters || {}; state.openFilters[id] = !state.openFilters[id]; render(); break;
-    case 'filter': state.activeFilter = id; render(); break;
-    case 'clear-filters': state.activeFilter = 'fav'; state.activeCuisine = 'all'; state.searchTerm = ''; render(); break;
-    case 'cfilter': state.activeCuisine = id; render(); break;
+    // tap a filter to turn it on or off; All / Any cuisine clears that row
+    case 'filter': state.typeSel = id === 'all' ? [] : (state.typeSel.includes(id) ? state.typeSel.filter(x => x !== id) : state.typeSel.concat(id)); render(); break;
+    case 'clear-filters': state.typeSel = ['fav']; state.cuiSel = []; state.searchTerm = ''; render(); break;
+    case 'cfilter': state.cuiSel = id === 'all' ? [] : (state.cuiSel.includes(id) ? state.cuiSel.filter(x => x !== id) : state.cuiSel.concat(id)); render(); break;
     case 'fav': await setFavourite(id); render(); break;
     case 'dislike': await setDislike(id); render(); break;
     // editing a step, or the ingredients shown under it, from the recipe's Steps tab (the same edits as cooking mode)
