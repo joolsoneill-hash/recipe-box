@@ -290,3 +290,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.63
 - Planner: holding a meal gives one buzz (the phone's own), and the page no longer jumps when selecting starts or ends; the meal you hold stays where it was.
+
+0.64
+- Menus are now named for the day they are built, not the day the draft was started (the Planner can start a draft days earlier, e.g. when it carries over uncooked meals). Older menus keep their start date.

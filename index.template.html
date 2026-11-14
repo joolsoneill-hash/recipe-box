@@ -872,7 +872,7 @@ function normPlan(p){
   const legacyBuilt = ids.filter(Boolean).length > 0;
   const built = p.built === undefined ? legacyBuilt : !!p.built;
   const locked = p.locked === undefined ? built : !!p.locked;
-  return {id: p.id, name: p.name || 'Meal plan', created: p.created || 0, recipeIds: ids.filter(Boolean), built, locked, groceryDone: !!p.groceryDone,
+  return {id: p.id, name: p.name || 'Meal plan', created: p.created || 0, builtAt: p.builtAt || undefined, recipeIds: ids.filter(Boolean), built, locked, groceryDone: !!p.groceryDone,
           servings: Object.fromEntries(Object.entries(p.servings || {}).map(([k,v]) => [k, Math.min(99, Math.max(1, parseInt(v) || 1))])),
           done: Object.fromEntries(Object.entries(p.done || {}).filter(([k,v]) => v).map(([k,v]) => [k, typeof v === 'number' ? v : true])),
           people: parseInt(p.people) || undefined, carried: p.carried ? Object.values(p.carried).filter(Boolean) : undefined, carryMode: p.carryMode || undefined, skipIng: p.skipIng ? Object.values(p.skipIng).filter(Boolean) : undefined,
@@ -923,11 +923,14 @@ function cookStatText(id){
 }
 function planLabel(p){
   if(!p) return '';
-  if(!p.created) return p.name || 'Meal plan';
-  const d = new Date(p.created);
+  // a menu is named for the day it was built (the draft may have been started days before); older menus only have the start date
+  const when = p.builtAt || p.created;
+  if(!when) return p.name || 'Meal plan';
+  const d = new Date(when);
   let label = d.toLocaleDateString('en-AU', {weekday:'short', day:'numeric', month:'short', year:'numeric'});
   // two plans on the same day: number them in the order they were made
-  const same = Object.values(state.plans).filter(q => q.created && new Date(q.created).toDateString() === d.toDateString()).sort((a,b)=>a.created-b.created);
+  const day = q => q.builtAt || q.created;
+  const same = Object.values(state.plans).filter(q => day(q) && new Date(day(q)).toDateString() === d.toDateString()).sort((a,b)=>day(a)-day(b));
   if(same.length > 1) label += ' (' + (same.findIndex(q => q.id === p.id) + 1) + ')';
   return label;
 }
@@ -1641,6 +1644,7 @@ async function buildMenuNow(fruit){
     if(!d.extras.some(x => String(x.name).toLowerCase() === n)) d.extras.push({id: uid(), name, qty: '', category: 'produce'});
   });
   d.built = true; d.locked = true; d.groceryDone = false;
+  d.builtAt = Date.now();
   state.npLog = []; state.npUsed = []; state.npGone = []; state.npFavGone = 0; state.npSugg = {};
   state.activePlanId = d.id;
   state.checks = {};
