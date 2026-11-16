@@ -319,3 +319,7 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 0.71
 - The version number shows under the logo on the opening screen and at the bottom of the ⋯ menu, no longer in the banner.
 - On the opening screen the steam rises off the bowl (still for anyone who has reduced motion turned on).
+
+0.72
+- Opening screen: the logo is now a circle the same size, place and background as the phone's own launch screen, so the two look like one and only the steam starts moving. Fixed the tablecloth not drawing on the opening screen.
+- Planner (including Edit menu): press and hold a meal in the Uncooked box to count it as new (its groceries go on the shopping list), just remove its label (shopping list unchanged), or select meals to remove.
