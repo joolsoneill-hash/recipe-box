@@ -323,3 +323,7 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 0.72
 - Opening screen: the logo is now a circle the same size, place and background as the phone's own launch screen, so the two look like one and only the steam starts moving. Fixed the tablecloth not drawing on the opening screen.
 - Planner (including Edit menu): press and hold a meal in the Uncooked box to count it as new (its groceries go on the shopping list), just remove its label (shopping list unchanged), or select meals to remove.
+
+0.73
+- Opening screen: the phone's top bar stays cream (like the launch screen) while Tavola opens, then turns dark to match the banner.
+- Opening screen: the logo is lifted slightly to make up for the phone's top and bottom bars, so it stays in exactly the same place as on the launch screen.

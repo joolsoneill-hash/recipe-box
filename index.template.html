@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="theme-color" content="#2B2620">
+<meta name="theme-color" content="#EDE3D0">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Tavola">
@@ -660,6 +660,17 @@
     (function(){ var sv = document.querySelector('#boot-splash svg'); if(!sv) return; var h = sv.innerHTML;
       sv.querySelectorAll('[id]').forEach(function(el){ var o = el.id; h = h.split('id="' + o + '"').join('id="bs-' + o + '"').split('url(#' + o + ')').join('url(#bs-' + o + ')'); });
       sv.innerHTML = h; })();
+    // the phone's top bar stays cream like the launch screen while Tavola opens, then turns dark to match the banner
+    (function(){ var app = document.getElementById('app'), m = document.querySelector('meta[name="theme-color"]');
+      var set = function(){ if(!app.classList.contains('booting')){ m.setAttribute('content', '#2B2620'); ob.disconnect(); } };
+      var ob = new MutationObserver(set); ob.observe(app, {attributes: true, attributeFilter: ['class']}); })();
+    // the launch screen centres the logo on the whole screen, but the app sits between the top bar (taller) and the bottom bar,
+    // so lift the logo by half the difference to keep it in exactly the same place (measured: top bar about 63% of the two bars together)
+    (function(){ try{
+      if(!window.matchMedia('(display-mode: standalone)').matches) return;
+      var bars = screen.height - window.innerHeight;
+      if(bars > 0 && bars < 220) document.querySelector('#boot-splash .boot-logo').style.transform = 'translateY(' + (-bars * 0.127).toFixed(1) + 'px)';
+    }catch(e){} })();
   </script>
   <main id="main"></main>
   <nav class="tabbar">
