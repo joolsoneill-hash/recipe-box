@@ -456,6 +456,8 @@
   #app.booting .boot-splash{position:relative;display:flex;align-items:center;justify-content:center;height:100%;}   /* exactly the app's height, so the logo is centred in it */
   /* the logo is cut to a circle the same size and place as the phone's own launch screen, so the hand-over is seamless and only the steam starts moving */
   #boot-splash .boot-logo{width:58.3vw;height:58.3vw;max-width:300px;max-height:300px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+  /* installed app: the phone's launch screen draws its logo slightly below the middle of the app's window, so match it (set from measurements on a Pixel-size phone) */
+  @media (display-mode: standalone){ #boot-splash .boot-logo{transform:translateY(11px);} }
   #boot-splash .boot-logo svg{width:107.3%;height:107.3%;flex-shrink:0;}
   #boot-splash .boot-ver{position:absolute;left:0;right:0;top:calc(50% + min(29.2vw, 150px) + 18px);text-align:center;}
   .boot-ver{font-size:12px;font-weight:500;letter-spacing:0.3px;color:var(--brown);opacity:.7;}
@@ -664,14 +666,14 @@
     (function(){ var app = document.getElementById('app'), m = document.querySelector('meta[name="theme-color"]');
       var set = function(){ if(!app.classList.contains('booting')){ m.setAttribute('content', '#2B2620'); ob.disconnect(); } };
       var ob = new MutationObserver(set); ob.observe(app, {attributes: true, attributeFilter: ['class']}); })();
-    // the launch screen centres the logo on the whole screen, but the app sits between the top bar (taller) and the bottom bar,
-    // so lift the logo by half the difference to keep it in exactly the same place (measured on a Pixel-size phone: the top bar is about 65% of the two bars together)
+    // measurements shown at the bottom of the ⋯ menu, to line the opening screen up with the phone's launch screen.
+    // Taken once the page has its real size: when this script runs, the installed app can still report a 0×0 window.
     (function(){ try{
-      var sa = window.matchMedia('(display-mode: standalone)').matches, bars = screen.height - window.innerHeight, lift = 0;
-      if(sa && bars > 0 && bars < 220){ lift = bars * 0.152; document.querySelector('#boot-splash .boot-logo').style.transform = 'translateY(' + (-lift).toFixed(1) + 'px)'; }
-      var b = document.querySelector('#boot-splash .boot-logo').getBoundingClientRect();
-      // measurements shown at the bottom of the ⋯ menu, to line the opening screen up with the phone's launch screen
-      window.__bootInfo = 'screen ' + screen.width + '×' + screen.height + ' · app ' + window.innerWidth + '×' + window.innerHeight + ' · ' + (sa ? 'app' : 'browser') + ' · lift ' + lift.toFixed(1) + ' · logo ' + Math.round(b.top) + '–' + Math.round(b.bottom) + ' · dpr ' + (window.devicePixelRatio || 1);
+      var sa = window.matchMedia('(display-mode: standalone)').matches, early = window.innerHeight;
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ try{
+        var b = document.querySelector('#boot-splash .boot-logo').getBoundingClientRect();
+        window.__bootInfo = 'screen ' + screen.width + '×' + screen.height + ' · app ' + window.innerWidth + '×' + window.innerHeight + ' (first ' + early + ') · ' + (sa ? 'app' : 'browser') + ' · logo ' + Math.round(b.top) + '–' + Math.round(b.bottom) + ' · dpr ' + (window.devicePixelRatio || 1);
+      }catch(e){ window.__bootInfo = 'error ' + e.message; } }); });
     }catch(e){ window.__bootInfo = 'error ' + e.message; } })();
   </script>
   <main id="main"></main>
