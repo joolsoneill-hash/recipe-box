@@ -667,10 +667,12 @@
     // the launch screen centres the logo on the whole screen, but the app sits between the top bar (taller) and the bottom bar,
     // so lift the logo by half the difference to keep it in exactly the same place (measured: top bar about 63% of the two bars together)
     (function(){ try{
-      if(!window.matchMedia('(display-mode: standalone)').matches) return;
-      var bars = screen.height - window.innerHeight;
-      if(bars > 0 && bars < 220) document.querySelector('#boot-splash .boot-logo').style.transform = 'translateY(' + (-bars * 0.127).toFixed(1) + 'px)';
-    }catch(e){} })();
+      var sa = window.matchMedia('(display-mode: standalone)').matches, bars = screen.height - window.innerHeight, lift = 0;
+      if(sa && bars > 0 && bars < 220){ lift = bars * 0.127; document.querySelector('#boot-splash .boot-logo').style.transform = 'translateY(' + (-lift).toFixed(1) + 'px)'; }
+      var b = document.querySelector('#boot-splash .boot-logo').getBoundingClientRect();
+      // measurements shown at the bottom of the ⋯ menu, to line the opening screen up with the phone's launch screen
+      window.__bootInfo = 'screen ' + screen.width + '×' + screen.height + ' · app ' + window.innerWidth + '×' + window.innerHeight + ' · ' + (sa ? 'app' : 'browser') + ' · lift ' + lift.toFixed(1) + ' · logo ' + Math.round(b.top) + '–' + Math.round(b.bottom) + ' · dpr ' + (window.devicePixelRatio || 1);
+    }catch(e){ window.__bootInfo = 'error ' + e.message; } })();
   </script>
   <main id="main"></main>
   <nav class="tabbar">
@@ -4093,7 +4095,7 @@ menuBtn.addEventListener('click', (e)=>{
   const items = [];
   if(deferredInstall) items.push(['install-app', 'Install app on this device']);
   items.push(['report-bug', 'Report a bug or idea'], ['view-bugs', 'View reports'], ['export-data', 'Export data'], ['change-db', 'Change database'], ['sign-out', 'Sign out']);
-  appMenu.innerHTML = items.map(([a, l]) => `<button type="button" data-menu="${a}">${l}</button>`).join('') + `<div class="app-menu-ver">Tavola v${APP_VERSION}</div>`;
+  appMenu.innerHTML = items.map(([a, l]) => `<button type="button" data-menu="${a}">${l}</button>`).join('') + `<div class="app-menu-ver">Tavola v${APP_VERSION}${window.__bootInfo ? `<br><small>${esc(window.__bootInfo)}</small>` : ''}</div>`;
   appMenu.hidden = false; menuBtn.setAttribute('aria-expanded', 'true');
 });
 appMenu.addEventListener('click', async (e)=>{

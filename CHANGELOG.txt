@@ -327,3 +327,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 0.73
 - Opening screen: the phone's top bar stays cream (like the launch screen) while Tavola opens, then turns dark to match the banner.
 - Opening screen: the logo is lifted slightly to make up for the phone's top and bottom bars, so it stays in exactly the same place as on the launch screen.
+
+0.74
+- Temporary: the ⋯ menu shows screen measurements under the version, to line up the opening screen.
