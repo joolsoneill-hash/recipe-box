@@ -330,3 +330,7 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.74
 - Temporary: the ⋯ menu shows screen measurements under the version, to line up the opening screen.
+
+0.75
+- Opening screen: logo centred on the app's exact height and lifted by the measured amount, so it stays where the phone's launch screen draws it.
+- The installed app now starts with a cream top bar (it turns dark once Tavola has opened), so no dark strip flashes at the top. Android picks this up when it next refreshes the installed app.
