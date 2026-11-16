@@ -456,8 +456,6 @@
   #app.booting .boot-splash{position:relative;display:flex;align-items:center;justify-content:center;height:100%;}   /* exactly the app's height, so the logo is centred in it */
   /* the logo is cut to a circle the same size and place as the phone's own launch screen, so the hand-over is seamless and only the steam starts moving */
   #boot-splash .boot-logo{width:58.3vw;height:58.3vw;max-width:300px;max-height:300px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;}
-  /* installed app: the phone's launch screen draws its logo slightly below the middle of the app's window, so match it (set from measurements on a Pixel-size phone) */
-  @media (display-mode: standalone){ #boot-splash .boot-logo{transform:translateY(11px);} }
   #boot-splash .boot-logo svg{width:107.3%;height:107.3%;flex-shrink:0;}
   #boot-splash .boot-ver{position:absolute;left:0;right:0;top:calc(50% + min(29.2vw, 150px) + 18px);text-align:center;}
   .boot-ver{font-size:12px;font-weight:500;letter-spacing:0.3px;color:var(--brown);opacity:.7;}
@@ -668,11 +666,21 @@
       var ob = new MutationObserver(set); ob.observe(app, {attributes: true, attributeFilter: ['class']}); })();
     // measurements shown at the bottom of the ⋯ menu, to line the opening screen up with the phone's launch screen.
     // Taken once the page has its real size: when this script runs, the installed app can still report a 0×0 window.
+    // Installed app: the phone's launch screen centres the logo on the whole screen, and the app's window changes size while it starts
+    // (the bottom bar appears), so the logo is placed from the top of the window using the screen's size, which is known straight away.
     (function(){ try{
-      var sa = window.matchMedia('(display-mode: standalone)').matches, early = window.innerHeight;
+      var sa = window.matchMedia('(display-mode: standalone)').matches, early = window.innerHeight, sizes = [early];
+      if(sa && screen.height > 0){
+        var sp = document.getElementById('boot-splash'), lg = sp.querySelector('.boot-logo'), vr = sp.querySelector('.boot-ver');
+        var size = Math.min(screen.width * 0.583, 300), top = screen.height / 2 - size / 2;
+        sp.style.alignItems = 'flex-start'; lg.style.marginTop = top.toFixed(1) + 'px'; vr.style.top = (top + size + 18).toFixed(1) + 'px';
+        window.addEventListener('resize', function(){ if(sizes.length < 6) sizes.push(window.innerHeight); });
+      }
       requestAnimationFrame(function(){ requestAnimationFrame(function(){ try{
         var b = document.querySelector('#boot-splash .boot-logo').getBoundingClientRect();
-        window.__bootInfo = 'screen ' + screen.width + '×' + screen.height + ' · app ' + window.innerWidth + '×' + window.innerHeight + ' (first ' + early + ') · ' + (sa ? 'app' : 'browser') + ' · logo ' + Math.round(b.top) + '–' + Math.round(b.bottom) + ' · dpr ' + (window.devicePixelRatio || 1);
+        var logo = Math.round(b.top) + '–' + Math.round(b.bottom);
+        // read when the ⋯ menu opens, so later window sizes are included
+        Object.defineProperty(window, '__bootInfo', {configurable: true, get: function(){ return 'screen ' + screen.width + '×' + screen.height + ' · window ' + sizes.join('→') + ' · ' + (sa ? 'app' : 'browser') + ' · logo ' + logo + ' · dpr ' + (window.devicePixelRatio || 1); }});
       }catch(e){ window.__bootInfo = 'error ' + e.message; } }); });
     }catch(e){ window.__bootInfo = 'error ' + e.message; } })();
   </script>
