@@ -343,3 +343,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.78
 - Recipe page: Share button next to Add to favourites, so a recipe can be sent as a PDF without scrolling to the bottom.
+
+0.79
+- Recipe page: Share is a round share-icon button beside a round star for favourites (no words).

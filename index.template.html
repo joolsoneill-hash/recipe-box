@@ -268,8 +268,8 @@
   .recipe-card .fav-btn{position:absolute;top:6px;right:8px;z-index:2;box-shadow:0 1px 4px rgba(0,0,0,.25);}
   .filter-label{font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--brown);margin:10px 0 2px;font-weight:600;}
   .fav-line{display:flex;align-items:center;gap:10px;margin:2px 0 6px;}
-  .share-pill{height:36px;padding:0 16px;border-radius:24px;border:1px solid var(--line-strong);background:rgba(255,255,255,.92);color:var(--brown);font:inherit;font-size:14px;font-weight:600;cursor:pointer;}   /* matches the favourites pill beside it */
-  .fav-line .fav-btn{width:auto;border-radius:24px;padding:0 14px;height:36px;gap:8px;}
+  .fav-line .share-round .share-ico{width:20px;height:20px;}
+  .fav-line .fav-btn{width:40px;height:40px;}
   .fav-line .fav-btn span{font-size:14px;font-weight:600;}
   .done-col{display:flex;align-items:center;flex-shrink:0;cursor:pointer;padding:4px;}
   .done-col input{-webkit-appearance:none;appearance:none;width:24px;height:24px;margin:0;border-radius:50%;border:2px solid var(--line-strong);background:transparent;cursor:pointer;position:relative;transition:background .15s,border-color .15s;}
@@ -1475,7 +1475,7 @@ function renderRecipeDetail(id){
     <span class="card-tag" style="position:static;display:inline-block;background:${TAG_COLORS[r.tag]||'var(--brown)'}">${esc(TAG_LABELS[r.tag]||r.tag)}</span>
     <h2 class="detail-title" style="margin-top:8px;">${esc(r.title)}</h2>
     ${r.subtitle ? `<div class="detail-sub">${esc(r.subtitle)}</div>` : ''}
-    <div class="fav-line">${favBtnHtml(r, true)}<button type="button" class="share-pill" data-act="share-recipe" data-id="${esc(r.id)}">Share</button></div>
+    <div class="fav-line">${favBtnHtml(r)}<button type="button" class="fav-btn share-round" data-act="share-recipe" data-id="${esc(r.id)}" aria-label="Share as PDF"><svg class="share-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg></button></div>
     <div class="recipe-meta">${esc(r.time)} min · serves ${esc(r.servings)}${Math.abs(sf - 1) > 1e-9 ? ` · <strong>scaled for ${planServings(plan, r)}</strong>` : ''}</div>
     <div class="cook-stat">${esc(cookStatText(r.id))}</div>
 
