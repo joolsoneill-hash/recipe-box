@@ -346,3 +346,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.79
 - Recipe page: Share is a round share-icon button beside a round star for favourites (no words).
+
+0.80
+- Recipe share button asks: Share link (opens the recipe in Tavola) or Share PDF. Tavola recipe links open that recipe.
