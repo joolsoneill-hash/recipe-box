@@ -340,3 +340,6 @@ v9.1 - Button style unified (Menu style), olive green, 2-per-row, icons removed.
 
 0.77
 - Opening screen: in the installed app the logo is placed from the top of the window using the screen size, so it stays still when the bottom bar appears while the app starts.
+
+0.78
+- Recipe page: Share button next to Add to favourites, so a recipe can be sent as a PDF without scrolling to the bottom.
